@@ -5,7 +5,9 @@ function fit(){const vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.h
 function show(name,...a){CUR=name;Audio.resume();Theme.route(name);const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
 function bindAll(){stage().querySelectorAll('[data-go]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx('click');const [n,...args]=b.dataset.go.split('|');show(n,...args)})}
 const AFTER={};
-function sceneBG(id){const k='bg_'+id;if(IMG[k])return `<div class="scene photo" style="background-image:url(${IMG[k]})"></div>`;return sceneSVG(id)}
+// Fundo de cada região = imagem do capítulo dela (assets/capitulos); se não houver, usa assets/fundos; senão, o desenho
+const REGION_CH={brasil:1,ocidental:2,caribe:2,eua:3,austral:4,latina:5,oriental:6,futuro:7,final:8};
+function sceneBG(id){const src=IMG['ch_'+REGION_CH[id]]||IMG['bg_'+id];if(src)return `<div class="scene photo" style="background-image:url(${src})"></div>`;return sceneSVG(id)}
 function portrait(id,cls=''){return `<img class="pt ${cls}" src="${IMG[id]}" alt="${esc(charName(id))}" draggable="false">`}
 function typeTag(t){const T=TYPES[t];return `<span class="tt" style="--tc:${T.c}">${T.ic} ${t}</span>`}
 function rarTag(r){return `<span class="rt" style="--rc:${RAR[r].c}">${'◆'.repeat(RAR[r].n)} ${r}</span>`}
@@ -18,16 +20,15 @@ const SCREENS={
 menu(){
   const ev=currentEvent();
   return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>
-  <div class="menu-hud">${wallet()}</div>
   <nav class="menu-hot" aria-label="Menu principal">
-    <button class="hot" style="left:49px;top:327px;width:380px;height:60px" data-act="play" aria-label="Jogar"></button>
-    <button class="hot" style="left:69px;top:398px;width:321px;height:50px" data-go="story" aria-label="Modo história"></button>
-    <button class="hot" style="left:69px;top:461px;width:321px;height:51px" data-go="multi" aria-label="Multiplayer"></button>
-    <button class="hot" style="left:69px;top:527px;width:321px;height:51px" data-go="chars" aria-label="Personagens"></button>
-    <button class="hot" style="left:69px;top:591px;width:321px;height:51px" data-go="collection" aria-label="Coleção"></button>
-    <button class="hot" style="left:69px;top:655px;width:321px;height:50px" data-go="settings" aria-label="Configurações"></button>
-    <button class="hot" style="left:69px;top:719px;width:321px;height:50px" data-go="exit" aria-label="Sair"></button>
-    <button class="hot evhot" style="left:1123px;top:668px;width:429px;height:117px" data-go="events" aria-label="Evento especial"></button>
+    <button class="hot" style="left:19px;top:362px;width:416px;height:60px" data-act="play" aria-label="Jogar"></button>
+    <button class="hot" style="left:48px;top:435px;width:344px;height:58px" data-go="story" aria-label="Modo história"></button>
+    <button class="hot" style="left:48px;top:502px;width:344px;height:58px" data-go="multi" aria-label="Multiplayer"></button>
+    <button class="hot" style="left:48px;top:569px;width:344px;height:58px" data-go="chars" aria-label="Personagens"></button>
+    <button class="hot" style="left:48px;top:636px;width:344px;height:58px" data-go="collection" aria-label="Coleção"></button>
+    <button class="hot" style="left:48px;top:703px;width:344px;height:60px" data-go="settings" aria-label="Configurações"></button>
+    <button class="hot" style="left:48px;top:772px;width:344px;height:59px" data-go="exit" aria-label="Sair"></button>
+    <button class="hot evhot" style="left:1115px;top:667px;width:456px;height:118px" data-go="events" aria-label="Evento especial"></button>
   </nav>
   <div class="menu-tip">Evento da semana: <b>${ev.ic} ${ev.name}</b></div>
   <button class="intro-again" data-act="replay" aria-label="Rever a abertura">▶ Rever abertura</button>`},
