@@ -43,7 +43,7 @@ const CHARS = [
   ult:{name:'Recorde Mundial', desc:'Dano 300% em um alvo.', fx:[{t:'dmg',m:3,tg:'one'}]},
   pas:{t:'crit',v:.2, desc:'20% de chance de crítico.'},
   lines:['Pisca e perdeu!','Linha de chegada é ali.','Mais um tiro!'], anim:'Entra em posição de largada com rastro de luz laranja.'},
- {id:'engenheiro', name:'André Cruz', title:'Engenheiro de Software', age:40, origin:'Rio de Janeiro, Brasil', type:'Tech', rar:'Lendária', role:'Defensor',
+ {id:'engenheiro', name:'André Cruz', title:'Engenheiro de Software', age:38, origin:'Rio de Janeiro, Brasil', type:'Tech', rar:'Lendária', role:'Defensor',
   hp:118, atk:17, def:15, spd:11,
   look:'Barba curta bem desenhada, blazer cinza sobre camisa preta, tablet holográfico azul sempre aceso nas mãos.',
   pers:'Calmo, analítico e direto. Pensa em sistemas, fala em soluções e só comemora depois que tudo passa nos testes.',

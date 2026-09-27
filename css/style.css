@@ -279,3 +279,5 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 .vc-in em{font-style:normal;font-size:12px;font-weight:800;background:#d8342c;color:#fff;padding:1px 8px;border-radius:8px}
 .scene.photo{background-size:cover;background-position:center}
 #cutin.vidon{pointer-events:auto;background:#000}.spv{position:absolute;inset:0}.spv video{width:100%;height:100%;object-fit:contain}
+
+.chap.locked{filter:none}.chap.locked .chph{filter:brightness(.8) saturate(.9)}.chap.locked span{color:#ddd}.chap .chph{background-position:center top}.chap.done{border-color:var(--acc);border-width:3px}

@@ -46,6 +46,14 @@ const IMG={
  "v_toxina": "assets/viloes/toxina.jpg",
  "v_vertice": "assets/viloes/vertice.jpg",
  "v_vulcano": "assets/viloes/vulcano.jpg",
- "v_zara": "assets/viloes/zara.jpg"
+ "v_zara": "assets/viloes/zara.jpg",
+ "ch_1": "assets/capitulos/cap1.jpg",
+ "ch_2": "assets/capitulos/cap2.jpg",
+ "ch_3": "assets/capitulos/cap3.jpg",
+ "ch_4": "assets/capitulos/cap4.jpg",
+ "ch_5": "assets/capitulos/cap5.jpg",
+ "ch_6": "assets/capitulos/cap6.jpg",
+ "ch_7": "assets/capitulos/cap7.jpg",
+ "ch_8": "assets/capitulos/cap8.jpg"
 };
 const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",musica:"media/musica.mp3"};
