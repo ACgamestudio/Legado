@@ -14,7 +14,7 @@ const RAR = {
 // efeitos: t = dmg | heal | buff | debuff | shield | stun | energy | cleanse | taunt
 // alvo: one | all | team | self | ally(menor vida)
 const CHARS = [
- {id:'protagonista', name:'Kayo', title:'Guardião do Legado', age:17, origin:'Vila Baobá, Bahia (Brasil)', type:'Espírito', rar:'Mítica', role:'Equilibrado',
+ {id:'protagonista', name:'Kayo', title:'Guardião do Legado', age:17, origin:'Vila Baobá, Salvador, Bahia (Brasil)', type:'Espírito', rar:'Mítica', role:'Equilibrado',
   hp:120, atk:22, def:12, spd:12,
   look:'Black power volumoso, moletom roxo com coroa dourada, mochila com o Livro Sankofa.',
   pers:'Curioso, teimoso e engraçado. Faz perguntas demais e escuta de verdade as respostas.',
@@ -308,8 +308,8 @@ const BOSSES = {
 // ---------------- HISTÓRIA ----------------
 // s: speaker id (char id | 'narr' | boss id)
 const CHAPTERS = [
- {n:1, title:'As Raízes', region:'brasil', scenes:[
-  ['narr','Vila Baobá, Bahia. Uma comunidade construída ao redor de um baobá centenário e de uma biblioteca que ninguém sabe exatamente quão antiga é.'],
+ {n:1, title:'As Raízes', region:'brasil', place:'Vila Baobá e Pelourinho, Salvador, Bahia (Brasil)', fact:'Salvador foi a primeira capital do Brasil (1549 a 1763). O Centro Histórico é Patrimônio Mundial da UNESCO desde 1985.', scenes:[
+  ['narr','Vila Baobá, Salvador, Bahia. Uma comunidade construída ao redor de um baobá centenário e de uma biblioteca que ninguém sabe exatamente quão antiga é.'],
   ['lider','{P}! Chegou bem na hora. A biblioteca está... estranha.'],
   ['protagonista','Estranha como? A vó sempre disse que ela é "viva", mas eu achava que era força de expressão.'],
   ['lider','Olha esta estante. Ontem aqui estava a história do nosso bloco afro. Hoje, páginas em branco.'],
@@ -328,7 +328,7 @@ const CHAPTERS = [
   ['lider','Isso foi só o começo. O livro está apontando para o outro lado do oceano.'],
   ['protagonista','Então vamos. Tem muita história lá fora esperando alguém lembrar.']
  ]},
- {n:2, title:'Além do Oceano', region:'ocidental', region2:'caribe', scenes:[
+ {n:2, title:'Além do Oceano', region:'ocidental', region2:'caribe', place:'Tombuctu (Mali), Kingston (Jamaica) e Porto Príncipe (Haiti)', fact:'Tombuctu guardou milhares de manuscritos. Kingston é o berço do ska e do reggae. Em 1804, o Haiti virou a primeira república negra das Américas.', scenes:[
   ['narr','O portal leva o grupo a Tombuctu, no Mali, cidade que foi um dos grandes centros de estudo do mundo, com milhares de manuscritos sobre astronomia, matemática, medicina e direito.'],
   ['cantora','Visitantes pelo livro? Faz muito tempo. Sou Fatou. Minha família canta a história desta terra há gerações.'],
   ['protagonista','Você é uma griot?'],
@@ -341,7 +341,7 @@ const CHAPTERS = [
   ['protagonista','A primeira república negra livre das Américas...'],
   ['chef','Exato. E cada colherada lembra isso. Agora, o livro está brilhando para o norte.']
  ]},
- {n:3, title:'Vozes', region:'eua', scenes:[
+ {n:3, title:'Vozes', region:'eua', place:'Nova Orleans e Bronx, Nova York (EUA)', fact:'O jazz nasceu em Nova Orleans no início do século XX. O hip-hop surgiu no Bronx, numa festa de bairro em 1973.', scenes:[
   ['narr','Nova Orleans. A cidade onde o jazz nasceu, no começo do século XX, misturando blues, ragtime, cantos de igreja e ritmos que vieram da África e do Caribe.'],
   ['musico','Vocês ouviram isso? Nada. Silêncio. Nessa cidade isso é um crime.'],
   ['protagonista','A Névoa está calando a música?'],
@@ -352,7 +352,7 @@ const CHAPTERS = [
   ['musico','Escuta só... a cidade voltou a tocar.'],
   ['inventor','E eu aproveitei os equipamentos do Vértice pra montar um amplificador. Marcus Bell, prazer. O próximo portal parece... geológico.']
  ]},
- {n:4, title:'Inventores', region:'austral', scenes:[
+ {n:4, title:'Inventores', region:'austral', place:'Grande Zimbábue (Zimbábue)', fact:'Muralhas de granito erguidas entre os séculos XI e XV sem nenhuma argamassa. Patrimônio Mundial da UNESCO desde 1986.', scenes:[
   ['narr','Grande Zimbábue. Muralhas de granito erguidas entre os séculos XI e XV sem nenhuma argamassa, pedra encaixada sobre pedra.'],
   ['pesquisador','Cuidado onde pisam! Cada pedra aqui é uma aula de engenharia. Sou Thabo.'],
   ['engenheiro','Sem argamassa? Com essa precisão? Isso é engenharia de primeira. Vou digitalizar cada pedra.'],
@@ -362,7 +362,7 @@ const CHAPTERS = [
   ['guerreiro','Belo trabalho. Sou Sipho. Treino luta com bastões e ouvi o barulho do Colôsso caindo lá de Durban.'],
   ['pesquisador','O livro agora aponta para as florestas da Colômbia.']
  ]},
- {n:5, title:'Resistência', region:'latina', scenes:[
+ {n:5, title:'Resistência', region:'latina', place:'San Basilio de Palenque (Colômbia)', fact:'Fundado no século XVII por pessoas que se libertaram da escravidão, liderado por Benkos Biohó. É considerado o primeiro povoado livre das Américas.', scenes:[
   ['narr','San Basilio de Palenque, Colômbia. Fundado por pessoas que se libertaram da escravidão no século XVII, liderados por Benkos Biohó. É considerado o primeiro povoado livre das Américas.'],
   ['esportista','Aqui ainda se fala palenquero, uma língua que mistura espanhol com línguas bantas. Meus avós contam que os caminhos da liberdade eram marcados até nos penteados das tranças.'],
   ['protagonista','Tipo os quilombos no Brasil. Palmares, Dandara, Zumbi...'],
@@ -372,7 +372,7 @@ const CHAPTERS = [
   ['esportista','As trilhas voltaram. E as crianças voltaram a brincar na praça. Isso é o que importa.'],
   ['protagonista','Próxima parada: as terras altas da Etiópia.']
  ]},
- {n:6, title:'Grandes Conquistas', region:'oriental', scenes:[
+ {n:6, title:'Grandes Conquistas', region:'oriental', place:'Aksum e Lalibela (Etiópia)', fact:'Aksum cunhava moedas próprias e ergueu obeliscos de mais de 20 metros. Em Lalibela, igrejas inteiras foram esculpidas em uma única rocha.', scenes:[
   ['narr','Aksum, Etiópia. Capital de um reino que cunhava as próprias moedas e erguia obeliscos de mais de 20 metros. Mais ao sul, em Lalibela, igrejas inteiras foram esculpidas de cima para baixo em uma única rocha.'],
   ['historiadora','Makeda, historiadora. E sim, meu nome é o mesmo da rainha de Sabá nas tradições etíopes. Não, eu não sou da realeza.'],
   ['artista','E eu sou a Zuri, de Nairóbi. Vim pintar a memória dos maratonistas, das cientistas e das ativistas daqui antes que a Névoa leve embora.'],
@@ -382,7 +382,7 @@ const CHAPTERS = [
   ['historiadora','Os obeliscos estão de pé. As histórias também.'],
   ['astronauta','Aqui é a Comandante Okafor, de Neo-Axé. Vocês estão sendo chamados para o futuro. Urgente.']
  ]},
- {n:7, title:'O Futuro', region:'futuro', scenes:[
+ {n:7, title:'O Futuro', region:'futuro', place:'Neo-Axé, cidade afrofuturista (fictícia)', fact:'O termo afrofuturismo foi criado em 1993 pelo crítico Mark Dery para a arte que imagina o futuro a partir da cultura negra.', scenes:[
   ['narr','Neo-Axé. Uma cidade de torres metálicas cobertas por padrões geométricos inspirados em tecidos e esculturas africanas, iluminadas em neon. Aqui se estuda, se dança e se inventa o amanhã.'],
   ['astronauta','Nosso arquivo central guarda tudo que vocês salvaram. Mas a IA que o protege foi corrompida.'],
   ['cientista','Vulcano corrompeu a IA do arquivo. Agora ela acha que memória é "dado desnecessário".'],
@@ -392,7 +392,7 @@ const CHAPTERS = [
   ['cientista','Arquivo restaurado. Backups em cinco continentes. Aprendemos a lição.'],
   ['protagonista','Mas a Névoa ainda está saindo de algum lugar... do Livro. Da Vila Baobá.']
  ]},
- {n:8, title:'Nosso Legado', region:'final', scenes:[
+ {n:8, title:'Nosso Legado', region:'final', place:'Vila Baobá, Salvador, Bahia (Brasil)', fact:'Baobás podem viver mais de mil anos. Em várias culturas africanas, a árvore é símbolo de memória, encontro e sabedoria.', scenes:[
   ['narr','De volta à Vila Baobá. A Névoa se concentra ao redor do baobá centenário. Dela surge Obsidian, o líder de todos os vilões.'],
   ['esquecimento','Eu sou Obsidian. Eu sou o nada entre uma geração e outra. Sem vocês, eu venço sozinho.'],
   ['protagonista','Você venceria sozinho. Mas a gente nunca está sozinho.'],
