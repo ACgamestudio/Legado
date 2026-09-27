@@ -15,20 +15,20 @@ function modal(html,onClose){const m=document.createElement('div');m.className='
 const SCREENS={
 // ---------------------------- MENU (arte do cliente) ----------------------------
 menu(){
-  const ev=currentEvent(), k=1350/1536, X=125, R=(x1,y1,x2,y2)=>`left:${Math.round(X+x1*k)}px;top:${Math.round(y1*k)}px;width:${Math.round((x2-x1)*k)}px;height:${Math.round((y2-y1)*k)}px`;
-  return `<div class="menu-fill" style="background-image:url(${IMG.menu})"></div><div class="menu-bg2" style="background-image:url(${IMG.menu})"></div>
-  <div class="menu-hud2">${wallet()}</div>
+  const ev=currentEvent();
+  return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>
+  <div class="menu-hud">${wallet()}</div>
   <nav class="menu-hot" aria-label="Menu principal">
-    <button class="hot" style="${R(20,358,420,422)}" data-act="play" aria-label="Jogar"></button>
-    <button class="hot" style="${R(40,432,372,490)}" data-go="story" aria-label="Modo história"></button>
-    <button class="hot" style="${R(40,500,372,558)}" data-go="multi" aria-label="Multiplayer"></button>
-    <button class="hot" style="${R(40,568,372,628)}" data-go="chars" aria-label="Personagens"></button>
-    <button class="hot" style="${R(40,640,372,698)}" data-go="collection" aria-label="Coleção"></button>
-    <button class="hot" style="${R(40,708,372,768)}" data-go="settings" aria-label="Configurações"></button>
-    <button class="hot" style="${R(40,776,372,836)}" data-go="exit" aria-label="Sair"></button>
-    <button class="hot" style="${R(1060,795,1503,915)}" data-go="events" aria-label="Evento especial"></button>
+    <button class="hot" style="left:49px;top:327px;width:380px;height:60px" data-act="play" aria-label="Jogar"></button>
+    <button class="hot" style="left:69px;top:398px;width:321px;height:50px" data-go="story" aria-label="Modo história"></button>
+    <button class="hot" style="left:69px;top:461px;width:321px;height:51px" data-go="multi" aria-label="Multiplayer"></button>
+    <button class="hot" style="left:69px;top:527px;width:321px;height:51px" data-go="chars" aria-label="Personagens"></button>
+    <button class="hot" style="left:69px;top:591px;width:321px;height:51px" data-go="collection" aria-label="Coleção"></button>
+    <button class="hot" style="left:69px;top:655px;width:321px;height:50px" data-go="settings" aria-label="Configurações"></button>
+    <button class="hot" style="left:69px;top:719px;width:321px;height:50px" data-go="exit" aria-label="Sair"></button>
+    <button class="hot evhot" style="left:1123px;top:668px;width:429px;height:117px" data-go="events" aria-label="Evento especial"></button>
   </nav>
-  <div class="menu-tip2">Evento da semana: <b>${ev.ic} ${ev.name}</b></div>
+  <div class="menu-tip">Evento da semana: <b>${ev.ic} ${ev.name}</b></div>
   <button class="intro-again" data-act="replay" aria-label="Rever a abertura">▶ Rever abertura</button>`},
 
 // ---------------------------- TELA INICIAR ----------------------------
