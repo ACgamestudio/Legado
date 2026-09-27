@@ -1,0 +1,26 @@
+// Caminhos das imagens do jogo
+const IMG={
+ "artista": "assets/personagens/artista.jpg",
+ "astronauta": "assets/personagens/astronauta.jpg",
+ "atleta": "assets/personagens/atleta.jpg",
+ "cantora": "assets/personagens/cantora.jpg",
+ "capoeirista": "assets/personagens/capoeirista.jpg",
+ "chef": "assets/personagens/chef.jpg",
+ "cientista": "assets/personagens/cientista.jpg",
+ "dancarina": "assets/personagens/dancarina.jpg",
+ "dj": "assets/personagens/dj.jpg",
+ "empreendedora": "assets/personagens/empreendedora.jpg",
+ "engenheiro": "assets/personagens/engenheiro.jpg",
+ "esportista": "assets/personagens/esportista.jpg",
+ "fotografa": "assets/personagens/fotografa.jpg",
+ "guerreiro": "assets/personagens/guerreiro.jpg",
+ "historiadora": "assets/personagens/historiadora.jpg",
+ "inventor": "assets/personagens/inventor.jpg",
+ "lider": "assets/personagens/lider.jpg",
+ "medica": "assets/personagens/medica.jpg",
+ "musico": "assets/personagens/musico.jpg",
+ "pesquisador": "assets/personagens/pesquisador.jpg",
+ "policial": "assets/personagens/policial.jpg",
+ "protagonista": "assets/personagens/protagonista.jpg",
+ "menu": "assets/menu.jpg"
+};
