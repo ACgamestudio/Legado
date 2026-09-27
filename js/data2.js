@@ -102,7 +102,7 @@ const ITEM_RAW = {
   ['Moto Magnética','🏍️','Objeto','Veículo de Neo-Axé com padrões geométricos pintados à mão.'],
   ['Máscara Holográfica','🎭','Obra de arte','Arte digital inspirada em máscaras tradicionais, criada com a permissão das comunidades.'],
   ['Mapa Estelar Dogon','🌌','Objeto histórico','Os dogons, do Mali, têm uma rica tradição de conhecimento sobre o céu, ainda debatida por pesquisadores.'],
-  ['Chip de Backup Pan-africano','💾','Instrumento científico','Backup do arquivo em cinco continentes. A lição da APAGÃO.'],
+  ['Chip de Backup Pan-africano','💾','Instrumento científico','Backup do arquivo em cinco continentes. A lição que Vulcano ensinou.'],
   ['Colar Neon','📿','Joia','Contas que acendem conforme o batimento de quem usa.'],
   ['Placa da Estação Orbital','🛰️','Objeto','Primeira estação de Neo-Axé. Nome escolhido por votação das escolas.']],
  legado:[

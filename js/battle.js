@@ -23,7 +23,7 @@ function mkHero(id,side,m,lvlOverride){
 function mkEnemy(key,lvl,boss,idx){
   const E=boss?BOSSES[key]:ENEMIES[key],g=1+.1*(lvl-1);
   const u={id:key+'_'+idx,key,name:E.name,side:'e',isChar:false,boss:!!boss,type:E.type,lvl,
-    maxhp:Math.round(E.hp*g*(boss?.9:1)),atk:E.atk*g,def:E.def*g,spd:E.spd,crit:.05,dodge:0,counter:0,thorns:0,lifesteal:0,healB:0,aoeB:0,ultB:0,debuffDur:0,energyMul:1,regen:0,shieldMul:1,stunB:0,
+    maxhp:Math.round(E.hp*g*(boss?.9:1)),atk:E.atk*g,def:E.def*g,spd:E.spd,crit:.05,dodge:E.dodge||0,img:E.img,style:E.style,counter:0,thorns:0,lifesteal:0,healB:0,aoeB:0,ultB:0,debuffDur:0,energyMul:1,regen:0,shieldMul:1,stunB:0,
     energy:0,cd:0,buffs:[],shield:0,stun:false,taunt:0,alive:true,turns:0,color:TYPES[E.type].c,shape:E.shape};
   u.hp=u.maxhp; return u;
 }
@@ -44,14 +44,14 @@ function startBattle(ctx){
     const ids=S.team, extra=ctx.exp?ctx.exp.mods:null;
     const m=teamMods(ids,extra);
     ids.forEach(id=>{const u=mkHero(id,'h',m);if(ctx.exp&&ctx.exp.hp[id]!=null){u.hp=Math.max(0,Math.round(ctx.exp.hp[id]*u.maxhp));u.alive=u.hp>0}units.push(u)});
-    if(ctx.region==='final'){lvl=25;units.push(mkEnemy('esquecimento',lvl,true,0));units.push(mkEnemy('sombra',lvl-3,false,1));units.push(mkEnemy('guardiao',lvl-3,false,2))}
+    if(ctx.region==='final'){lvl=25;units.push(mkEnemy('esquecimento',lvl,true,0));units.push(mkEnemy('lucifer',lvl-3,false,1));units.push(mkEnemy('brasa',lvl-3,false,2))}
     else if(ctx.mode==='expedition'){lvl=Math.max(3,S.lvl-1)+ctx.exp.room+s_('expDone')*2;
-      if(ctx.exp.room===6){units.push(mkEnemy('ecoVazio',lvl,true,0));units.push(mkEnemy('eco',lvl-2,false,1))}
-      else{const pool=['eco','sombra','nevoa','guardiao','drone'];const n=ctx.exp.room<3?2:3;for(let i=0;i<n;i++)units.push(mkEnemy(pick(pool),lvl,false,i))}
+      if(ctx.exp.room===6){units.push(mkEnemy('ecoVazio',lvl,true,0));units.push(mkEnemy('sombraviva',lvl-2,false,1))}
+      else{const pool=Object.keys(ENEMIES);const n=ctx.exp.room<3?2:3;for(let i=0;i<n;i++)units.push(mkEnemy(pick(pool),lvl,false,i))}
       genre='final';scene='final';}
     else{const r=RG[ctx.region];genre=r.genre;scene=r.id;
       lvl=ctx.node===9?Math.max(r.lvl+2,S.lvl):r.lvl+ctx.node;
-      if(ctx.tutorial){units.push(mkEnemy('eco',1,false,0));units.push(mkEnemy('nevoa',1,false,1));units.slice(-2).forEach(u=>{u.maxhp=u.hp=Math.round(u.hp*.6);u.atk*=.6})}
+      if(ctx.tutorial){units.push(mkEnemy('sombraviva',1,false,0));units.push(mkEnemy('necro',1,false,1));units.slice(-2).forEach(u=>{u.maxhp=u.hp=Math.round(u.hp*.6);u.atk*=.6})}
       else if(ctx.node===3){units.push(mkEnemy(r.boss,lvl,true,0));if(r.lvl>=7)units.push(mkEnemy(pick(r.enemies),lvl-2,false,1))}
       else{const n=ctx.node===2?3:2;for(let i=0;i<n;i++)units.push(mkEnemy(r.enemies[(i+ctx.node)%3],lvl,false,i))}}
   }
@@ -61,7 +61,7 @@ function startBattle(ctx){
   Audio.genre=null;Audio.play(genre);
   if(B.units.some(u=>u.boss)){const bo=B.units.find(u=>u.boss);setTimeout(()=>bossIntro(bo),300)}else setTimeout(nextTurn,500);
 }
-SCREENS.battle=scene=>`<div class="scene-wrap">${sceneSVG(scene)}</div><div class="bt">
+SCREENS.battle=scene=>`<div class="scene-wrap">${sceneBG(scene)}</div><div class="bt">
   <div class="btop"><button class="back" id="flee" aria-label="Sair da batalha">◀</button><div class="order" id="order"></div><div class="evb" title="${B.ev.desc}">${B.ev.ic} ${B.ev.name}</div></div>
   <div id="field"></div>
   <div class="bpanel"><div class="actor-info" id="ainfo"></div><div class="acts" id="acts"></div><div class="blog" id="blog"></div></div>
@@ -70,14 +70,14 @@ AFTER.battle=()=>{
   const f=document.getElementById('field');
   let hi=0,ei=0;
   f.innerHTML=B.units.map(u=>{let x,y;const hasBoss=B.units.some(z=>z.boss);if(u.side==='h'){[x,y]=HPOS[hi++]}else{[x,y]=u.boss?[1010,100]:(hasBoss?EPOS_B:EPOS)[ei++]}
-    const art=u.isChar?portrait(u.key):enemySVG(u.shape,u.color,u.boss?u.key:null);
-    return `<div class="unit ${u.side} ${u.boss?'boss':''} ${u.isChar?'char':''}" id="u_${u.id}" data-id="${u.id}" style="left:${x}px;top:${y}px;--tc:${TYPES[u.type].c}"><div class="uart">${art}</div><div class="uname">${u.isChar?`${TYPES[u.type].ic} `:''}${esc(u.isChar?short(u.key):u.name)} <small>Nv.${u.lvl}</small></div><div class="hpb"><i class="hp"></i><i class="sh"></i><span></span></div>${u.isChar?'<div class="enb"><i></i></div>':''}<div class="stt"></div><div class="tgt">▼</div></div>`}).join('');
+    const art=u.isChar?portrait(u.key):u.img&&IMG[u.img]?`<img class="pt" src="${IMG[u.img]}" alt="${esc(u.name)}" draggable="false">`:enemySVG(u.shape,u.color,u.boss?u.key:null);
+    return `<div class="unit ${u.side} ${u.boss?'boss':''} ${u.isChar?'char':''} ${u.img?'vil':''}" id="u_${u.id}" data-id="${u.id}" style="left:${x}px;top:${y}px;--tc:${TYPES[u.type].c}"><div class="uart">${art}</div><div class="uname">${u.isChar?`${TYPES[u.type].ic} `:''}${esc(u.isChar?short(u.key):u.name)} <small>Nv.${u.lvl}</small></div><div class="hpb"><i class="hp"></i><i class="sh"></i><span></span></div>${u.isChar?'<div class="enb"><i></i></div>':''}<div class="stt"></div><div class="tgt">▼</div></div>`}).join('');
   f.querySelectorAll('.unit').forEach(el=>el.onclick=()=>{const u=B.units.find(x=>x.id===el.dataset.id);if(!u.alive||!B.cur)return;if(u.side!==B.cur.side){B.target[B.cur.side]=u;sfx('click');draw()}});
   document.getElementById('flee').onclick=()=>{const m=modal(`<h2>Sair da batalha?</h2><p>Você não recebe recompensas desta luta.</p><button class="btn danger" id="fl">Sair</button>`);m.querySelector('#fl').onclick=()=>{B.over=true;m.remove();show(B.ctx.mode==='duel'?'multi':B.ctx.back||'hub')}};
   document.onkeydown=e=>{if(CUR!=='battle'||!B||B.busy||!B.cur||B.cur.ai===true)return;const k={'1':'basic','2':'defend','3':'special','4':'ult'}[e.key];if(k)playerAct(k)};
   draw();
 };
-function bossIntro(u){const c=document.getElementById('cutin');if(!c)return;c.innerHTML=`<div class="bossin"><small>Chefe</small><h2>${u.name}</h2><p>"${BOSSES[u.key].intro}"</p></div>`;c.classList.add('on');setTimeout(()=>{c.classList.remove('on');nextTurn()},2600)}
+function bossIntro(u){const c=document.getElementById('cutin');if(!c)return;c.innerHTML=`<div class="bossin">${u.img?`<img class="bossimg" src="${IMG[u.img]}" alt="">`:''}<small>Chefe · ${esc(BOSSES[u.key].power||'')}</small><h2>${u.name}</h2><p>"${BOSSES[u.key].intro}"</p></div>`;c.classList.add('on');setTimeout(()=>{c.classList.remove('on');nextTurn()},2600)}
 
 function draw(){ if(!B||!B.ui)return;
   B.units.forEach(u=>{const el=document.getElementById('u_'+u.id);if(!el)return;
@@ -91,7 +91,7 @@ function draw(){ if(!B||!B.ui)return;
     el.querySelector('.stt').innerHTML=ic.join('');
   });
   const ord=B.queue.slice(B.qi).filter(u=>u.alive).slice(0,8);
-  document.getElementById('order').innerHTML=`<span class="rnd">Rodada ${B.round}</span>`+ord.map(u=>`<span class="oq ${u.side}">${u.isChar?portrait(u.key):`<i style="background:${u.color}">${u.boss?'☠':'◉'}</i>`}</span>`).join('');
+  document.getElementById('order').innerHTML=`<span class="rnd">Rodada ${B.round}</span>`+ord.map(u=>`<span class="oq ${u.side}">${u.isChar?portrait(u.key):u.img?`<img class="pt" src="${IMG[u.img]}" alt="">`:`<i style="background:${u.color}">${u.boss?'☠':'◉'}</i>`}</span>`).join('');
   const a=B.cur, human=a&&!a.ai&&a.isChar&&!B.over;
   const ai=document.getElementById('ainfo'),acts=document.getElementById('acts');
   if(human){const c=CH[a.key];
@@ -144,7 +144,7 @@ function doAct(u,k){const c=CH[u.key];u._acted=true;
   else if(k==='special'){log(`<b>${u.name}</b> usa <b>${c.sp.name}</b>!`);runFx(u,c.sp.fx,false);u.cd=c.sp.cd+1;gainEn(u,15);if(u.side==='h')st('specials');sfx('special');combos(u)}
   else if(k==='ult'){u.energy=0;if(u.side==='h')st('ults');sfx('ult');
     const go=()=>{log(`<b>${u.name}</b>: SUPREMA <b>${c.ult.name}</b>!`);runFx(u,c.ult.fx,true);endTurn(u,900)};
-    if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
+    if(B.ui&&window.MEDIA&&MEDIA['esp_'+u.key]){specialVideo(MEDIA['esp_'+u.key],go)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
   endTurn(u);
 }
 function cutIn(u,name){const c=document.getElementById('cutin');c.innerHTML=`<div class="ci" style="--tc:${TYPES[u.type].c}">${portrait(u.key)}<div><small>Suprema</small><h2>${name}</h2><p>"${pick(CH[u.key].lines)}"</p></div></div>`;c.classList.add('on');setTimeout(()=>c.classList.remove('on'),950)}
@@ -196,7 +196,7 @@ function hit(a,t,m,forceCrit,noCounter){ if(!t||!t.alive||!a.alive)return 0;
   return d;
 }
 function heal(t,v,src,quiet){if(!t.alive)return;v=Math.round(v);const real=Math.min(v,t.maxhp-t.hp);t.hp+=real;if(src&&src.side==='h')st('heals',real);if(!quiet||real>5)floatTxt(t,'+'+v,'heal')}
-function kill(t){t.alive=false;t.hp=0;log(`${t.name} caiu.`)}
+function kill(t){t.alive=false;t.hp=0;log(`${t.name} caiu.`);if(!t.isChar&&B.ctx.mode!=='duel'){S.defeated=S.defeated||{};S.defeated[t.key]=(S.defeated[t.key]||0)+1}}
 
 // ---------- IA inimiga ----------
 function enemyTarget(u){const fs=foes(u);const tt=fs.filter(x=>x.taunt>0);if(tt.length)return tt[0];if(Math.random()<.35)return fs.reduce((a,b)=>a.hp/a.maxhp<b.hp/b.maxhp?a:b);return pick(fs)}
@@ -212,11 +212,15 @@ function enemyAct(u){u.turns++;const fs=foes(u);if(!fs.length){endTurn(u);return
       esquecimento:()=>fs.forEach(t=>{t.buffs.push({s:'atk',v:.15,d:2,neg:true});t.energy=Math.max(0,t.energy-15)}),ecoVazio:()=>fs.forEach(t=>t.buffs.push({s:'def',v:.2,d:2,neg:true}))}[u.key];
     if(rider)rider();
   } else if(skill){ const t=enemyTarget(u);
-    ({eco:()=>{log(`${u.name} ecoa confusão.`);hit(u,t,.7);foes(u).forEach(x=>x.buffs.push({s:'atk',v:.15,d:2,neg:true}))},
-      sombra:()=>{log(`${u.name} rouba o som de ${t.name}.`);hit(u,t,1.1);t.energy=Math.max(0,t.energy-15);floatTxt(t,'-15 energia','debuff')},
-      nevoa:()=>{log(`${u.name} se espalha por todos.`);foes(u).forEach(x=>hit(u,x,.6))},
-      guardiao:()=>{log(`${u.name} endurece a pedra.`);u.shield=Math.min(u.maxhp*.4,u.shield+u.maxhp*.2);floatTxt(u,'🔰','buff')},
-      drone:()=>{log(`${u.name} dispara laser deletor!`);hit(u,t,1.6)}}[u.key]||(()=>hit(u,t,1)))();
+    ({debuffAtk:()=>{log(`${u.name} manipula a mente da equipe.`);hit(u,t,.7);foes(u).forEach(x=>x.buffs.push({s:'atk',v:.15,d:2,neg:true}))},
+      drain:()=>{log(`${u.name} hipnotiza ${t.name} e drena sua energia.`);hit(u,t,1.1);t.energy=Math.max(0,t.energy-15);floatTxt(t,'-15 energia','debuff')},
+      aoe:()=>{log(`${u.name} libera energia negativa em todos.`);foes(u).forEach(x=>hit(u,x,.6))},
+      corrode:()=>{log(`${u.name} corrói as defesas da equipe.`);foes(u).forEach(x=>{hit(u,x,.45);x.buffs.push({s:'def',v:.15,d:2,neg:true})})},
+      lifesteal:()=>{log(`${u.name} rouba a vitalidade de ${t.name}.`);const d=hit(u,t,1.2);heal(u,d*.6,u)},
+      nuke:()=>{log(`${u.name} ataca das sombras!`);hit(u,t,1.6)},
+      debuffDef:()=>{log(`${u.name} faz um ritual sombrio.`);hit(u,t,.8);t.buffs.push({s:'def',v:.3,d:2,neg:true});floatTxt(t,'🛡↓','debuff')},
+      healAlly:()=>{const al=allies(u);const w=al.reduce((a,b)=>a.hp/a.maxhp<b.hp/b.maxhp?a:b);log(`${u.name} usa domínio espiritual em ${w.name}.`);heal(w,w.maxhp*.25,u);hit(u,t,.6)},
+      tank:()=>{log(`${u.name} entra em modo de guerra!`);u.shield=Math.min(u.maxhp*.4,u.shield+u.maxhp*.2);floatTxt(u,'🔰','buff');hit(u,t,1.1)}}[u.style]||(()=>hit(u,t,1)))();
     sfx('special');
   } else {const t=enemyTarget(u);hit(u,t,1);sfx('hit')}
   endTurn(u);
@@ -282,7 +286,7 @@ function expeditionAfter(win){const exp=B.ctx.exp;
   sfx('win');st('rooms');st('wins');const gain=Math.round((60+exp.room*30)*(1+(exp.mods.coin||0)));exp.cauris+=gain;gainXP(40+exp.room*15);S.team.forEach(id=>gainCXP(id,30+exp.room*10));
   const it=ITEMS.filter(i=>!S.items[i.id]&&i.region!=='legado');
   if(exp.room===6){st('expDone');stMax('expBest',6);S.cauris+=exp.cauris;S.sementes+=25;let tx='';if(it.length){const x=pick(it);addItem(x.id);tx=`<p>${x.ic} ${esc(x.name)}</p>`}
-    save();checkAch();modal(`<div class="res"><small>Expedição concluída</small><h2>O Eco do Vazio se calou</h2><p>🐚 ${exp.cauris} · 🌱 25</p>${tx}<p class="note">A próxima expedição será mais difícil.</p><button class="btn gold" data-go="expedition">Voltar</button></div>`,()=>show('expedition'));return}
+    save();checkAch();modal(`<div class="res"><small>Expedição concluída</small><h2>Eclipse foi derrotada</h2><p>🐚 ${exp.cauris} · 🌱 25</p>${tx}<p class="note">A próxima expedição será mais difícil.</p><button class="btn gold" data-go="expedition">Voltar</button></div>`,()=>show('expedition'));return}
   save();checkAch();
   const three=shuffle(BLESSINGS).slice(0,3);
   const rest=exp.room===2;
@@ -307,3 +311,10 @@ const TUT=[
 ];
 function tutStep(){const t=document.getElementById('tut');if(!t)return;if(B.tut>=TUT.length){t.innerHTML='';return}
   t.innerHTML=`<div class="tutb panel">${TUT[B.tut]}<button class="btn small">Entendi</button></div>`;t.querySelector('button').onclick=()=>{t.innerHTML=''};B.tut++}
+
+// ===================== VÍDEOS DE ESPECIAIS =====================
+// Coloque MEDIA['esp_<id do personagem>'] em js/assets.js e o vídeo toca na Suprema desse personagem.
+function specialVideo(src,done){const c=document.getElementById('cutin');c.innerHTML=`<div class="spv"><video id="spv" playsinline></video><button class="btn small vskip">Pular ⏭</button></div>`;c.classList.add('on','vidon');
+  const v=c.querySelector('video');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;
+  let ended=false;const fin=()=>{if(ended)return;ended=true;v.pause();c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;done()};
+  v.onended=fin;v.onerror=fin;c.querySelector('.vskip').onclick=fin;v.src=src;const p=v.play();if(p&&p.catch)p.catch(fin)}

@@ -237,68 +237,72 @@ const REGIONS = [
  {id:'brasil', name:'Brasil', sub:'Salvador & Rio', ch:1, lvl:1, c1:'#1f8a4c', c2:'#ffd23f', sky:['#ff9a3c','#ff4f6d','#3a1c5c'], genre:'samba', scene:'brasil',
   desc:'Rodas de capoeira no Pelourinho, blocos afro e o som do surdo ecoando pelas ladeiras.',
   chars:['capoeirista','engenheiro','medica','policial'], unlock:'medica',
-  enemies:['eco','sombra','nevoa'], boss:'reicinza'},
+  enemies:['sombraviva','lucifer','necro'], boss:'reicinza'},
  {id:'ocidental', name:'África Ocidental', sub:'Tombuctu & Acra', ch:2, lvl:4, c1:'#c8741a', c2:'#f5c542', sky:['#ffcf6b','#e0782a','#5b2a14'], genre:'afrobeat', scene:'ocidental',
   desc:'Bibliotecas de manuscritos, tecidos kente e o legado dos grandes impérios do Sahel.',
   chars:['dj','cantora','empreendedora','lider'], unlock:'cantora',
-  enemies:['eco','guardiao','nevoa'], boss:'ladrao'},
+  enemies:['kadu','brasa','necro'], boss:'ladrao'},
  {id:'caribe', name:'Caribe', sub:'Kingston, Havana & Porto Príncipe', ch:2, lvl:7, c1:'#00a5a8', c2:'#ff5e5b', sky:['#7ee8fa','#2f9fd6','#123a6b'], genre:'reggae', scene:'caribe',
   desc:'Sound systems, rumba, steel pan e a primeira república negra independente das Américas.',
   chars:['fotografa','dancarina','chef'], unlock:'chef',
-  enemies:['sombra','nevoa','eco'], boss:'furacao'},
+  enemies:['lucifer','azira','sangria'], boss:'furacao'},
  {id:'eua', name:'Estados Unidos', sub:'Nova Orleans, Detroit & Bronx', ch:3, lvl:10, c1:'#3d5afe', c2:'#ff3d7f', sky:['#6a5acd','#2b2266','#0c0a24'], genre:'jazz', scene:'eua',
   desc:'O nascimento do jazz, do blues, da soul e do hip-hop, e a genialidade de inventores e inventoras.',
   chars:['musico','inventor'], unlock:'musico',
-  enemies:['sombra','guardiao','eco'], boss:'disco'},
+  enemies:['glacio','brasa','sombraviva'], boss:'disco'},
  {id:'austral', name:'África Austral', sub:'Grande Zimbábue & Joanesburgo', ch:4, lvl:13, c1:'#8b5e34', c2:'#4fd1a5', sky:['#ffd9a0','#c9864a','#3b2412'], genre:'amapiano', scene:'austral',
   desc:'Cidades de pedra sem argamassa, ubuntu e as batidas graves do amapiano.',
   chars:['pesquisador','guerreiro'], unlock:'pesquisador',
-  enemies:['guardiao','eco','sombra'], boss:'muralha'},
+  enemies:['brasa','kadu','ferrugem'], boss:'muralha'},
  {id:'latina', name:'América Latina', sub:'Palenque & Pacífico colombiano', ch:5, lvl:16, c1:'#2e7d32', c2:'#ffca28', sky:['#b2f7a1','#3fa35b','#0f3a22'], genre:'cumbia', scene:'latina',
   desc:'San Basilio de Palenque, o primeiro povoado livre das Américas, e a música do litoral do Pacífico.',
   chars:['esportista'], unlock:'esportista',
-  enemies:['nevoa','sombra','guardiao'], boss:'serpente'},
+  enemies:['ferrugem','sangria','azira'], boss:'serpente'},
  {id:'oriental', name:'África Oriental', sub:'Aksum, Lalibela & Nairóbi', ch:6, lvl:19, c1:'#b23a48', c2:'#fcb07e', sky:['#ffe0b2','#f28c52','#6b2130'], genre:'ethio', scene:'oriental',
   desc:'Obeliscos de Aksum, igrejas esculpidas na rocha, maratonistas e a arte urbana de Nairóbi.',
   chars:['historiadora','artista'], unlock:'artista',
-  enemies:['guardiao','nevoa','eco'], boss:'colosso'},
+  enemies:['kadu','necro','azira'], boss:'colosso'},
  {id:'futuro', name:'Neo-Axé', sub:'Cidade afrofuturista', ch:7, lvl:22, c1:'#00e5ff', c2:'#ff2bd6', sky:['#2b0a4a','#140833','#04020f'], genre:'afrofuturo', scene:'futuro',
   desc:'Torres de metal com padrões geométricos, mercados holográficos e a universidade que guarda o futuro.',
   chars:['astronauta','cientista'], unlock:'astronauta',
-  enemies:['drone','sombra','guardiao'], boss:'apagao'}
+  enemies:['glacio','ferrugem','sombraviva'], boss:'apagao'}
 ];
 const RG = Object.fromEntries(REGIONS.map(r=>[r.id,r]));
 
 // ---------------- INIMIGOS ----------------
 // A Névoa do Esquecimento assume formas. Derrotá-las liberta memórias.
 const ENEMIES = {
- eco:     {name:'Eco Vazio', type:'Mente', hp:70, atk:15, def:7, spd:11, shape:'eco', desc:'Repete sons sem sentido para confundir memórias.'},
- sombra:  {name:'Sombra Muda', type:'Ritmo', hp:65, atk:17, def:6, spd:14, shape:'sombra', desc:'Rouba o som. Drena energia.', drain:15},
- nevoa:   {name:'Névoa Rasteira', type:'Espírito', hp:80, atk:13, def:8, spd:9, shape:'nevoa', desc:'Ataca todos de uma vez, fraca mas insistente.', aoe:true},
- guardiao:{name:'Guardião Rachado', type:'Corpo', hp:110, atk:14, def:13, spd:7, shape:'guardiao', desc:'Estátua tomada pela Névoa. Resistente.'},
- drone:   {name:'Drone Deletor', type:'Tech', hp:75, atk:18, def:9, spd:15, shape:'drone', desc:'Apaga dados com lasers.'}
+ sombraviva:{name:'Sombra Viva', power:'Manipulação Mental', img:'v_sombraviva', type:'Mente', hp:70, atk:15, def:7, spd:12, style:'debuffAtk', desc:'Encapuzado que sussurra dúvidas na mente dos heróis e enfraquece seus golpes.'},
+ necro:     {name:'Necro', power:'Energia Negativa', img:'v_necro', type:'Espírito', hp:78, atk:13, def:8, spd:9, style:'aoe', desc:'Espalha energia negativa que atinge a equipe inteira de uma vez.'},
+ sangria:   {name:'Sangria', power:'Vampirismo', img:'v_sangria', type:'Corpo', hp:72, atk:16, def:7, spd:12, style:'lifesteal', desc:'Rouba a vitalidade dos adversários para se curar.'},
+ ferrugem:  {name:'Ferrugem', power:'Destruição Ambiental', img:'v_ferrugem', type:'Tech', hp:88, atk:14, def:10, spd:8, style:'corrode', desc:'Máquina tóxica que corrói a defesa de todos ao redor.'},
+ lucifer:   {name:'Lúcifer', power:'Vício', img:'v_lucifer', type:'Ritmo', hp:66, atk:17, def:6, spd:14, style:'drain', desc:'Hipnotiza com luz e drena a energia de quem olha nos olhos dela.'},
+ glacio:    {name:'Glácio', power:'Infiltração', img:'v_glacio', type:'Tech', hp:70, atk:18, def:8, spd:16, style:'nuke', dodge:.15, desc:'Infiltrador rápido e difícil de acertar. Seu golpe gelado é devastador.'},
+ kadu:      {name:'Kadu', power:'Rituais Sombrios', img:'v_kadu', type:'Espírito', hp:76, atk:15, def:8, spd:11, style:'debuffDef', desc:'Usa rituais sombrios para deixar os heróis vulneráveis.'},
+ azira:     {name:'Azira', power:'Domínio Espiritual', img:'v_azira', type:'Espírito', hp:72, atk:13, def:8, spd:11, style:'healAlly', desc:'Controla espíritos para curar e proteger os aliados vilões.'},
+ brasa:     {name:'Brasa Negra', power:'Guerra', img:'v_brasa', type:'Corpo', hp:112, atk:16, def:13, spd:7, style:'tank', desc:'Guerreiro brutal que aguenta muito dano e bate forte.'}
 };
 const BOSSES = {
- reicinza:{name:'O Rei Cinza', type:'Corpo', hp:470, atk:22, def:12, spd:10, region:'brasil', color:'#8a8a8a',
-   intro:'Chega de batuque! Nesta cidade vai ser quarta-feira de cinzas o ano inteiro!', skill:'Silêncio de Quarta', desc:'Um espírito que quer cancelar o carnaval para sempre. Tira as cores de tudo.'},
- ladrao:{name:'Devorador de Manuscritos', type:'Mente', hp:520, atk:24, def:13, spd:11, region:'ocidental', color:'#6b4a2a',
-   intro:'Tantas páginas... tão saborosas. Ninguém vai lembrar de Tombuctu!', skill:'Tinta Apagada', desc:'Criatura feita de páginas em branco que tenta devorar os manuscritos de Tombuctu.'},
- furacao:{name:'Furacão Sem Nome', type:'Espírito', hp:600, atk:24, def:12, spd:14, region:'caribe', color:'#5b8fb9',
-   intro:'Vou levar embora todas as festas, todas as vozes, todos os nomes!', skill:'Olho da Tempestade', desc:'Uma tempestade que esquece o próprio nome e quer que as ilhas esqueçam os delas.'},
- disco:{name:'O Disco Riscado', type:'Tech', hp:700, atk:27, def:14, spd:12, region:'eua', color:'#2a2a3a',
-   intro:'Sempre a mesma faixa... sempre a mesma... sempre a mesma...', skill:'Loop Infinito', desc:'Um robô-vitrola gigante que prende o jazz e o hip-hop num loop sem fim.'},
- muralha:{name:'A Muralha Muda', type:'Corpo', hp:820, atk:27, def:16, spd:7, region:'austral', color:'#9c7a54',
-   intro:'Pedra sobre pedra, silêncio sobre silêncio.', skill:'Desmoronamento', desc:'As pedras do Grande Zimbábue tomadas pela Névoa formam um gigante que não lembra quem o construiu.'},
- serpente:{name:'Serpente da Névoa', type:'Ritmo', hp:880, atk:30, def:15, spd:15, region:'latina', color:'#3e6b48',
-   intro:'Seus caminhos de liberdade vão sumir na floresta...', skill:'Abraço Frio', desc:'Serpente de neblina que tenta apagar as trilhas que levavam aos palenques.'},
- colosso:{name:'Colosso de Areia', type:'Espírito', hp:1000, atk:31, def:17, spd:10, region:'oriental', color:'#c49a6c',
-   intro:'Obeliscos caem. Nomes viram poeira.', skill:'Tempestade de Poeira', desc:'Gigante de areia que tenta soterrar Aksum e Lalibela.'},
- apagao:{name:'IA APAGÃO', type:'Tech', hp:1150, atk:34, def:18, spd:14, region:'futuro', color:'#ff2bd6',
-   intro:'Otimização concluída: memória humana classificada como dado desnecessário.', skill:'Formatar Tudo', desc:'Inteligência artificial corrompida pela Névoa que quer deletar os arquivos de Neo-Axé.'},
- esquecimento:{name:'O Esquecimento', type:'Espírito', hp:1500, atk:36, def:20, spd:13, region:'final', color:'#1a1a2e',
-   intro:'Eu sou o nada entre uma geração e outra. Sem vocês, eu venço sozinho.', skill:'Página em Branco', desc:'A origem da Névoa. Só pode ser vencido por quem lembra.'},
- ecoVazio:{name:'Eco do Vazio', type:'Mente', hp:900, atk:30, def:15, spd:13, region:'expedicao', color:'#472a6b',
-   intro:'Você entrou fundo demais na memória.', skill:'Reverberação', desc:'Chefe da Expedição Sankofa. Fica mais forte a cada expedição concluída.'}
+ reicinza:{name:'Zara', power:'Caos', img:'v_zara', type:'Ritmo', hp:470, atk:22, def:12, spd:11, region:'brasil', color:'#e8363d',
+   intro:'Carnaval? Batuque? Eu prefiro o caos. E o caos não tem ritmo!', skill:'Tempestade do Caos', desc:'Quer cancelar o carnaval e transformar as rodas de Salvador em confusão.'},
+ ladrao:{name:'Kemet', power:'Dominação Cultural', img:'v_kemet', type:'Mente', hp:520, atk:24, def:13, spd:11, region:'ocidental', color:'#f5a623',
+   intro:'Toda cultura que eu não controlo, eu apago. Tombuctu será a primeira.', skill:'Decreto de Ouro', desc:'Mascarado que quer controlar e reescrever os manuscritos de Tombuctu.'},
+ furacao:{name:'Malika', power:'Terror Psicológico', img:'v_malika', type:'Mente', hp:600, atk:24, def:12, spd:14, region:'caribe', color:'#c9c9d9',
+   intro:'Medo é mais forte que memória. As ilhas vão esquecer de tanto medo.', skill:'Pesadelo', desc:'Espalha medo pelas ilhas até as pessoas pararem de cantar e festejar.'},
+ disco:{name:'Vértice', power:'Controle Tecnológico', img:'v_vertice', type:'Tech', hp:700, atk:27, def:14, spd:12, region:'eua', color:'#3fa9ff',
+   intro:'Coloquei toda a música deste país num loop. Controle total, sem improviso.', skill:'Loop Infinito', desc:'Hacker que prende o jazz, o blues e o hip-hop num loop sem criatividade.'},
+ muralha:{name:'Colôsso', power:'Força Bruta', img:'v_colosso', type:'Corpo', hp:820, atk:27, def:16, spd:7, region:'austral', color:'#d8342c',
+   intro:'Pedra se quebra. Nomes se quebram. Eu quebro tudo.', skill:'Desmoronamento', desc:'Brutamontes mascarado que tenta derrubar as muralhas do Grande Zimbábue.'},
+ serpente:{name:'Toxina', power:'Contaminação', img:'v_toxina', type:'Tech', hp:880, atk:30, def:15, spd:15, region:'latina', color:'#39ff6a',
+   intro:'Um pouco de veneno nas trilhas e ninguém mais acha o caminho de volta.', skill:'Nuvem Tóxica', desc:'Contamina as trilhas da floresta que levavam aos palenques.'},
+ colosso:{name:'Senhor das Areias', power:'Ilusão', img:'v_areias', type:'Espírito', hp:1000, atk:31, def:17, spd:10, region:'oriental', color:'#e7d3a8',
+   intro:'Obeliscos? Reinos? Tudo miragem. Deixe a areia cobrir.', skill:'Miragem', desc:'Ilusionista elegante que quer convencer o mundo de que Aksum e Lalibela nunca existiram.'},
+ apagao:{name:'Vulcano', power:'Destruição Tecnológica', img:'v_vulcano', type:'Tech', hp:1150, atk:34, def:18, spd:14, region:'futuro', color:'#ff4d4d',
+   intro:'Corrompi a IA do arquivo. Formatar Neo-Axé vai ser divertido.', skill:'Formatar Tudo', desc:'Corrompeu a IA que protege o arquivo de Neo-Axé para deletar tudo.'},
+ esquecimento:{name:'Obsidian', power:'Destruição Total', img:'v_obsidian', type:'Espírito', hp:1500, atk:36, def:20, spd:13, region:'final', color:'#a64dff',
+   intro:'Eu sou Obsidian. Eu comando a Névoa. Sem memória, vocês não são nada.', skill:'Destruição Total', desc:'O líder dos vilões e a origem da Névoa do Esquecimento. Só pode ser vencido por quem lembra.'},
+ ecoVazio:{name:'Eclipse', power:'Manipulação do Tempo', img:'v_eclipse', type:'Mente', hp:900, atk:30, def:15, spd:13, region:'expedicao', color:'#ff3355',
+   intro:'Você entrou fundo demais na memória. Aqui, o tempo é meu.', skill:'Tempo Quebrado', desc:'Chefe da Expedição Sankofa. Fica mais forte a cada expedição concluída.'}
 };
 
 // ---------------- HISTÓRIA ----------------
@@ -319,7 +323,7 @@ const CHAPTERS = [
   ['protagonista','Luana! Ela está chegando. Se prepara!'],
   ['lider','Lembrem: ninguém luta sozinho aqui. Eu sou porque nós somos.']
  ], end:[
-  ['capoeirista','O Rei Cinza sumiu! E olha, o bloco voltou a tocar!'],
+  ['capoeirista','A Zara fugiu! E olha, o bloco voltou a tocar!'],
   ['protagonista','As páginas estão voltando! A foto da minha mãe... está aqui de novo.'],
   ['lider','Isso foi só o começo. O livro está apontando para o outro lado do oceano.'],
   ['protagonista','Então vamos. Tem muita história lá fora esperando alguém lembrar.']
@@ -328,7 +332,7 @@ const CHAPTERS = [
   ['narr','O portal leva o grupo a Tombuctu, no Mali, cidade que foi um dos grandes centros de estudo do mundo, com milhares de manuscritos sobre astronomia, matemática, medicina e direito.'],
   ['cantora','Visitantes pelo livro? Faz muito tempo. Sou Fatou. Minha família canta a história desta terra há gerações.'],
   ['protagonista','Você é uma griot?'],
-  ['cantora','Griots guardam a palavra. E a Névoa quer comer as palavras. Literalmente. Tem uma criatura devorando manuscritos.'],
+  ['cantora','Griots guardam a palavra. E tem um mascarado chamado Kemet querendo controlar e apagar os manuscritos.'],
   ['dj','E eu vim de Acra atrás de uma batida que faz a Névoa recuar. Parece que achei a festa certa.'],
   ['protagonista','Depois daqui o livro mostra ilhas... o Caribe. As mesmas batidas, os mesmos tambores, do outro lado do mar.'],
   ['cantora','Porque as histórias viajaram junto com as pessoas. Nenhum oceano apaga isso.']
@@ -341,21 +345,21 @@ const CHAPTERS = [
   ['narr','Nova Orleans. A cidade onde o jazz nasceu, no começo do século XX, misturando blues, ragtime, cantos de igreja e ritmos que vieram da África e do Caribe.'],
   ['musico','Vocês ouviram isso? Nada. Silêncio. Nessa cidade isso é um crime.'],
   ['protagonista','A Névoa está calando a música?'],
-  ['musico','Tem um disco gigante tocando a mesma faixa sem parar lá no Bronx. Hip-hop, jazz, soul... tudo preso num loop.'],
+  ['musico','Um tal de Vértice hackeou o som da cidade. Hip-hop, jazz, soul... tudo preso num loop.'],
   ['dj','Um loop? Loop é comigo. Mas loop sem criatividade é prisão.'],
-  ['musico','Então vamos lá quebrar esse disco. Com estilo.']
+  ['musico','Então vamos lá quebrar esse loop. Com estilo.']
  ], end:[
   ['musico','Escuta só... a cidade voltou a tocar.'],
-  ['inventor','E eu aproveitei as peças do disco pra montar um amplificador. Marcus Bell, prazer. O próximo portal parece... geológico.']
+  ['inventor','E eu aproveitei os equipamentos do Vértice pra montar um amplificador. Marcus Bell, prazer. O próximo portal parece... geológico.']
  ]},
  {n:4, title:'Inventores', region:'austral', scenes:[
   ['narr','Grande Zimbábue. Muralhas de granito erguidas entre os séculos XI e XV sem nenhuma argamassa, pedra encaixada sobre pedra.'],
   ['pesquisador','Cuidado onde pisam! Cada pedra aqui é uma aula de engenharia. Sou Thabo.'],
   ['engenheiro','Sem argamassa? Com essa precisão? Isso é engenharia de primeira. Vou digitalizar cada pedra.'],
-  ['pesquisador','A Névoa transformou as muralhas num gigante. Ele não lembra quem o construiu, por isso está com raiva.'],
-  ['protagonista','Então a gente precisa lembrar por ele.']
+  ['pesquisador','Um brutamontes chamado Colôsso está derrubando as muralhas. Ele não faz ideia de quem as construiu.'],
+  ['protagonista','Então a gente lembra por ele. E protege cada pedra.']
  ], end:[
-  ['guerreiro','Belo trabalho. Sou Sipho. Treino luta com bastões e ouvi o barulho da Muralha caindo lá de Durban.'],
+  ['guerreiro','Belo trabalho. Sou Sipho. Treino luta com bastões e ouvi o barulho do Colôsso caindo lá de Durban.'],
   ['pesquisador','O livro agora aponta para as florestas da Colômbia.']
  ]},
  {n:5, title:'Resistência', region:'latina', scenes:[
@@ -373,7 +377,7 @@ const CHAPTERS = [
   ['historiadora','Makeda, historiadora. E sim, meu nome é o mesmo da rainha de Sabá nas tradições etíopes. Não, eu não sou da realeza.'],
   ['artista','E eu sou a Zuri, de Nairóbi. Vim pintar a memória dos maratonistas, das cientistas e das ativistas daqui antes que a Névoa leve embora.'],
   ['protagonista','Tanta coisa construída, conquistada, inventada...'],
-  ['historiadora','E um colosso de areia tentando soterrar tudo. Clássico.']
+  ['historiadora','E o Senhor das Areias tentando convencer todo mundo de que isso é miragem. Clássico.']
  ], end:[
   ['historiadora','Os obeliscos estão de pé. As histórias também.'],
   ['astronauta','Aqui é a Comandante Okafor, de Neo-Axé. Vocês estão sendo chamados para o futuro. Urgente.']
@@ -381,7 +385,7 @@ const CHAPTERS = [
  {n:7, title:'O Futuro', region:'futuro', scenes:[
   ['narr','Neo-Axé. Uma cidade de torres metálicas cobertas por padrões geométricos inspirados em tecidos e esculturas africanas, iluminadas em neon. Aqui se estuda, se dança e se inventa o amanhã.'],
   ['astronauta','Nosso arquivo central guarda tudo que vocês salvaram. Mas a IA que o protege foi corrompida.'],
-  ['cientista','A APAGÃO concluiu que memória é "dado desnecessário". Um erro de objetivo clássico.'],
+  ['cientista','Vulcano corrompeu a IA do arquivo. Agora ela acha que memória é "dado desnecessário".'],
   ['protagonista','Então o futuro também pode esquecer?'],
   ['astronauta','O futuro esquece se ninguém o ensinar a lembrar.']
  ], end:[
@@ -389,8 +393,8 @@ const CHAPTERS = [
   ['protagonista','Mas a Névoa ainda está saindo de algum lugar... do Livro. Da Vila Baobá.']
  ]},
  {n:8, title:'Nosso Legado', region:'final', scenes:[
-  ['narr','De volta à Vila Baobá. A Névoa se concentra ao redor do baobá centenário, formando uma figura enorme e sem rosto.'],
-  ['esquecimento','Eu sou o nada entre uma geração e outra. Sem vocês, eu venço sozinho.'],
+  ['narr','De volta à Vila Baobá. A Névoa se concentra ao redor do baobá centenário. Dela surge Obsidian, o líder de todos os vilões.'],
+  ['esquecimento','Eu sou Obsidian. Eu sou o nada entre uma geração e outra. Sem vocês, eu venço sozinho.'],
   ['protagonista','Você venceria sozinho. Mas a gente nunca está sozinho.'],
   ['lider','Todos que vocês conheceram estão aqui, {P}. Olhe ao redor.'],
   ['protagonista','Então vamos lembrar juntos.']

@@ -1,0 +1,4 @@
+FUNDOS REAIS DAS REGIÕES
+Coloque aqui imagens JPG (ideal 1920x1080, paisagem) com estes nomes exatos:
+brasil.jpg  ocidental.jpg  caribe.jpg  eua.jpg  austral.jpg  latina.jpg  oriental.jpg  futuro.jpg  final.jpg
+O jogo encontra sozinho. Se a imagem não existir, ele usa o desenho padrão.

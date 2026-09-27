@@ -22,7 +22,7 @@ js/ui.js            telas e menus
 js/battle.js        combate, recompensas, expedição, tutorial
 js/mini.js          desafios rápidos (ritmo, memória, quiz, corrida)
 js/main.js          inicialização
-assets/             artes do menu, das cidades e dos personagens
+assets/             artes do menu, cidades, personagens, vilões e fundos
 media/              vídeo da produtora, abertura e música tema
 ```
 
@@ -33,3 +33,13 @@ media/              vídeo da produtora, abertura e música tema
 - Corrida: espaço ou toque.
 
 O progresso fica salvo no `localStorage` do navegador.
+
+## Fundos reais e vídeos de especiais
+
+- Fundos das regiões: coloque imagens em `assets/fundos/` com os nomes `brasil.jpg`, `ocidental.jpg`, `caribe.jpg`, `eua.jpg`, `austral.jpg`, `latina.jpg`, `oriental.jpg`, `futuro.jpg` e `final.jpg`.
+- Vídeos de especiais: coloque vídeos em `media/especiais/` com o id do personagem, por exemplo `engenheiro.mp4` (André Cruz). O vídeo toca na Suprema.
+- Os vilões ficam em `assets/viloes/`.
+
+## Tela cheia
+
+O jogo entra em tela cheia e na horizontal ao tocar em INICIAR e volta para tela cheia no próximo toque se o jogador sair. Instalado como app (menu do navegador → "Adicionar à tela inicial"), ele já abre em tela cheia na horizontal.

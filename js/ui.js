@@ -5,6 +5,7 @@ function fit(){const vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.h
 function show(name,...a){CUR=name;Audio.resume();Theme.route(name);const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
 function bindAll(){stage().querySelectorAll('[data-go]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx('click');const [n,...args]=b.dataset.go.split('|');show(n,...args)})}
 const AFTER={};
+function sceneBG(id){const k='bg_'+id;if(IMG[k])return `<div class="scene photo" style="background-image:url(${IMG[k]})"></div>`;return sceneSVG(id)}
 function portrait(id,cls=''){return `<img class="pt ${cls}" src="${IMG[id]}" alt="${esc(charName(id))}" draggable="false">`}
 function typeTag(t){const T=TYPES[t];return `<span class="tt" style="--tc:${T.c}">${T.ic} ${t}</span>`}
 function rarTag(r){return `<span class="rt" style="--rc:${RAR[r].c}">${'◆'.repeat(RAR[r].n)} ${r}</span>`}
@@ -43,7 +44,7 @@ start(){return `<div class="start">
 video(){return `<div class="vid"><video id="vp" playsinline preload="auto"></video><button class="btn small vskip" id="vskip">Pular ⏭</button></div>`},
 
 // ---------------------------- PRIMEIRO ACESSO ----------------------------
-intro(){return `<div class="scene-wrap">${sceneSVG('brasil')}</div><div class="intro">${LOGO(1.1)}<p class="slogan">Nossa história é o nosso maior poder.</p>
+intro(){return `<div class="scene-wrap">${sceneBG('brasil')}</div><div class="intro">${LOGO(1.1)}<p class="slogan">Nossa história é o nosso maior poder.</p>
   <div class="panel introbox"><div class="introrow">${portrait('protagonista','big')}<div><h2>Como você quer ser chamado?</h2><p>Você é quem o Livro Sankofa escolheu. Seu nome aparece na história e no perfil.</p>
   <input id="nm" maxlength="14" value="${esc(S.name)}" aria-label="Nome do protagonista"><button class="btn gold" id="go1">Começar a jornada</button></div></div></div></div>`},
 
@@ -54,7 +55,7 @@ hub(){ Audio.play('menu'); ensureDaily();
   const miss=S.daily.missions.map(id=>{const m=MISSION_POOL.find(x=>x.id===id);const p=missionProg(id);return `<li class="${p>=m.n?'ok':''}"><span>${m.text}</span><b>${p}/${m.n}</b></li>`}).join('');
   const tiles=[['map','🗺️','Mapa-mundi','8 regiões para explorar'],['expedition','🐦','Expedição Sankofa','Roguelite: 6 salas, bênçãos aleatórias'],['challenges','⏱️','Desafios rápidos','Ritmo, memória, quiz e corrida'],['community','🏘️','Comunidade','Construa a Vila Baobá'],['missions','✅','Missões e recompensas','Diárias, baú gratuito'],['achievements','🏆','Conquistas',`${Object.keys(S.ach).length}/50`],['chars','👥','Personagens',`${S.unlocked.length}/${CHARS.length}`],['collection','📚','Coleção',`${itemCount()}/100 itens`],['events','🎉','Eventos',ev.name],['customize','🪮','Personalização','Nome, avatar, cores']];
   return topbar('Vila Baobá','menu')+`<div class="hub">
-   <button class="hero-card" data-act="continue">${sceneSVG(ch.region==='final'?'final':ch.region)}<div class="hc-in"><small>${done?'Jornada concluída: continue explorando':'Continuar história'}</small><h2>${done?'Nosso Legado':`Capítulo ${ch.n}: ${ch.title}`}</h2><p>${done?'Volte a qualquer região, complete coleções e encare a Expedição Sankofa.':(RG[ch.region]?RG[ch.region].desc:'O confronto final na Vila Baobá.')}</p><span class="btn gold">▶ Jogar</span></div><div class="hc-team">${S.team.map(id=>portrait(id)).join('')}</div></button>
+   <button class="hero-card" data-act="continue">${sceneBG(ch.region==='final'?'final':ch.region)}<div class="hc-in"><small>${done?'Jornada concluída: continue explorando':'Continuar história'}</small><h2>${done?'Nosso Legado':`Capítulo ${ch.n}: ${ch.title}`}</h2><p>${done?'Volte a qualquer região, complete coleções e encare a Expedição Sankofa.':(RG[ch.region]?RG[ch.region].desc:'O confronto final na Vila Baobá.')}</p><span class="btn gold">▶ Jogar</span></div><div class="hc-team">${S.team.map(id=>portrait(id)).join('')}</div></button>
    <div class="tiles">${tiles.map(t=>`<button class="tile" data-go="${t[0]}"><span class="ti">${t[1]}</span><b>${t[2]}</b><small>${esc(t[3])}</small></button>`).join('')}</div>
    <aside class="side panel"><h3>Missões de hoje</h3><ul class="mlist">${miss}</ul><button class="btn small" data-go="missions">Ver recompensas</button><div class="evbox"><span>${ev.ic}</span><div><b>${ev.name}</b><small>${ev.desc}</small></div></div></aside>
   </div>`},
@@ -74,7 +75,7 @@ map(){ Audio.play('menu');
 region(id){ const r=RG[id]; Audio.play(r.genre); const prog=S.region[id]||0;
   const owned=ITEMS.filter(i=>i.region===id&&S.items[i.id]).length;
   const nodes=['Patrulha','Desafio Cultural','Guardiões','Chefe: '+BOSSES[r.boss].name].map((n,i)=>{const open=i<=prog;return `<button class="rnode ${i<prog?'clear':''} ${open?'':'locked'} ${i===3?'boss':''}" ${open?`data-act="node" data-i="${i}"`:''}><span>${i<prog?'✔':i===3?'☠':i+1}</span><b>${n}</b><small>${i===1?'Quiz + batalha':i===3?'Recompensa: '+charName(r.unlock):'Batalha'}</small></button>`}).join('<i class="rline"></i>');
-  return `<div class="scene-wrap">${sceneSVG(id)}</div>`+topbar(r.name,'map')+`<div class="region">
+  return `<div class="scene-wrap">${sceneBG(id)}</div>`+topbar(r.name,'map')+`<div class="region">
    <div class="panel rinfo"><small>${r.sub}</small><h2>${r.name}</h2><p>${r.desc}</p>
     <div class="rrow"><span>Nível recomendado <b>${r.lvl}</b></span><span>Colecionáveis <b>${owned}/12</b></span><span>Trilha <b>${({samba:'Samba',afrobeat:'Afrobeat',reggae:'Reggae e dub',jazz:'Jazz e blues',amapiano:'Amapiano',cumbia:'Cumbia e currulao',ethio:'Ethio-jazz',afrofuturo:'Eletrônica afrofuturista'})[r.genre]}</b></span></div>
     <h4>Personagens daqui</h4><div class="rchars">${r.chars.map(c=>`<div class="rc ${S.unlocked.includes(c)?'':'lk'}">${portrait(c)}<small>${S.unlocked.includes(c)?short(c):`${S.frags[c]||0}/${fragNeed(c)} frag.`}</small></div>`).join('')}</div>
@@ -91,8 +92,8 @@ team(ctx){ // ctx: JSON-ish string stored in window.PENDING
 
 // ---------------------------- HISTÓRIA ----------------------------
 story(){ Audio.play('menu');
-  return topbar('Modo história','menu')+`<div class="chapters">${CHAPTERS.map(c=>{const done=S.chDone.includes(c.n),open=c.n<=S.chapter;const bg=c.region==='final'?'final':c.region;return `<button class="chap ${done?'done':''} ${open?'':'locked'}" ${open?`data-act="chap" data-n="${c.n}"`:''}>${sceneSVG(bg)}<div><small>${c.n===8?'Capítulo final':'Capítulo '+c.n}</small><b>${c.title}</b><span>${done?'✔ Concluído':open?'▶ Jogar':'🔒 Bloqueado'}</span></div></button>`}).join('')}</div>`},
-cutscene(n,part){return `<div class="scene-wrap">${sceneSVG((CHAPTERS[n-1].region==='final')?'final':CHAPTERS[n-1].region)}</div><div class="cut"><div class="cut-title"><small>${n===8?'Capítulo final':'Capítulo '+n}</small><h2>${CHAPTERS[n-1].title}</h2></div><div class="cut-actors" id="actors"></div><div class="dlg panel" id="dlg"><b id="dn"></b><p id="dt"></p><span class="dnext">Toque para continuar ▸</span></div><button class="btn small skip" id="skip">Pular ⏭</button></div>`},
+  return topbar('Modo história','menu')+`<div class="chapters">${CHAPTERS.map(c=>{const done=S.chDone.includes(c.n),open=c.n<=S.chapter;const bg=c.region==='final'?'final':c.region;return `<button class="chap ${done?'done':''} ${open?'':'locked'}" ${open?`data-act="chap" data-n="${c.n}"`:''}>${sceneBG(bg)}<div><small>${c.n===8?'Capítulo final':'Capítulo '+c.n}</small><b>${c.title}</b><span>${done?'✔ Concluído':open?'▶ Jogar':'🔒 Bloqueado'}</span></div></button>`}).join('')}</div>`},
+cutscene(n,part){return `<div class="scene-wrap">${sceneBG((CHAPTERS[n-1].region==='final')?'final':CHAPTERS[n-1].region)}</div><div class="cut"><div class="cut-title"><small>${n===8?'Capítulo final':'Capítulo '+n}</small><h2>${CHAPTERS[n-1].title}</h2></div><div class="cut-actors" id="actors"></div><div class="dlg panel" id="dlg"><b id="dn"></b><p id="dt"></p><span class="dnext">Toque para continuar ▸</span></div><button class="btn small skip" id="skip">Pular ⏭</button></div>`},
 
 // ---------------------------- PERSONAGENS ----------------------------
 chars(){ Audio.play('menu');
@@ -100,15 +101,16 @@ chars(){ Audio.play('menu');
 
 // ---------------------------- COLEÇÃO ----------------------------
 collection(tab='cards'){ Audio.play('menu');
-  const tabs=`<div class="tabs"><button class="${tab==='cards'?'on':''}" data-go="collection|cards">Cartas (${S.unlocked.length}/${CHARS.length})</button><button class="${tab==='items'?'on':''}" data-go="collection|items">Colecionáveis (${itemCount()}/100)</button></div>`;
+  const tabs=`<div class="tabs"><button class="${tab==='cards'?'on':''}" data-go="collection|cards">Cartas (${S.unlocked.length}/${CHARS.length})</button><button class="${tab==='items'?'on':''}" data-go="collection|items">Colecionáveis (${itemCount()}/100)</button><button class="${tab==='vil'?'on':''}" data-go="collection|vil">Vilões (${VILS().filter(v=>(S.defeated||{})[v.key]).length}/${VILS().length})</button></div>`;
   let body;
-  if(tab==='cards') body=`<div class="cards">${CHARS.map(c=>cardHTML(c.id)).join('')}</div>`;
+  if(tab==='vil') body=`<div class="vils">${VILS().map(v=>{const d=(S.defeated||{})[v.key];return `<div class="vcard ${d?'':'lk'}" style="--tc:${TYPES[v.type].c}"><img class="pt" src="${IMG[v.img]}" alt="${esc(v.name)}"><div class="vc-in">${v.boss?'<em>CHEFE</em>':''}<b>${esc(v.name)}</b><small>${esc(v.power)} · ${TYPES[v.type].ic} ${v.type}</small><p>${esc(v.desc)}</p><span>${d?`Derrotado ${d}x`:'Ainda não derrotado'}</span></div></div>`}).join('')}</div>`;
+  else if(tab==='cards') body=`<div class="cards">${CHARS.map(c=>cardHTML(c.id)).join('')}</div>`;
   else body=Object.keys(ITEM_RAW).map(r=>`<h3 class="ih">${r==='legado'?'Vila Baobá (Legado)':RG[r].name} <small>${ITEMS.filter(i=>i.region===r&&S.items[i.id]).length}/${ITEM_RAW[r].length}</small></h3><div class="items">${ITEMS.filter(i=>i.region===r).map(i=>S.items[i.id]?`<button class="item" data-act="item" data-id="${i.id}"><span>${i.ic}</span><small>${esc(i.name)}</small></button>`:`<div class="item lk"><span>?</span><small>${i.cat}</small></div>`).join('')}</div>`).join('');
   return topbar('Coleção','menu')+`<div class="coll">${tabs}<div class="scroll">${body}</div></div>`},
 
 // ---------------------------- COMUNIDADE ----------------------------
 community(){ Audio.play('menu');
-  return `<div class="scene-wrap">${sceneSVG('brasil')}</div>`+topbar('Comunidade: Vila Baobá')+`<div class="comm"><p class="lead panel">Tudo que você conquista volta para a Vila. Cada construção dá um bônus permanente à sua equipe. Os custos são fixos e transparentes.</p><div class="blds">${BUILDINGS.map(b=>{const l=bld(b.id),max=l>=b.max,cost=b.cost[l];return `<div class="bld panel"><span class="bi">${b.ic}</span><div><b>${b.name}</b><small>${b.desc}</small><em>${b.bonus}</em><div class="lv">${Array.from({length:b.max},(_,i)=>`<i class="${i<l?'on':''}"></i>`).join('')}</div></div><button class="btn small ${max?'':'gold'}" ${max?'disabled':`data-act="build" data-id="${b.id}"`}>${max?'Máximo':(l?'Melhorar':'Construir')+` 🐚 ${fmt(cost)}`}</button></div>`}).join('')}</div>
+  return `<div class="scene-wrap">${sceneBG('brasil')}</div>`+topbar('Comunidade: Vila Baobá')+`<div class="comm"><p class="lead panel">Tudo que você conquista volta para a Vila. Cada construção dá um bônus permanente à sua equipe. Os custos são fixos e transparentes.</p><div class="blds">${BUILDINGS.map(b=>{const l=bld(b.id),max=l>=b.max,cost=b.cost[l];return `<div class="bld panel"><span class="bi">${b.ic}</span><div><b>${b.name}</b><small>${b.desc}</small><em>${b.bonus}</em><div class="lv">${Array.from({length:b.max},(_,i)=>`<i class="${i<l?'on':''}"></i>`).join('')}</div></div><button class="btn small ${max?'':'gold'}" ${max?'disabled':`data-act="build" data-id="${b.id}"`}>${max?'Máximo':(l?'Melhorar':'Construir')+` 🐚 ${fmt(cost)}`}</button></div>`}).join('')}</div>
    <div class="panel legado"><h3>Modo Legado: a Grande Cidade Cultural</h3><p>No multiplayer online, grupos de jogadores contribuem juntos para uma cidade cultural compartilhada. Nesta versão, sua Vila Baobá é o seu pedaço dessa cidade: total de níveis construídos <b>${sumB()}/38</b>.</p></div></div>`},
 
 // ---------------------------- DESAFIOS ----------------------------
@@ -145,7 +147,7 @@ customize(){ Audio.play('menu');
    <p class="note">Na versão completa: editor de tom de pele, rosto, cabelos (tranças, dreadlocks, black power, cortes), corpos, alturas, roupas urbanas, tradicionais e futuristas.</p><button class="btn gold" id="csave">Salvar</button></div></div>`},
 
 // ---------------------------- CONFIGURAÇÕES ----------------------------
-settings(){ return topbar('Configurações','menu')+`<div class="panel sets"><label>Música <input type="range" id="sm" min="0" max="1" step=".05" value="${S.settings.music}"></label><label>Efeitos sonoros <input type="range" id="ss" min="0" max="1" step=".05" value="${S.settings.sfx}"></label><label class="ck"><input type="checkbox" id="smo" ${S.settings.motion?'checked':''}> Animações de tela (tremor e flashes)</label>
+settings(){ return topbar('Configurações','menu')+`<div class="panel sets"><label>Música <input type="range" id="sm" min="0" max="1" step=".05" value="${S.settings.music}"></label><label>Efeitos sonoros <input type="range" id="ss" min="0" max="1" step=".05" value="${S.settings.sfx}"></label><label class="ck"><input type="checkbox" id="smo" ${S.settings.motion?'checked':''}> Animações de tela (tremor e flashes)</label><label class="ck"><input type="checkbox" id="sfs" ${S.settings.fs!==false?'checked':''}> Sempre em tela cheia e na horizontal</label>
   <h4>Controles</h4><p>Batalha: teclas 1 a 4 escolhem ação; clique no inimigo para atacar. Ritmo: D F J K. Corrida: espaço ou toque.</p>
   <h4>Progresso</h4><p>Seu progresso fica salvo neste navegador.</p><button class="btn danger" id="reset">Apagar progresso</button>
   <h4>Classificação indicativa sugerida</h4><p>Livre a 10 anos: fantasia sem sangue, temas históricos tratados com cuidado.</p></div>`},
@@ -155,17 +157,21 @@ multi(){ Audio.play('menu'); return topbar('Multiplayer','menu')+`<div class="mu
   <div class="panel mcard soon"><span>🌐</span><b>Online (planejado)</b><p>Cooperativo para 2 a 4 jogadores, batalhas amistosas, guildas, ranking opcional, troca de itens permitidos e o Modo Legado de cidade compartilhada. Precisa de servidores e fica para a versão de lançamento.</p></div></div>`},
 
 // ---------------------------- EXPEDIÇÃO ----------------------------
-expedition(){ Audio.play('final'); return topbar('Expedição Sankofa')+`<div class="exp panel"><h2>Mergulhe fundo na memória</h2><p>6 salas seguidas. A vida da equipe não recupera entre lutas. Depois de cada vitória, escolha 1 de 3 bênçãos aleatórias. Na sala 3 há uma fogueira de descanso. Na sala 6, o Eco do Vazio espera.</p><p>Se a equipe cair, você mantém as recompensas das salas vencidas.</p><p>Expedições concluídas: <b>${s_('expDone')}</b>. Recorde de salas: <b>${s_('expBest')}</b>.</p><button class="btn gold" data-act="expstart">Montar equipe e entrar</button></div>`},
+expedition(){ Audio.play('final'); return topbar('Expedição Sankofa')+`<div class="exp panel"><h2>Mergulhe fundo na memória</h2><p>6 salas seguidas. A vida da equipe não recupera entre lutas. Depois de cada vitória, escolha 1 de 3 bênçãos aleatórias. Na sala 3 há uma fogueira de descanso. Na sala 6, a vilã Eclipse espera.</p><p>Se a equipe cair, você mantém as recompensas das salas vencidas.</p><p>Expedições concluídas: <b>${s_('expDone')}</b>. Recorde de salas: <b>${s_('expBest')}</b>.</p><button class="btn gold" data-act="expstart">Montar equipe e entrar</button></div>`},
 
 exit(){ Audio.stop(); return `<div class="exitw">${LOGO(1)}<p>Até a próxima! A Vila Baobá guarda seu progresso.</p><button class="btn gold" data-go="menu">Voltar ao menu</button></div>`}
 };
 
+function VILS(){return [...Object.entries(BOSSES).map(([k,v])=>Object.assign({key:k,boss:true},v)),...Object.entries(ENEMIES).map(([k,v])=>Object.assign({key:k,boss:false},v))]}
 function cardHTML(id){const c=CH[id],u=S.unlocked.includes(id);return `<div class="card ${u?'':'lk'}" style="--rc:${RAR[c.rar].c};--tc:${TYPES[c.type].c}"><div class="cardart">${portrait(id)}<span class="crar">${'◆'.repeat(RAR[c.rar].n)}</span><span class="ctype">${TYPES[c.type].ic}</span></div><b>${u?charName(id):'???'}</b><small>${c.rar} · ${c.origin.split(',').pop().trim()}</small>${u?`<div class="cstat"><span>❤ ${c.hp}</span><span>⚔ ${c.atk}</span><span>🛡 ${c.def}</span><span>⚡ ${c.spd}</span></div><p>${c.sp.name}</p>`:`<p>${S.frags[id]||0}/${fragNeed(id)} fragmentos</p>`}</div>`}
 
 // ---------------------------- LIGAÇÕES DE TELA ----------------------------
 AFTER.menu=()=>{stage().querySelector('[data-act=play]').onclick=()=>{sfx('click');if(!S.started)show('intro');else show('hub')};stage().querySelector('[data-act=replay]').onclick=()=>{sfx('click');playIntroVideos()}};
 AFTER.start=()=>{document.getElementById('iniciar').onclick=()=>{goFullscreen();Theme.unlock();playIntroVideos()}};
-function goFullscreen(){const el=document.documentElement;try{const r=(el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen);if(r&&!document.fullscreenElement){const p=r.call(el,{navigationUI:'hide'});if(p&&p.catch)p.catch(()=>{})}}catch(e){}setTimeout(fit,300)}
+function goFullscreen(){const el=document.documentElement;try{if(!(document.fullscreenElement||document.webkitFullscreenElement)){const r=(el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen);if(r){const p=r.call(el,{navigationUI:'hide'});if(p&&p.then)p.then(lockLandscape).catch(()=>{});else lockLandscape()}}else lockLandscape()}catch(e){}setTimeout(fit,300)}
+function lockLandscape(){try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}
+// Mantém o jogo em tela cheia: se sair (tecla Esc, gesto do sistema), o próximo toque volta para tela cheia
+document.addEventListener('pointerdown',()=>{if(S&&S.settings.fs!==false&&CUR!=='start'&&!(document.fullscreenElement||document.webkitFullscreenElement))goFullscreen()},true);
 document.addEventListener('fullscreenchange',()=>setTimeout(fit,100));
 function playIntroVideos(){
   show('video');
@@ -199,7 +205,7 @@ AFTER.customize=()=>{let av=S.avatar,acc=S.accent;
   stage().querySelectorAll('[data-acc]').forEach(b=>b.onclick=()=>{const A=ACCENTS.find(a=>a.id===b.dataset.acc);if(!S.accents.includes(A.id)){if(S.sementes<A.cost){toast('Sementes insuficientes','🌱');return}S.sementes-=A.cost;S.accents.push(A.id);toast(`Cor ${A.name} desbloqueada`,'🎨')}acc=A.id;document.documentElement.style.setProperty('--acc',A.c);stage().querySelectorAll('[data-acc]').forEach(x=>x.classList.toggle('on',x===b));save()});
   document.getElementById('csave').onclick=()=>{S.name=(document.getElementById('cn').value.trim()||'Kayo').slice(0,14);S.title=document.getElementById('ct').value;S.avatar=av;S.accent=acc;st('custom');save();checkAch();toast('Perfil salvo','✔');show('customize')};
 };
-AFTER.settings=()=>{const u=()=>{S.settings.music=+document.getElementById('sm').value;S.settings.sfx=+document.getElementById('ss').value;S.settings.motion=document.getElementById('smo').checked;Audio.vol();save()};['sm','ss','smo'].forEach(i=>document.getElementById(i).oninput=u);
+AFTER.settings=()=>{const u=()=>{S.settings.music=+document.getElementById('sm').value;S.settings.sfx=+document.getElementById('ss').value;S.settings.motion=document.getElementById('smo').checked;S.settings.fs=document.getElementById('sfs').checked;Audio.vol();save();if(S.settings.fs)goFullscreen();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})};['sm','ss','smo','sfs'].forEach(i=>document.getElementById(i).oninput=u);
   document.getElementById('reset').onclick=()=>{const m=modal(`<h2>Apagar todo o progresso?</h2><p>Isso não pode ser desfeito.</p><button class="btn danger" id="rs2">Apagar</button>`);m.querySelector('#rs2').onclick=()=>{localStorage.removeItem(SAVE_KEY);load();m.remove();show('menu')}}};
 AFTER.multi=()=>{stage().querySelector('[data-act=duel]').onclick=()=>{sfx('click');duelSetup()}};
 AFTER.expedition=()=>{stage().querySelector('[data-act=expstart]').onclick=()=>{sfx('click');window.PENDING={mode:'expedition',back:'expedition'};show('team')}};
@@ -227,7 +233,7 @@ function playChapter(n,part='scenes',after){
     const nm=sp==='narr'?'Narração':BOSSES[sp]?BOSSES[sp].name:charName(sp);
     document.getElementById('dn').textContent=nm;
     const t=tx.replace(/\{P\}/g,P());const dt=document.getElementById('dt');dt.textContent='';let k=0;clearInterval(window._tw);window._tw=setInterval(()=>{dt.textContent=t.slice(0,k+=2);if(k>=t.length)clearInterval(window._tw)},14);
-    if(sp!=='narr'){ if(!actors.querySelector(`[data-a="${sp}"]`)){const d=document.createElement('div');d.className='actor';d.dataset.a=sp;d.innerHTML=BOSSES[sp]?enemySVG(null,'#ff3d5a',sp):portrait(sp);actors.appendChild(d);if(actors.children.length>3)actors.firstChild.remove()}
+    if(sp!=='narr'){ if(!actors.querySelector(`[data-a="${sp}"]`)){const d=document.createElement('div');d.className='actor';d.dataset.a=sp;d.innerHTML=BOSSES[sp]?(IMG[BOSSES[sp].img]?`<img class="pt" src="${IMG[BOSSES[sp].img]}" alt="">`:enemySVG(null,'#ff3d5a',sp)):portrait(sp);actors.appendChild(d);if(actors.children.length>3)actors.firstChild.remove()}
       actors.querySelectorAll('.actor').forEach(a=>a.classList.toggle('talk',a.dataset.a===sp)); }
     sfx('click');
   };

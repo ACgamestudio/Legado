@@ -14,7 +14,7 @@ function newState(){return{
   unlocked:['protagonista','engenheiro','capoeirista','dj','historiadora'], frags:{}, clv:{}, cxp:{},
   team:['protagonista','capoeirista','dj'], items:{}, ach:{}, build:{}, chapter:1, chDone:[],
   region:{}, stats:{}, daily:null, accent:'ouro', accents:['ouro'], avatar:'protagonista', title:'Aprendiz da Biblioteca',
-  settings:{music:.45,sfx:.7,motion:true}, tutorialDone:false, started:false, lastLogin:null
+  settings:{music:.45,sfx:.7,motion:true,fs:true}, tutorialDone:false, started:false, lastLogin:null
 }}
 let S;
 function load(){try{const r=localStorage.getItem(SAVE_KEY);S=r?Object.assign(newState(),JSON.parse(r)):newState()}catch(e){S=newState()}if(!S.unlocked.includes('engenheiro'))S.unlocked.push('engenheiro')}
@@ -144,7 +144,7 @@ const Audio={ctx:null, master:null, mus:null, fx:null, timer:null, step:0, next:
   },
   vol(){Theme.vol();if(!this.ctx)return;this.mus.gain.value=S.settings.music*.5;this.fx.gain.value=S.settings.sfx*.6},
   resume(){this.init();if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume()},
-  play(g){ this.init(); if(!this.ctx)return; if(this.genre===g)return; this.stop(); this.genre=g; const G=GENRES[g]; if(!G)return;
+  play(g){ if(Theme.on)return; this.init(); if(!this.ctx)return; if(this.genre===g)return; this.stop(); this.genre=g; const G=GENRES[g]; if(!G)return;
     this.step=0; this.startTime=this.next=this.ctx.currentTime+.08; this.seed=[...g].reduce((a,c)=>a+c.charCodeAt(0),7);
     this.timer=setInterval(()=>this.tick(),25);
   },
@@ -215,7 +215,9 @@ const Theme={el:null,on:false,duck:false,fade:null,
   vol(){if(this.el&&this.on){clearInterval(this.fade);this.el.volume=this.target()}},
   play(fromStart){const a=this.get();this.on=true;this.duck=CUR==='video';clearInterval(this.fade);if(fromStart)a.currentTime=0;a.volume=this.target();a.muted=false;const p=a.play();if(p&&p.catch)p.catch(()=>{});Audio.stop()},
   stop(){if(!this.el||!this.on)return;this.on=false;const a=this.el;clearInterval(this.fade);this.fade=setInterval(()=>{a.volume=Math.max(0,a.volume-.05);if(a.volume<=0.01){clearInterval(this.fade);a.pause()}},60)},
+  // A música tema toca em todas as telas de menu; só sai na história, batalhas, regiões e minigames com trilha própria
+  menus:['menu','intro','exit','hub','chars','collection','community','missions','events','achievements','customize','settings','multi','expedition','story','map','challenges','team','memory','quiz'],
   route(name){ if(name==='start'||name==='video')return;
-    if(name==='menu'||name==='intro'||name==='exit'){ if(this.el&&this.el.currentTime>0){this.duck=false;if(!this.on||this.el.paused)this.play(false);else this.vol()} Audio.stop(); }
+    if(this.menus.includes(name)){ this.duck=false; Audio.stop(); if(!this.on||this.get().paused)this.play(false);else this.vol(); }
     else this.stop(); }
 };

@@ -1,0 +1,27 @@
+VÍDEOS DE ESPECIAIS
+Coloque aqui vídeos MP4 curtos (5 a 10 segundos) com o nome do personagem.
+O vídeo toca quando o personagem usa a SUPREMA. O jogador pode pular.
+Nomes aceitos:
+protagonista.mp4
+dj.mp4
+atleta.mp4
+engenheiro.mp4
+historiadora.mp4
+artista.mp4
+inventor.mp4
+capoeirista.mp4
+empreendedora.mp4
+pesquisador.mp4
+lider.mp4
+medica.mp4
+policial.mp4
+musico.mp4
+dancarina.mp4
+chef.mp4
+fotografa.mp4
+astronauta.mp4
+guerreiro.mp4
+cantora.mp4
+cientista.mp4
+esportista.mp4
+(engenheiro = André Cruz, protagonista = Kayo)

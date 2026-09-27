@@ -264,3 +264,18 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 .start-in::before{content:"";position:absolute;left:50%;top:50%;width:1100px;height:620px;transform:translate(-50%,-50%);background:radial-gradient(ellipse,#000c 0%,#0008 45%,#0000 70%);pointer-events:none}
 .start-in>*{position:relative}
 .start-in .slogan{text-shadow:2px 2px 0 #000,0 0 12px #000}
+/* ---- vilões ---- */
+.unit.e.vil .uart{border:3px solid var(--tc);background:#000;box-shadow:0 0 26px color-mix(in srgb,var(--tc) 60%,transparent),0 12px 30px #000a;filter:none}
+.unit.e.vil:not(.boss){width:160px}.unit.e.vil:not(.boss) .uart{height:185px}
+.unit.boss.vil{width:330px}.unit.boss.vil .uart{height:390px}
+.unit.e.vil .pt{object-position:50% 15%}
+.bossin{display:flex;flex-direction:column;align-items:center}.bossimg{width:190px;height:230px;object-fit:cover;object-position:50% 10%;border-radius:12px;border:4px solid #ff6b5b;margin-bottom:10px;box-shadow:0 0 40px #ff3d5a}
+.bossin{top:180px}
+.vils{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.vcard{position:relative;height:330px;border-radius:10px;overflow:hidden;border:2px solid var(--tc);background:#000}
+.vcard .pt{height:100%}.vcard.lk .pt{filter:grayscale(.85) brightness(.45)}
+.vc-in{position:absolute;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(#0000,#000f 35%)}.vc-in b{display:block;font-size:24px;font-family:"Permanent Marker",cursive;font-weight:400;color:var(--tc)}
+.vc-in small{display:block;font-size:15px}.vc-in p{font-size:14px;margin:4px 0;line-height:1.25}.vc-in span{font-size:14px;color:var(--acc)}
+.vc-in em{font-style:normal;font-size:12px;font-weight:800;background:#d8342c;color:#fff;padding:1px 8px;border-radius:8px}
+.scene.photo{background-size:cover;background-position:center}
+#cutin.vidon{pointer-events:auto;background:#000}.spv{position:absolute;inset:0}.spv video{width:100%;height:100%;object-fit:contain}

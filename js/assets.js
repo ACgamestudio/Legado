@@ -1,4 +1,7 @@
 // Caminhos das imagens e mídias do jogo
+// Fundos reais: coloque em assets/fundos/<região>.jpg (brasil, ocidental, caribe, eua, austral, latina, oriental, futuro, final)
+// Vídeos de especiais: coloque em media/especiais/<id-do-personagem>.mp4 (toca na Suprema). Os dois são detectados sozinhos.
+window.REPO=true;
 const IMG={
  "artista": "assets/personagens/artista.jpg",
  "astronauta": "assets/personagens/astronauta.jpg",
@@ -24,6 +27,25 @@ const IMG={
  "protagonista": "assets/personagens/protagonista.jpg",
  "menu": "assets/menu.jpg",
  "cidade1": "assets/cidade1.jpg",
- "cidade2": "assets/cidade2.jpg"
+ "cidade2": "assets/cidade2.jpg",
+ "v_areias": "assets/viloes/areias.jpg",
+ "v_azira": "assets/viloes/azira.jpg",
+ "v_brasa": "assets/viloes/brasa.jpg",
+ "v_colosso": "assets/viloes/colosso.jpg",
+ "v_eclipse": "assets/viloes/eclipse.jpg",
+ "v_ferrugem": "assets/viloes/ferrugem.jpg",
+ "v_glacio": "assets/viloes/glacio.jpg",
+ "v_kadu": "assets/viloes/kadu.jpg",
+ "v_kemet": "assets/viloes/kemet.jpg",
+ "v_lucifer": "assets/viloes/lucifer.jpg",
+ "v_malika": "assets/viloes/malika.jpg",
+ "v_necro": "assets/viloes/necro.jpg",
+ "v_obsidian": "assets/viloes/obsidian.jpg",
+ "v_sangria": "assets/viloes/sangria.jpg",
+ "v_sombraviva": "assets/viloes/sombraviva.jpg",
+ "v_toxina": "assets/viloes/toxina.jpg",
+ "v_vertice": "assets/viloes/vertice.jpg",
+ "v_vulcano": "assets/viloes/vulcano.jpg",
+ "v_zara": "assets/viloes/zara.jpg"
 };
 const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",musica:"media/musica.mp3"};
