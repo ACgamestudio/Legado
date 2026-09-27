@@ -22,7 +22,8 @@ js/ui.js            telas e menus
 js/battle.js        combate, recompensas, expedição, tutorial
 js/mini.js          desafios rápidos (ritmo, memória, quiz, corrida)
 js/main.js          inicialização
-assets/             artes do menu e dos personagens
+assets/             artes do menu, das cidades e dos personagens
+media/              vídeo da produtora, abertura e música tema
 ```
 
 ## Controles

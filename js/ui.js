@@ -2,7 +2,7 @@
 const stage=()=>document.getElementById('stage');
 let CUR='menu';
 function fit(){const vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.height:innerHeight;const s=Math.min(w/1600,h/900);const el=document.getElementById('stage');el.style.transform=`translate(${(w-1600*s)/2}px,${(h-900*s)/2}px) scale(${s})`;document.getElementById('rot').style.display=(h>w*1.15)?'flex':'none'}
-function show(name,...a){CUR=name;Audio.resume();const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
+function show(name,...a){CUR=name;Audio.resume();Theme.route(name);const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
 function bindAll(){stage().querySelectorAll('[data-go]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx('click');const [n,...args]=b.dataset.go.split('|');show(n,...args)})}
 const AFTER={};
 function portrait(id,cls=''){return `<img class="pt ${cls}" src="${IMG[id]}" alt="${esc(charName(id))}" draggable="false">`}
@@ -14,21 +14,33 @@ function modal(html,onClose){const m=document.createElement('div');m.className='
 
 const SCREENS={
 // ---------------------------- MENU (arte do cliente) ----------------------------
-menu(){ Audio.play('menu');
-  const ev=currentEvent();
-  return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>
-  <div class="menu-hud">${wallet()}</div>
+menu(){
+  const ev=currentEvent(), k=1350/1536, X=125, R=(x1,y1,x2,y2)=>`left:${Math.round(X+x1*k)}px;top:${Math.round(y1*k)}px;width:${Math.round((x2-x1)*k)}px;height:${Math.round((y2-y1)*k)}px`;
+  return `<div class="menu-fill" style="background-image:url(${IMG.menu})"></div><div class="menu-bg2" style="background-image:url(${IMG.menu})"></div>
+  <div class="menu-hud2">${wallet()}</div>
   <nav class="menu-hot" aria-label="Menu principal">
-    <button class="hot" style="left:49px;top:327px;width:380px;height:60px" data-act="play" aria-label="Jogar"></button>
-    <button class="hot" style="left:69px;top:398px;width:321px;height:50px" data-go="story" aria-label="Modo história"></button>
-    <button class="hot" style="left:69px;top:461px;width:321px;height:51px" data-go="multi" aria-label="Multiplayer"></button>
-    <button class="hot" style="left:69px;top:527px;width:321px;height:51px" data-go="chars" aria-label="Personagens"></button>
-    <button class="hot" style="left:69px;top:591px;width:321px;height:51px" data-go="collection" aria-label="Coleção"></button>
-    <button class="hot" style="left:69px;top:655px;width:321px;height:50px" data-go="settings" aria-label="Configurações"></button>
-    <button class="hot" style="left:69px;top:719px;width:321px;height:50px" data-go="exit" aria-label="Sair"></button>
-    <button class="hot evhot" style="left:1123px;top:668px;width:429px;height:117px" data-go="events" aria-label="Evento especial"></button>
+    <button class="hot" style="${R(20,358,420,422)}" data-act="play" aria-label="Jogar"></button>
+    <button class="hot" style="${R(40,432,372,490)}" data-go="story" aria-label="Modo história"></button>
+    <button class="hot" style="${R(40,500,372,558)}" data-go="multi" aria-label="Multiplayer"></button>
+    <button class="hot" style="${R(40,568,372,628)}" data-go="chars" aria-label="Personagens"></button>
+    <button class="hot" style="${R(40,640,372,698)}" data-go="collection" aria-label="Coleção"></button>
+    <button class="hot" style="${R(40,708,372,768)}" data-go="settings" aria-label="Configurações"></button>
+    <button class="hot" style="${R(40,776,372,836)}" data-go="exit" aria-label="Sair"></button>
+    <button class="hot" style="${R(1060,795,1503,915)}" data-go="events" aria-label="Evento especial"></button>
   </nav>
-  <div class="menu-tip">Evento da semana: <b>${ev.ic} ${ev.name}</b></div>`},
+  <div class="menu-tip2">Evento da semana: <b>${ev.ic} ${ev.name}</b></div>
+  <button class="intro-again" data-act="replay" aria-label="Rever a abertura">▶ Rever abertura</button>`},
+
+// ---------------------------- TELA INICIAR ----------------------------
+start(){return `<div class="start">
+  <div class="kb kb1" style="background-image:url(${IMG.cidade1})"></div><div class="kb kb2" style="background-image:url(${IMG.cidade2})"></div>
+  <div class="start-shade"></div>
+  <div class="start-in">${LOGO(1.25)}<p class="slogan">Nossa história é o nosso maior poder.</p>
+  <button class="btn gold iniciar" id="iniciar">▶ INICIAR</button><small class="start-hint">Toque para entrar em tela cheia</small></div>
+  <div class="start-foot">AC GAMES apresenta</div></div>`},
+
+// ---------------------------- VÍDEOS ----------------------------
+video(){return `<div class="vid"><video id="vp" playsinline preload="auto"></video><button class="btn small vskip" id="vskip">Pular ⏭</button></div>`},
 
 // ---------------------------- PRIMEIRO ACESSO ----------------------------
 intro(){return `<div class="scene-wrap">${sceneSVG('brasil')}</div><div class="intro">${LOGO(1.1)}<p class="slogan">Nossa história é o nosso maior poder.</p>
@@ -151,7 +163,23 @@ exit(){ Audio.stop(); return `<div class="exitw">${LOGO(1)}<p>Até a próxima! A
 function cardHTML(id){const c=CH[id],u=S.unlocked.includes(id);return `<div class="card ${u?'':'lk'}" style="--rc:${RAR[c.rar].c};--tc:${TYPES[c.type].c}"><div class="cardart">${portrait(id)}<span class="crar">${'◆'.repeat(RAR[c.rar].n)}</span><span class="ctype">${TYPES[c.type].ic}</span></div><b>${u?charName(id):'???'}</b><small>${c.rar} · ${c.origin.split(',').pop().trim()}</small>${u?`<div class="cstat"><span>❤ ${c.hp}</span><span>⚔ ${c.atk}</span><span>🛡 ${c.def}</span><span>⚡ ${c.spd}</span></div><p>${c.sp.name}</p>`:`<p>${S.frags[id]||0}/${fragNeed(id)} fragmentos</p>`}</div>`}
 
 // ---------------------------- LIGAÇÕES DE TELA ----------------------------
-AFTER.menu=()=>{stage().querySelector('[data-act=play]').onclick=()=>{sfx('click');if(!S.started)show('intro');else show('hub')}};
+AFTER.menu=()=>{stage().querySelector('[data-act=play]').onclick=()=>{sfx('click');if(!S.started)show('intro');else show('hub')};stage().querySelector('[data-act=replay]').onclick=()=>{sfx('click');playIntroVideos()}};
+AFTER.start=()=>{document.getElementById('iniciar').onclick=()=>{goFullscreen();Theme.unlock();playIntroVideos()}};
+function goFullscreen(){const el=document.documentElement;try{const r=(el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen);if(r&&!document.fullscreenElement){const p=r.call(el,{navigationUI:'hide'});if(p&&p.catch)p.catch(()=>{})}}catch(e){}setTimeout(fit,300)}
+document.addEventListener('fullscreenchange',()=>setTimeout(fit,100));
+function playIntroVideos(){
+  show('video');
+  const v=document.getElementById('vp');
+  const seq=[{src:MEDIA.produtora,music:false},{src:MEDIA.abertura,music:true}];let i=0;
+  const next=()=>{ if(i>=seq.length){v.pause();show('menu');return}
+    const it=seq[i++];v.src=it.src;v.currentTime=0;
+    if(it.music)Theme.play(true);
+    const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(()=>{})});
+  };
+  v.onended=next;v.onerror=next;
+  document.getElementById('vskip').onclick=e=>{e.stopPropagation();next()};
+  next();
+}
 AFTER.intro=()=>{document.getElementById('go1').onclick=()=>{S.name=(document.getElementById('nm').value.trim()||'Kayo').slice(0,14);S.started=true;save();playChapter(1)}};
 AFTER.hub=()=>{stage().querySelector('[data-act=continue]').onclick=()=>{sfx('click');if(S.chDone.includes(8))show('map');else playChapter(S.chapter)}};
 AFTER.region=id=>{stage().querySelectorAll('[data-act=node]').forEach(b=>b.onclick=()=>{sfx('click');const i=+b.dataset.i;startNode(id,i)})};

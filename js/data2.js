@@ -13,7 +13,7 @@ const ITEM_RAW = {
   ['Fita do Bonfim','🎗️','Símbolo','Amarrada no pulso com três nós, cada um para um desejo. Só pode ser tirada quando se rompe sozinha.'],
   ['Mapa do Quilombo','🗺️','Objeto histórico','Os quilombos eram comunidades livres. Palmares, na Serra da Barriga, resistiu por quase um século.'],
   ['Foto do Desfile','📷','Fotografia','Foto fictícia da mãe de Kayo desfilando no bloco da Vila Baobá, restaurada pelo Livro Sankofa.'],
-  ['Painel Solar do Morro','🔆','Instrumento científico','Protótipo de Rafael que leva energia barata para quatro ruas da comunidade.']],
+  ['Tablet Holográfico de André','📲','Instrumento científico','O tablet onde André Cruz guarda o backup do acervo da Biblioteca Viva. A Névoa não apaga o que tem backup.']],
  ocidental:[
   ['Manuscrito de Tombuctu','📜','Livro','Tombuctu guardou dezenas de milhares de manuscritos sobre astronomia, medicina, matemática e direito.'],
   ['Tecido Kente','🧵','Roupa','Tecido tradicional de Gana, feito em faixas estreitas costuradas. Cada padrão e cor tem nome e significado.'],
@@ -148,7 +148,7 @@ const QUIZ = [
 const BUILDINGS = [
  {id:'biblioteca', name:'Biblioteca Viva', ic:'📚', desc:'Guarda as memórias recuperadas.', bonus:'+5% de XP por nível', max:5, cost:[300,700,1400,2600,4500]},
  {id:'estudio', name:'Estúdio de Música', ic:'🎧', desc:'Onde Kwame e Eli ensaiam.', bonus:'+4% de energia inicial por nível', max:5, cost:[400,900,1700,3000,5000]},
- {id:'oficina', name:'Oficina Maker', ic:'🔧', desc:'Marcus e Rafael inventam aqui.', bonus:'+4% de defesa da equipe por nível', max:5, cost:[400,900,1700,3000,5000]},
+ {id:'oficina', name:'Oficina Maker', ic:'🔧', desc:'Marcus e André criam e programam aqui.', bonus:'+4% de defesa da equipe por nível', max:5, cost:[400,900,1700,3000,5000]},
  {id:'quadra', name:'Quadra Comunitária', ic:'🏀', desc:'Treinos de Nia e Valentina.', bonus:'+4% de ataque da equipe por nível', max:5, cost:[400,900,1700,3000,5000]},
  {id:'mercado', name:'Mercado da Vila', ic:'🧺', desc:'Cooperativa organizada por Amara.', bonus:'+6% de Cauris por nível', max:5, cost:[350,800,1500,2800,4800]},
  {id:'cozinha', name:'Cozinha Coletiva', ic:'🍲', desc:'Chef Émile alimenta todo mundo.', bonus:'+4% de vida da equipe por nível', max:5, cost:[350,800,1500,2800,4800]},

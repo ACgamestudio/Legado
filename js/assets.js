@@ -1,4 +1,4 @@
-// Caminhos das imagens do jogo
+// Caminhos das imagens e mídias do jogo
 const IMG={
  "artista": "assets/personagens/artista.jpg",
  "astronauta": "assets/personagens/astronauta.jpg",
@@ -22,5 +22,8 @@ const IMG={
  "pesquisador": "assets/personagens/pesquisador.jpg",
  "policial": "assets/personagens/policial.jpg",
  "protagonista": "assets/personagens/protagonista.jpg",
- "menu": "assets/menu.jpg"
+ "menu": "assets/menu.jpg",
+ "cidade1": "assets/cidade1.jpg",
+ "cidade2": "assets/cidade2.jpg"
 };
+const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",musica:"media/musica.mp3"};
