@@ -14,10 +14,15 @@ function newState(){return{
   unlocked:['protagonista','engenheiro','capoeirista','dj','historiadora'], frags:{}, clv:{}, cxp:{},
   team:['protagonista','capoeirista','dj'], items:{}, ach:{}, build:{}, chapter:1, chDone:[],
   region:{}, stats:{}, daily:null, accent:'ouro', accents:['ouro'], avatar:'protagonista', title:'Aprendiz da Biblioteca',
-  settings:{music:.45,sfx:.7,motion:true,fs:true}, tutorialDone:false, started:false, lastLogin:null
+  settings:{music:.45,sfx:.7,motion:true,fs:true}, tutorialDone:false, chv:2, started:false, lastLogin:null
 }}
 let S;
-function load(){try{const r=localStorage.getItem(SAVE_KEY);S=r?Object.assign(newState(),JSON.parse(r)):newState()}catch(e){S=newState()}if(!S.unlocked.includes('engenheiro'))S.unlocked.push('engenheiro')}
+function load(){let raw=null;try{raw=localStorage.getItem(SAVE_KEY);S=raw?Object.assign(newState(),JSON.parse(raw)):newState()}catch(e){S=newState();raw=null}
+  if(!S.unlocked.includes('engenheiro'))S.unlocked.push('engenheiro');
+  // saves antigos tinham 8 capítulos (Caribe junto com a África Ocidental): renumera para 9
+  let old=false;try{old=raw&&!JSON.parse(raw).chv}catch(e){}
+  if(old){const m=n=>n<=2?n:n+1;const d=S.chDone.map(m);if(S.chDone.includes(2))d.push(3);S.chDone=[...new Set(d)].sort((a,b)=>a-b);S.chapter=S.chapter<=2?S.chapter:S.chapter+1;if(S.chDone.includes(3))S.chapter=Math.max(S.chapter,4);S.chv=2}
+}
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 function st(k,v=1){S.stats[k]=(S.stats[k]||0)+v}
 function stMax(k,v){S.stats[k]=Math.max(S.stats[k]||0,v)}
@@ -78,13 +83,13 @@ const sumB=()=>BUILDINGS.reduce((a,b)=>a+bld(b.id),0);
 const s_=k=>S.stats[k]||0;
 const ACHS=[
  ['primeiras_raizes','Primeiras Raízes','Conclua o Capítulo 1.','🌱',()=>chDone(1)],
- ['alem_oceano','Além do Oceano','Conclua o Capítulo 2.','🌊',()=>chDone(2)],
- ['vozes','Vozes','Conclua o Capítulo 3.','🎺',()=>chDone(3)],
- ['inventores','Mentes Inventivas','Conclua o Capítulo 4.','⚙️',()=>chDone(4)],
- ['resistencia','Caminhos Livres','Conclua o Capítulo 5.','✊🏾',()=>chDone(5)],
- ['conquistas','Grandes Conquistas','Conclua o Capítulo 6.','🏛️',()=>chDone(6)],
- ['lenda_futuro','Lenda do Futuro','Conclua o Capítulo 7.','🚀',()=>chDone(7)],
- ['guardiao_legado','Guardião do Legado','Conclua o Capítulo Final.','👑',()=>chDone(8)],
+ ['alem_oceano','Além do Oceano','Conclua os Capítulos 2 e 3.','🌊',()=>chDone(2)&&chDone(3)],
+ ['vozes','Vozes','Conclua o Capítulo 4.','🎺',()=>chDone(4)],
+ ['inventores','Mentes Inventivas','Conclua o Capítulo 5.','⚙️',()=>chDone(5)],
+ ['resistencia','Caminhos Livres','Conclua o Capítulo 6.','✊🏾',()=>chDone(6)],
+ ['conquistas','Grandes Conquistas','Conclua o Capítulo 7.','🏛️',()=>chDone(7)],
+ ['lenda_futuro','Lenda do Futuro','Conclua o Capítulo 8.','🚀',()=>chDone(8)],
+ ['guardiao_legado','Guardião do Legado','Conclua o Capítulo Final.','👑',()=>chDone(9)],
  ['primeira_vitoria','Primeira Vitória','Vença uma batalha.','⚔️',()=>s_('wins')>=1],
  ['veterano','Veterano','Vença 50 batalhas.','🛡️',()=>s_('wins')>=50],
  ['lenda_arena','Lenda da Arena','Vença 200 batalhas.','🏆',()=>s_('wins')>=200],

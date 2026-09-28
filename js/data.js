@@ -242,27 +242,27 @@ const REGIONS = [
   desc:'Bibliotecas de manuscritos, tecidos kente e o legado dos grandes impérios do Sahel.',
   chars:['dj','cantora','empreendedora','lider'], unlock:'cantora',
   enemies:['kadu','brasa','necro'], boss:'ladrao'},
- {id:'caribe', name:'Caribe', sub:'Kingston, Havana & Porto Príncipe', ch:2, lvl:7, c1:'#00a5a8', c2:'#ff5e5b', sky:['#7ee8fa','#2f9fd6','#123a6b'], genre:'reggae', scene:'caribe',
+ {id:'caribe', name:'Caribe', sub:'Kingston, Havana & Porto Príncipe', ch:3, lvl:7, c1:'#00a5a8', c2:'#ff5e5b', sky:['#7ee8fa','#2f9fd6','#123a6b'], genre:'reggae', scene:'caribe',
   desc:'Sound systems, rumba, steel pan e a primeira república negra independente das Américas.',
   chars:['fotografa','dancarina','chef'], unlock:'chef',
   enemies:['lucifer','azira','sangria'], boss:'furacao'},
- {id:'eua', name:'Estados Unidos', sub:'Nova Orleans, Detroit & Bronx', ch:3, lvl:10, c1:'#3d5afe', c2:'#ff3d7f', sky:['#6a5acd','#2b2266','#0c0a24'], genre:'jazz', scene:'eua',
+ {id:'eua', name:'Estados Unidos', sub:'Nova Orleans, Detroit & Bronx', ch:4, lvl:10, c1:'#3d5afe', c2:'#ff3d7f', sky:['#6a5acd','#2b2266','#0c0a24'], genre:'jazz', scene:'eua',
   desc:'O nascimento do jazz, do blues, da soul e do hip-hop, e a genialidade de inventores e inventoras.',
   chars:['musico','inventor'], unlock:'musico',
   enemies:['glacio','brasa','sombraviva'], boss:'disco'},
- {id:'austral', name:'África Austral', sub:'Grande Zimbábue & Joanesburgo', ch:4, lvl:13, c1:'#8b5e34', c2:'#4fd1a5', sky:['#ffd9a0','#c9864a','#3b2412'], genre:'amapiano', scene:'austral',
+ {id:'austral', name:'África Austral', sub:'Grande Zimbábue & Joanesburgo', ch:5, lvl:13, c1:'#8b5e34', c2:'#4fd1a5', sky:['#ffd9a0','#c9864a','#3b2412'], genre:'amapiano', scene:'austral',
   desc:'Cidades de pedra sem argamassa, ubuntu e as batidas graves do amapiano.',
   chars:['pesquisador','guerreiro'], unlock:'pesquisador',
   enemies:['brasa','kadu','ferrugem'], boss:'muralha'},
- {id:'latina', name:'América Latina', sub:'Palenque & Pacífico colombiano', ch:5, lvl:16, c1:'#2e7d32', c2:'#ffca28', sky:['#b2f7a1','#3fa35b','#0f3a22'], genre:'cumbia', scene:'latina',
+ {id:'latina', name:'América Latina', sub:'Palenque & Pacífico colombiano', ch:6, lvl:16, c1:'#2e7d32', c2:'#ffca28', sky:['#b2f7a1','#3fa35b','#0f3a22'], genre:'cumbia', scene:'latina',
   desc:'San Basilio de Palenque, o primeiro povoado livre das Américas, e a música do litoral do Pacífico.',
   chars:['esportista'], unlock:'esportista',
   enemies:['ferrugem','sangria','azira'], boss:'serpente'},
- {id:'oriental', name:'África Oriental', sub:'Aksum, Lalibela & Nairóbi', ch:6, lvl:19, c1:'#b23a48', c2:'#fcb07e', sky:['#ffe0b2','#f28c52','#6b2130'], genre:'ethio', scene:'oriental',
+ {id:'oriental', name:'África Oriental', sub:'Aksum, Lalibela & Nairóbi', ch:7, lvl:19, c1:'#b23a48', c2:'#fcb07e', sky:['#ffe0b2','#f28c52','#6b2130'], genre:'ethio', scene:'oriental',
   desc:'Obeliscos de Aksum, igrejas esculpidas na rocha, maratonistas e a arte urbana de Nairóbi.',
   chars:['historiadora','artista'], unlock:'artista',
   enemies:['kadu','necro','azira'], boss:'colosso'},
- {id:'futuro', name:'Neo-Axé', sub:'Cidade afrofuturista', ch:7, lvl:22, c1:'#00e5ff', c2:'#ff2bd6', sky:['#2b0a4a','#140833','#04020f'], genre:'afrofuturo', scene:'futuro',
+ {id:'futuro', name:'Neo-Axé', sub:'Cidade afrofuturista', ch:8, lvl:22, c1:'#00e5ff', c2:'#ff2bd6', sky:['#2b0a4a','#140833','#04020f'], genre:'afrofuturo', scene:'futuro',
   desc:'Torres de metal com padrões geométricos, mercados holográficos e a universidade que guarda o futuro.',
   chars:['astronauta','cientista'], unlock:'astronauta',
   enemies:['glacio','ferrugem','sombraviva'], boss:'apagao'}
@@ -328,20 +328,30 @@ const CHAPTERS = [
   ['lider','Isso foi só o começo. O livro está apontando para o outro lado do oceano.'],
   ['protagonista','Então vamos. Tem muita história lá fora esperando alguém lembrar.']
  ]},
- {n:2, title:'Além do Oceano', region:'ocidental', region2:'caribe', place:'Tombuctu (Mali), Kingston (Jamaica) e Porto Príncipe (Haiti)', fact:'Tombuctu guardou milhares de manuscritos. Kingston é o berço do ska e do reggae. Em 1804, o Haiti virou a primeira república negra das Américas.', scenes:[
+ {n:2, title:'Além do Oceano', region:'ocidental', place:'Tombuctu (Mali) e Acra (Gana)', fact:'Tombuctu guardou milhares de manuscritos de astronomia, medicina e direito. Em Gana nasceu o highlife, ritmo que influenciou o afrobeat.', scenes:[
   ['narr','O portal leva o grupo a Tombuctu, no Mali, cidade que foi um dos grandes centros de estudo do mundo, com milhares de manuscritos sobre astronomia, matemática, medicina e direito.'],
   ['cantora','Visitantes pelo livro? Faz muito tempo. Sou Fatou. Minha família canta a história desta terra há gerações.'],
   ['protagonista','Você é uma griot?'],
   ['cantora','Griots guardam a palavra. E tem um mascarado chamado Kemet querendo controlar e apagar os manuscritos.'],
-  ['dj','E eu vim de Acra atrás de uma batida que faz a Névoa recuar. Parece que achei a festa certa.'],
-  ['protagonista','Depois daqui o livro mostra ilhas... o Caribe. As mesmas batidas, os mesmos tambores, do outro lado do mar.'],
+  ['dj','E eu vim de Acra atrás de uma batida que faz a Névoa recuar. Parece que achei a festa certa.']
+ ], end:[
+  ['cantora','Os manuscritos estão salvos. Obrigada, {P}.'],
+  ['protagonista','O livro está mostrando ilhas... o Caribe. As mesmas batidas, os mesmos tambores, do outro lado do mar.'],
   ['cantora','Porque as histórias viajaram junto com as pessoas. Nenhum oceano apaga isso.']
+ ]},
+ {n:3, title:'Ilhas da Liberdade', region:'caribe', place:'Kingston (Jamaica), Havana (Cuba) e Porto Príncipe (Haiti)', fact:'Kingston é o berço do ska e do reggae. A rumba cubana é Patrimônio da UNESCO desde 2016. Em 1804, o Haiti virou a primeira república negra das Américas.', scenes:[
+  ['narr','Kingston, Jamaica. Nas ruas, os sound systems empilham caixas de som do tamanho de paredes. Foi daqui que o ska e o reggae ganharam o mundo.'],
+  ['fotografa','Vocês vieram pelo livro? Sou Imani. Passo as noites fotografando as festas de rua, mas hoje está tudo em silêncio.'],
+  ['dj','Silêncio em Kingston? Isso não existe.'],
+  ['fotografa','Uma vilã chamada Malika espalhou medo pelas ilhas. Ninguém tem coragem de tocar, cantar ou dançar.'],
+  ['dancarina','Em Havana a rumba também parou. Sou Yamilé. Se ninguém dançar, a memória dos nossos passos some.'],
+  ['protagonista','Então vamos devolver a música às ilhas. De Kingston até Porto Príncipe.']
  ], end:[
   ['chef','Bem-vindos a Porto Príncipe! Sentem, tem soup joumou. É a sopa da nossa independência, de 1804.'],
   ['protagonista','A primeira república negra livre das Américas...'],
   ['chef','Exato. E cada colherada lembra isso. Agora, o livro está brilhando para o norte.']
  ]},
- {n:3, title:'Vozes', region:'eua', place:'Nova Orleans e Bronx, Nova York (EUA)', fact:'O jazz nasceu em Nova Orleans no início do século XX. O hip-hop surgiu no Bronx, numa festa de bairro em 1973.', scenes:[
+ {n:4, title:'Vozes', region:'eua', place:'Nova Orleans e Bronx, Nova York (EUA)', fact:'O jazz nasceu em Nova Orleans no início do século XX. O hip-hop surgiu no Bronx, numa festa de bairro em 1973.', scenes:[
   ['narr','Nova Orleans. A cidade onde o jazz nasceu, no começo do século XX, misturando blues, ragtime, cantos de igreja e ritmos que vieram da África e do Caribe.'],
   ['musico','Vocês ouviram isso? Nada. Silêncio. Nessa cidade isso é um crime.'],
   ['protagonista','A Névoa está calando a música?'],
@@ -352,7 +362,7 @@ const CHAPTERS = [
   ['musico','Escuta só... a cidade voltou a tocar.'],
   ['inventor','E eu aproveitei os equipamentos do Vértice pra montar um amplificador. Marcus Bell, prazer. O próximo portal parece... geológico.']
  ]},
- {n:4, title:'Inventores', region:'austral', place:'Grande Zimbábue (Zimbábue)', fact:'Muralhas de granito erguidas entre os séculos XI e XV sem nenhuma argamassa. Patrimônio Mundial da UNESCO desde 1986.', scenes:[
+ {n:5, title:'Inventores', region:'austral', place:'Grande Zimbábue (Zimbábue)', fact:'Muralhas de granito erguidas entre os séculos XI e XV sem nenhuma argamassa. Patrimônio Mundial da UNESCO desde 1986.', scenes:[
   ['narr','Grande Zimbábue. Muralhas de granito erguidas entre os séculos XI e XV sem nenhuma argamassa, pedra encaixada sobre pedra.'],
   ['pesquisador','Cuidado onde pisam! Cada pedra aqui é uma aula de engenharia. Sou Thabo.'],
   ['engenheiro','Sem argamassa? Com essa precisão? Isso é engenharia de primeira. Vou digitalizar cada pedra.'],
@@ -362,7 +372,7 @@ const CHAPTERS = [
   ['guerreiro','Belo trabalho. Sou Sipho. Treino luta com bastões e ouvi o barulho do Colôsso caindo lá de Durban.'],
   ['pesquisador','O livro agora aponta para as florestas da Colômbia.']
  ]},
- {n:5, title:'Resistência', region:'latina', place:'San Basilio de Palenque (Colômbia)', fact:'Fundado no século XVII por pessoas que se libertaram da escravidão, liderado por Benkos Biohó. É considerado o primeiro povoado livre das Américas.', scenes:[
+ {n:6, title:'Resistência', region:'latina', place:'San Basilio de Palenque (Colômbia)', fact:'Fundado no século XVII por pessoas que se libertaram da escravidão, liderado por Benkos Biohó. É considerado o primeiro povoado livre das Américas.', scenes:[
   ['narr','San Basilio de Palenque, Colômbia. Fundado por pessoas que se libertaram da escravidão no século XVII, liderados por Benkos Biohó. É considerado o primeiro povoado livre das Américas.'],
   ['esportista','Aqui ainda se fala palenquero, uma língua que mistura espanhol com línguas bantas. Meus avós contam que os caminhos da liberdade eram marcados até nos penteados das tranças.'],
   ['protagonista','Tipo os quilombos no Brasil. Palmares, Dandara, Zumbi...'],
@@ -372,7 +382,7 @@ const CHAPTERS = [
   ['esportista','As trilhas voltaram. E as crianças voltaram a brincar na praça. Isso é o que importa.'],
   ['protagonista','Próxima parada: as terras altas da Etiópia.']
  ]},
- {n:6, title:'Grandes Conquistas', region:'oriental', place:'Aksum e Lalibela (Etiópia)', fact:'Aksum cunhava moedas próprias e ergueu obeliscos de mais de 20 metros. Em Lalibela, igrejas inteiras foram esculpidas em uma única rocha.', scenes:[
+ {n:7, title:'Grandes Conquistas', region:'oriental', place:'Aksum, Lalibela (Etiópia) & Nairóbi (Quênia)', fact:'Aksum cunhava moedas e ergueu obeliscos de mais de 20 metros. Em Lalibela, igrejas foram esculpidas na rocha. Em Nairóbi, Wangari Maathai criou o Cinturão Verde.', scenes:[
   ['narr','Aksum, Etiópia. Capital de um reino que cunhava as próprias moedas e erguia obeliscos de mais de 20 metros. Mais ao sul, em Lalibela, igrejas inteiras foram esculpidas de cima para baixo em uma única rocha.'],
   ['historiadora','Makeda, historiadora. E sim, meu nome é o mesmo da rainha de Sabá nas tradições etíopes. Não, eu não sou da realeza.'],
   ['artista','E eu sou a Zuri, de Nairóbi. Vim pintar a memória dos maratonistas, das cientistas e das ativistas daqui antes que a Névoa leve embora.'],
@@ -382,7 +392,7 @@ const CHAPTERS = [
   ['historiadora','Os obeliscos estão de pé. As histórias também.'],
   ['astronauta','Aqui é a Comandante Okafor, de Neo-Axé. Vocês estão sendo chamados para o futuro. Urgente.']
  ]},
- {n:7, title:'O Futuro', region:'futuro', place:'Neo-Axé, cidade afrofuturista (fictícia)', fact:'O termo afrofuturismo foi criado em 1993 pelo crítico Mark Dery para a arte que imagina o futuro a partir da cultura negra.', scenes:[
+ {n:8, title:'O Futuro', region:'futuro', place:'Neo-Axé, cidade afrofuturista (fictícia)', fact:'O termo afrofuturismo foi criado em 1993 pelo crítico Mark Dery para a arte que imagina o futuro a partir da cultura negra.', scenes:[
   ['narr','Neo-Axé. Uma cidade de torres metálicas cobertas por padrões geométricos inspirados em tecidos e esculturas africanas, iluminadas em neon. Aqui se estuda, se dança e se inventa o amanhã.'],
   ['astronauta','Nosso arquivo central guarda tudo que vocês salvaram. Mas a IA que o protege foi corrompida.'],
   ['cientista','Vulcano corrompeu a IA do arquivo. Agora ela acha que memória é "dado desnecessário".'],
@@ -392,7 +402,7 @@ const CHAPTERS = [
   ['cientista','Arquivo restaurado. Backups em cinco continentes. Aprendemos a lição.'],
   ['protagonista','Mas a Névoa ainda está saindo de algum lugar... do Livro. Da Vila Baobá.']
  ]},
- {n:8, title:'Nosso Legado', region:'final', place:'Vila Baobá, Salvador, Bahia (Brasil)', fact:'Baobás podem viver mais de mil anos. Em várias culturas africanas, a árvore é símbolo de memória, encontro e sabedoria.', scenes:[
+ {n:9, title:'Nosso Legado', region:'final', place:'Vila Baobá, Salvador, Bahia (Brasil)', fact:'Baobás podem viver mais de mil anos. Em várias culturas africanas, a árvore é símbolo de memória, encontro e sabedoria.', scenes:[
   ['narr','De volta à Vila Baobá. A Névoa se concentra ao redor do baobá centenário. Dela surge Obsidian, o líder de todos os vilões.'],
   ['esquecimento','Eu sou Obsidian. Eu sou o nada entre uma geração e outra. Sem vocês, eu venço sozinho.'],
   ['protagonista','Você venceria sozinho. Mas a gente nunca está sozinho.'],

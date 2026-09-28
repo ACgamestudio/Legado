@@ -6,7 +6,7 @@ function show(name,...a){CUR=name;Audio.resume();Theme.route(name);const f=SCREE
 function bindAll(){stage().querySelectorAll('[data-go]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx('click');const [n,...args]=b.dataset.go.split('|');show(n,...args)})}
 const AFTER={};
 // Fundo de cada região = imagem do capítulo dela (assets/capitulos); se não houver, usa assets/fundos; senão, o desenho
-const REGION_CH={brasil:1,ocidental:2,caribe:2,eua:3,austral:4,latina:5,oriental:6,futuro:7,final:8};
+const REGION_CH={brasil:1,ocidental:2,caribe:3,eua:4,austral:5,latina:6,oriental:7,futuro:8,final:9};
 function sceneBG(id){const src=IMG['ch_'+REGION_CH[id]]||IMG['bg_'+id];if(src)return `<div class="scene photo" style="background-image:url(${src})"></div>`;return sceneSVG(id)}
 function portrait(id,cls=''){return `<img class="pt ${cls}" src="${IMG[id]}" alt="${esc(charName(id))}" draggable="false">`}
 function typeTag(t){const T=TYPES[t];return `<span class="tt" style="--tc:${T.c}">${T.ic} ${t}</span>`}
@@ -51,7 +51,7 @@ intro(){return `<div class="scene-wrap">${sceneBG('brasil')}</div><div class="in
 
 // ---------------------------- HUB ----------------------------
 hub(){ Audio.play('menu'); ensureDaily();
-  const ch=CHAPTERS.find(c=>c.n===S.chapter)||CHAPTERS[7], done=S.chDone.includes(8);
+  const ch=CHAPTERS.find(c=>c.n===S.chapter)||CHAPTERS[8], done=S.chDone.includes(9);
   const ev=currentEvent();
   const miss=S.daily.missions.map(id=>{const m=MISSION_POOL.find(x=>x.id===id);const p=missionProg(id);return `<li class="${p>=m.n?'ok':''}"><span>${m.text}</span><b>${p}/${m.n}</b></li>`}).join('');
   const tiles=[['map','🗺️','Mapa-mundi','8 regiões para explorar'],['expedition','🐦','Expedição Sankofa','Roguelite: 6 salas, bênçãos aleatórias'],['challenges','⏱️','Desafios rápidos','Ritmo, memória, quiz e corrida'],['community','🏘️','Comunidade','Construa a Vila Baobá'],['missions','✅','Missões e recompensas','Diárias, baú gratuito'],['achievements','🏆','Conquistas',`${Object.keys(S.ach).length}/50`],['chars','👥','Personagens',`${S.unlocked.length}/${CHARS.length}`],['collection','📚','Coleção',`${itemCount()}/100 itens`],['events','🎉','Eventos',ev.name],['customize','🪮','Personalização','Nome, avatar, cores']];
@@ -64,7 +64,7 @@ hub(){ Audio.play('menu'); ensureDaily();
 // ---------------------------- MAPA ----------------------------
 map(){ Audio.play('menu');
   const pos={brasil:[520,560],ocidental:[800,380],caribe:[380,380],eua:[300,220],austral:[930,640],latina:[430,520],oriental:[1040,420],futuro:[1250,200]};
-  const nodes=REGIONS.map(r=>{const open=r.ch<=S.chapter||S.chDone.includes(r.ch)||(r.id==='caribe'&&S.chapter>=2);const prog=S.region[r.id]||0;const [x,y]=pos[r.id];
+  const nodes=REGIONS.map(r=>{const open=r.ch<=S.chapter||S.chDone.includes(r.ch);const prog=S.region[r.id]||0;const [x,y]=pos[r.id];
     return `<button class="mnode ${open?'':'locked'} ${prog>=4?'done':''}" style="left:${x}px;top:${y}px;--c1:${r.c1};--c2:${r.c2}" ${open?`data-go="region|${r.id}"`:''}><span class="mdot">${prog>=4?'★':open?prog+'/4':'🔒'}</span><b>${r.name}</b><small>${open?`Nv. recomendado ${r.lvl}`:`Capítulo ${r.ch}`}</small></button>`}).join('');
   return topbar('Mapa-mundi')+`<div class="worldmap"><svg class="wm" viewBox="0 0 1600 780"><defs><pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="2" fill="#f5b82e" opacity=".18"/></pattern></defs>
    <path d="M150 120 Q250 60 420 110 L470 220 Q400 300 440 360 Q520 380 600 460 Q620 560 560 660 Q520 720 480 700 Q420 600 430 520 Q360 460 330 400 Q260 330 200 250z" fill="url(#dots)" stroke="#f5b82e33" stroke-width="2"/>
@@ -93,8 +93,8 @@ team(ctx){ // ctx: JSON-ish string stored in window.PENDING
 
 // ---------------------------- HISTÓRIA ----------------------------
 story(){ Audio.play('menu');
-  return topbar('Modo história','menu')+`<div class="chapters">${CHAPTERS.map(c=>{const done=S.chDone.includes(c.n),open=c.n<=S.chapter;const bg=c.region==='final'?'final':c.region;return `<button class="chap ${done?'done':''} ${open?'':'locked'}" ${open?`data-act="chap" data-n="${c.n}"`:''}>${IMG['ch_'+c.n]?`<div class="scene photo chph" style="background-image:url(${IMG['ch_'+c.n]})"></div>`:sceneBG(bg)}<div><small>${c.n===8?'Capítulo final':'Capítulo '+c.n}</small><b>${c.title}</b><em class="cplace">📍 ${c.place}</em><p class="cfact">${c.fact}</p><span>${done?'✔ Concluído':open?'▶ Jogar':'🔒 Bloqueado'}</span></div></button>`}).join('')}</div>`},
-cutscene(n,part){return `<div class="scene-wrap">${sceneBG((CHAPTERS[n-1].region==='final')?'final':CHAPTERS[n-1].region)}</div><div class="cut"><div class="cut-title"><small>${n===8?'Capítulo final':'Capítulo '+n}</small><h2>${CHAPTERS[n-1].title}</h2><em class="cplace">📍 ${CHAPTERS[n-1].place}</em></div><div class="cut-actors" id="actors"></div><div class="dlg panel" id="dlg"><b id="dn"></b><p id="dt"></p><span class="dnext">Toque para continuar ▸</span></div><button class="btn small skip" id="skip">Pular ⏭</button></div>`},
+  return topbar('Modo história','menu')+`<div class="chapters">${CHAPTERS.map(c=>{const done=S.chDone.includes(c.n),open=c.n<=S.chapter;const bg=c.region==='final'?'final':c.region;return `<button class="chap ${done?'done':''} ${open?'':'locked'}" ${open?`data-act="chap" data-n="${c.n}"`:''}>${IMG['ch_'+c.n]?`<div class="scene photo chph" style="background-image:url(${IMG['ch_'+c.n]})"></div>`:sceneBG(bg)}<div><small>${c.n===9?'Capítulo final':'Capítulo '+c.n}</small><b>${c.title}</b><em class="cplace">📍 ${c.place}</em><p class="cfact">${c.fact}</p><span>${done?'✔ Concluído':open?'▶ Jogar':'🔒 Bloqueado'}</span></div></button>`}).join('')}</div>`},
+cutscene(n,part){return `<div class="scene-wrap">${sceneBG((CHAPTERS[n-1].region==='final')?'final':CHAPTERS[n-1].region)}</div><div class="cut"><div class="cut-title"><small>${n===9?'Capítulo final':'Capítulo '+n}</small><h2>${CHAPTERS[n-1].title}</h2><em class="cplace">📍 ${CHAPTERS[n-1].place}</em></div><div class="cut-actors" id="actors"></div><div class="dlg panel" id="dlg"><b id="dn"></b><p id="dt"></p><span class="dnext">Toque para continuar ▸</span></div><button class="btn small skip" id="skip">Pular ⏭</button></div>`},
 
 // ---------------------------- PERSONAGENS ----------------------------
 chars(){ Audio.play('menu');
@@ -188,7 +188,7 @@ function playIntroVideos(){
   next();
 }
 AFTER.intro=()=>{document.getElementById('go1').onclick=()=>{S.name=(document.getElementById('nm').value.trim()||'Kayo').slice(0,14);S.started=true;save();playChapter(1)}};
-AFTER.hub=()=>{stage().querySelector('[data-act=continue]').onclick=()=>{sfx('click');if(S.chDone.includes(8))show('map');else playChapter(S.chapter)}};
+AFTER.hub=()=>{stage().querySelector('[data-act=continue]').onclick=()=>{sfx('click');if(S.chDone.includes(9))show('map');else playChapter(S.chapter)}};
 AFTER.region=id=>{stage().querySelectorAll('[data-act=node]').forEach(b=>b.onclick=()=>{sfx('click');const i=+b.dataset.i;startNode(id,i)})};
 AFTER.story=()=>{stage().querySelectorAll('[data-act=chap]').forEach(b=>b.onclick=()=>{sfx('click');playChapter(+b.dataset.n)})};
 AFTER.chars=()=>{stage().querySelectorAll('[data-act=char]').forEach(b=>b.onclick=()=>{sfx('click');charModal(b.dataset.id)})};
@@ -238,7 +238,7 @@ function playChapter(n,part='scenes',after){
       actors.querySelectorAll('.actor').forEach(a=>a.classList.toggle('talk',a.dataset.a===sp)); }
     sfx('click');
   };
-  const finish=()=>{clearInterval(window._tw);if(part==='scenes'){ if(ch.region==='final'){startBattle({mode:'story',region:'final',node:3,chapter:8})} else if(!S.tutorialDone){startTutorial()} else {show('region',ch.region)} } else { after?after():show('hub') }};
+  const finish=()=>{clearInterval(window._tw);if(part==='scenes'){ if(ch.region==='final'){startBattle({mode:'story',region:'final',node:3,chapter:9})} else if(!S.tutorialDone){startTutorial()} else {show('region',ch.region)} } else { after?after():show('hub') }};
   document.getElementById('dlg').onclick=step;
   document.getElementById('skip').onclick=e=>{e.stopPropagation();finish()};
   step();

@@ -54,6 +54,7 @@ const IMG={
  "ch_5": "assets/capitulos/cap5.jpg",
  "ch_6": "assets/capitulos/cap6.jpg",
  "ch_7": "assets/capitulos/cap7.jpg",
- "ch_8": "assets/capitulos/cap8.jpg"
+ "ch_8": "assets/capitulos/cap8.jpg",
+ "ch_9": "assets/capitulos/cap9.jpg"
 };
 const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",musica:"media/musica.mp3"};

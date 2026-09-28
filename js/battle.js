@@ -256,13 +256,13 @@ function battleEnd(win){
   drops.forEach(it=>rewards.push(`<span class="ric">${it.ic}</span> ${esc(it.name)}`));
   // progresso
   let chapterDone=null;
-  if(ctx.region==='final'){if(!S.chDone.includes(8)){S.chDone.push(8);chapterDone=8;ITEMS.filter(i=>i.region==='legado').forEach(i=>addItem(i.id))}S.sementes+=50;st('bosses')}
+  if(ctx.region==='final'){if(!S.chDone.includes(9)){S.chDone.push(9);chapterDone=9;ITEMS.filter(i=>i.region==='legado').forEach(i=>addItem(i.id))}S.sementes+=50;st('bosses')}
   else{const r=RG[ctx.region];const prog=S.region[r.id]||0;
     if(ctx.node<9&&ctx.node>=prog)S.region[r.id]=ctx.node+1;
     if(boss){st('bosses');S.sementes+=20;rewards.push('🌱 +20 Sementes');
       if(!S.unlocked.includes(r.unlock)){unlockChar(r.unlock);rewards.push(`${portrait(r.unlock,'mini')} <b>${charName(r.unlock)} entrou para a equipe!</b>`)}
-      const ch=CHAPTERS.find(c=>c.region===r.id||c.region2===r.id);
-      const bothDone=!ch.region2||((S.region[ch.region]||0)>=4&&(S.region[ch.region2]||0)>=4);
+      const ch=CHAPTERS.find(c=>c.region===r.id);
+      const bothDone=true;
       if(ch&&bothDone&&!S.chDone.includes(ch.n)){S.chDone.push(ch.n);S.chapter=Math.max(S.chapter,ch.n+1);chapterDone=ch.n}
     }}
   if(ctx.tutorial){S.tutorialDone=true}
