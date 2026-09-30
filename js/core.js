@@ -147,9 +147,9 @@ const Audio={ctx:null, master:null, mus:null, fx:null, timer:null, step:0, next:
     const n=this.ctx.createBuffer(1,this.ctx.sampleRate,this.ctx.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;this.noise=n;
     this.vol();
   },
-  vol(){Theme.vol();if(!this.ctx)return;this.mus.gain.value=S.settings.music*.5;this.fx.gain.value=S.settings.sfx*.6},
+  vol(){Theme.vol();ChMusic.vol();if(!this.ctx)return;this.mus.gain.value=S.settings.music*.5;this.fx.gain.value=S.settings.sfx*.6},
   resume(){this.init();if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume()},
-  play(g){ if(Theme.on)return; this.init(); if(!this.ctx)return; if(this.genre===g)return; this.stop(); this.genre=g; const G=GENRES[g]; if(!G)return;
+  play(g){ if(Theme.on||ChMusic.on)return; this.init(); if(!this.ctx)return; if(this.genre===g)return; this.stop(); this.genre=g; const G=GENRES[g]; if(!G)return;
     this.step=0; this.startTime=this.next=this.ctx.currentTime+.08; this.seed=[...g].reduce((a,c)=>a+c.charCodeAt(0),7);
     this.timer=setInterval(()=>this.tick(),25);
   },
@@ -218,11 +218,44 @@ const Theme={el:null,on:false,duck:false,fade:null,
   unlock(){const a=this.get();a.muted=true;const p=a.play();if(p&&p.then)p.then(()=>{a.pause();a.muted=false;a.currentTime=0}).catch(()=>{a.muted=false})},
   target(){return Math.min(1,S.settings.music*(this.duck?.55:1.4))},
   vol(){if(this.el&&this.on){clearInterval(this.fade);this.el.volume=this.target()}},
-  play(fromStart){const a=this.get();this.on=true;this.duck=CUR==='video';clearInterval(this.fade);if(fromStart)a.currentTime=0;a.volume=this.target();a.muted=false;const p=a.play();if(p&&p.catch)p.catch(()=>{});Audio.stop()},
+  play(fromStart){const a=this.get();this.on=true;this.duck=CUR==='video';clearInterval(this.fade);if(fromStart)a.currentTime=0;a.volume=this.target();a.muted=false;const p=a.play();if(p&&p.catch)p.catch(()=>{});Audio.stop();ChMusic.stop()},
   stop(){if(!this.el||!this.on)return;this.on=false;const a=this.el;clearInterval(this.fade);this.fade=setInterval(()=>{a.volume=Math.max(0,a.volume-.05);if(a.volume<=0.01){clearInterval(this.fade);a.pause()}},60)},
   // A música tema toca em todas as telas de menu; só sai na história, batalhas, regiões e minigames com trilha própria
   menus:['menu','intro','exit','hub','chars','collection','community','missions','events','achievements','customize','settings','multi','expedition','story','map','challenges','team','memory','quiz'],
-  route(name){ if(name==='start'||name==='video')return;
+  route(name,a=[]){ if(name==='start'||name==='video')return;
+    const n=chapterFor(name,a);
+    if(n&&ChMusic.play(n)){ this.stop(); return; }
+    ChMusic.stop();
     if(this.menus.includes(name)){ this.duck=false; Audio.stop(); if(!this.on||this.get().paused)this.play(false);else this.vol(); }
     else this.stop(); }
+};
+
+// ===================== MÚSICA DOS CAPÍTULOS (media/capitulos/capN.mp3) =====================
+// Cada capítulo tem sua música: toca na cutscene, na tela da região, na montagem de equipe e nas batalhas daquela região.
+// Se o arquivo não carregar, o jogo volta para a trilha procedural do gênero da região.
+function chapterFor(name,a){
+  const P=window.PENDING||{};
+  if(name==='cutscene')return +a[0]||null;
+  if(name==='region')return REGION_CH[a[0]]||null;
+  if(name==='battle'||name==='team'){ if(P.mode==='story'&&P.region)return REGION_CH[P.region]||null; if(name==='battle'&&P.region==='final')return 9; }
+  return null;
+}
+const ChMusic={el:null,on:false,cur:null,duck:false,fade:null,bad:{},
+  get(){if(!this.el){this.el=document.createElement('audio');this.el.loop=true;this.el.preload='auto';
+    this.el.onerror=()=>{const n=this.cur;if(!n)return;this.bad[n]=true;this.on=false;this.cur=null;clearInterval(this.fade);
+      if(CUR==='cutscene'||CUR==='region'||CUR==='battle'||CUR==='team'){const g=n===9?'final':(REGIONS.find(r=>r.ch===n)||{}).genre;if(g){Audio.genre=null;Audio.play(g)}}}}
+    return this.el},
+  target(){return Math.min(1,S.settings.music*1.4*(this.duck?.2:1))},
+  vol(){if(this.el&&this.on){clearInterval(this.fade);this.el.volume=this.target()}},
+  play(n){ const src=MEDIA['cap'+n]; if(!src||this.bad[n])return false;
+    const a=this.get(); Audio.stop(); clearInterval(this.fade);
+    if(this.cur!==n){ this.cur=n; a.src=src; a.currentTime=0; }
+    const was=this.on&&!a.paused; this.on=true; this.duck=false;
+    if(was){ a.volume=this.target(); return true; }
+    a.volume=0; a.muted=false; const p=a.play(); if(p&&p.catch)p.catch(()=>{});
+    this.fade=setInterval(()=>{const t=this.target();a.volume=Math.min(t,a.volume+.06);if(a.volume>=t-.001)clearInterval(this.fade)},60);
+    return true; },
+  stop(){ if(!this.el||!this.on)return; this.on=false; const a=this.el; clearInterval(this.fade);
+    this.fade=setInterval(()=>{a.volume=Math.max(0,a.volume-.06);if(a.volume<=0.01){clearInterval(this.fade);a.pause()}},60); },
+  setDuck(d){this.duck=d;this.vol()}
 };

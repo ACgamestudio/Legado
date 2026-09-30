@@ -57,4 +57,8 @@ const IMG={
  "ch_8": "assets/capitulos/cap8.jpg",
  "ch_9": "assets/capitulos/cap9.jpg"
 };
-const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",musica:"media/musica.mp3"};
+const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",musica:"media/musica.mp3",
+ // Música de cada capítulo (toca na cutscene, na região, na montagem de equipe e nas batalhas do capítulo)
+ cap1:"media/capitulos/cap1.mp3",cap2:"media/capitulos/cap2.mp3",cap3:"media/capitulos/cap3.mp3",
+ cap4:"media/capitulos/cap4.mp3",cap5:"media/capitulos/cap5.mp3",cap6:"media/capitulos/cap6.mp3",
+ cap7:"media/capitulos/cap7.mp3",cap8:"media/capitulos/cap8.mp3",cap9:"media/capitulos/cap9.mp3"};

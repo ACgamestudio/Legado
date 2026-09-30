@@ -2,7 +2,7 @@
 const stage=()=>document.getElementById('stage');
 let CUR='menu';
 function fit(){const vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.height:innerHeight;const s=Math.min(w/1600,h/900);const el=document.getElementById('stage');el.style.transform=`translate(${(w-1600*s)/2}px,${(h-900*s)/2}px) scale(${s})`;document.getElementById('rot').style.display=(h>w*1.15)?'flex':'none'}
-function show(name,...a){CUR=name;Audio.resume();Theme.route(name);const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
+function show(name,...a){CUR=name;Audio.resume();Theme.route(name,a);const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
 function bindAll(){stage().querySelectorAll('[data-go]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx('click');const [n,...args]=b.dataset.go.split('|');show(n,...args)})}
 const AFTER={};
 // Fundo de cada região = imagem do capítulo dela (assets/capitulos); se não houver, usa assets/fundos; senão, o desenho

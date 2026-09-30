@@ -315,6 +315,6 @@ function tutStep(){const t=document.getElementById('tut');if(!t)return;if(B.tut>
 // ===================== VÍDEOS DE ESPECIAIS =====================
 // Coloque MEDIA['esp_<id do personagem>'] em js/assets.js e o vídeo toca na Suprema desse personagem.
 function specialVideo(src,done){const c=document.getElementById('cutin');c.innerHTML=`<div class="spv"><video id="spv" playsinline></video><button class="btn small vskip">Pular ⏭</button></div>`;c.classList.add('on','vidon');
-  const v=c.querySelector('video');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;
-  let ended=false;const fin=()=>{if(ended)return;ended=true;v.pause();c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;done()};
+  const v=c.querySelector('video');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;ChMusic.setDuck(true);
+  let ended=false;const fin=()=>{if(ended)return;ended=true;v.pause();c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false);done()};
   v.onended=fin;v.onerror=fin;c.querySelector('.vskip').onclick=fin;v.src=src;const p=v.play();if(p&&p.catch)p.catch(fin)}

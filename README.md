@@ -23,7 +23,7 @@ js/battle.js        combate, recompensas, expedição, tutorial
 js/mini.js          desafios rápidos (ritmo, memória, quiz, corrida)
 js/main.js          inicialização
 assets/             artes do menu, cidades, personagens, vilões e fundos
-media/              vídeo da produtora, abertura e música tema
+media/              vídeo da produtora, abertura, música tema e músicas dos capítulos
 ```
 
 ## Controles
@@ -43,3 +43,7 @@ O progresso fica salvo no `localStorage` do navegador.
 ## Tela cheia
 
 O jogo entra em tela cheia e na horizontal ao tocar em INICIAR e volta para tela cheia no próximo toque se o jogador sair. Instalado como app (menu do navegador → "Adicionar à tela inicial"), ele já abre em tela cheia na horizontal.
+
+## Músicas dos capítulos
+
+Cada capítulo tem sua própria música em `media/capitulos/cap1.mp3` a `cap9.mp3`. Ela toca na cutscene do capítulo, na tela da região, na montagem de equipe e nas batalhas daquela região (o capítulo 9 toca na batalha final). Para trocar uma música, basta substituir o arquivo mantendo o nome. Se um arquivo faltar, o jogo usa a trilha procedural da região. Menus continuam com `media/musica.mp3`, e os minigames (Ritmo, Corrida) mantêm a trilha própria.
