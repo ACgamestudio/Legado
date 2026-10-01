@@ -144,7 +144,7 @@ function doAct(u,k){const c=CH[u.key];u._acted=true;
   else if(k==='special'){log(`<b>${u.name}</b> usa <b>${c.sp.name}</b>!`);runFx(u,c.sp.fx,false);u.cd=c.sp.cd+1;gainEn(u,15);if(u.side==='h')st('specials');sfx('special');combos(u)}
   else if(k==='ult'){u.energy=0;if(u.side==='h')st('ults');sfx('ult');
     const go=()=>{log(`<b>${u.name}</b>: SUPREMA <b>${c.ult.name}</b>!`);runFx(u,c.ult.fx,true);endTurn(u,900)};
-    if(B.ui&&window.MEDIA&&MEDIA['esp_'+u.key]){specialVideo(MEDIA['esp_'+u.key],go,u)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
+    if(B.ui&&typeof MEDIA!=='undefined'&&MEDIA['esp_'+u.key]){specialVideo(MEDIA['esp_'+u.key],go,u)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
   endTurn(u);
 }
 function cutIn(u,name){const c=document.getElementById('cutin');c.innerHTML=`<div class="ci" style="--tc:${TYPES[u.type].c}">${portrait(u.key)}<div><small>Suprema</small><h2>${name}</h2><p>"${pick(CH[u.key].lines)}"</p></div></div>`;c.classList.add('on');setTimeout(()=>c.classList.remove('on'),950)}
@@ -322,7 +322,17 @@ function specialVideo(src,done,u){const c=document.getElementById('cutin');
    <div class="spv-flash"></div><button class="btn small vskip">Pular ⏭</button></div>`;
   c.classList.add('on','vidon');
   const v=c.querySelector('video'),bar=c.querySelector('#spvbar');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;ChMusic.setDuck(true);
+  v.setAttribute('webkit-playsinline','');v.playsInline=true;
   v.ontimeupdate=()=>{if(v.duration)bar.style.width=Math.min(100,v.currentTime/v.duration*100)+'%'};
-  let ended=false;const fin=()=>{if(ended)return;ended=true;v.pause();const w=c.querySelector('.spv');if(w)w.classList.add('out');
-    setTimeout(()=>{c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false);done()},S.settings.motion===false?0:320)};
-  v.onended=fin;v.onerror=fin;c.querySelector('.vskip').onclick=fin;v.src=src;const p=v.play();if(p&&p.catch)p.catch(fin)}
+  let ended=false,started=false;
+  const clean=()=>{clearTimeout(guard);v.onended=v.onerror=v.onplaying=null;try{v.pause();v.removeAttribute('src');v.load()}catch(e){}c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false)};
+  const fin=()=>{if(ended)return;ended=true;const w=c.querySelector('.spv');if(w)w.classList.add('out');setTimeout(()=>{clean();done()},S.settings.motion===false?0:320)};
+  // Se o vídeo não carregar/tocar, mostra a animação antiga em vez de pular a Suprema
+  const fallback=why=>{if(ended)return;ended=true;console.warn('Vídeo da Suprema não tocou ('+why+'):',src);clean();if(u&&ch){cutIn(u,ch.ult.name);setTimeout(done,1000)}else done()};
+  v.onplaying=()=>{started=true;clearTimeout(guard)};
+  v.onended=fin;v.onerror=()=>started?fin():fallback('erro ao carregar');c.querySelector('.vskip').onclick=fin;
+  const guard=setTimeout(()=>{if(!started)fallback('demorou demais')},4000);
+  v.src=src;v.load();
+  const tryPlay=()=>{const p=v.play();if(p&&p.catch)p.catch(()=>{ // navegador bloqueou som: toca sem som
+    v.muted=true;const p2=v.play();if(p2&&p2.catch)p2.catch(()=>fallback('reprodução bloqueada'))})};
+  tryPlay()}

@@ -61,4 +61,26 @@ const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",music
  // Música de cada capítulo (toca na cutscene, na região, na montagem de equipe e nas batalhas do capítulo)
  cap1:"media/capitulos/cap1.mp3",cap2:"media/capitulos/cap2.mp3",cap3:"media/capitulos/cap3.mp3",
  cap4:"media/capitulos/cap4.mp3",cap5:"media/capitulos/cap5.mp3",cap6:"media/capitulos/cap6.mp3",
- cap7:"media/capitulos/cap7.mp3",cap8:"media/capitulos/cap8.mp3",cap9:"media/capitulos/cap9.mp3"};
+ cap7:"media/capitulos/cap7.mp3",cap8:"media/capitulos/cap8.mp3",cap9:"media/capitulos/cap9.mp3",
+ // Vídeos das Supremas (media/especiais/<id>.mp4). Para adicionar o Líder: esp_lider:"media/especiais/lider.mp4"
+ esp_dj:"media/especiais/dj.mp4",
+ esp_atleta:"media/especiais/atleta.mp4",
+ esp_engenheiro:"media/especiais/engenheiro.mp4",
+ esp_historiadora:"media/especiais/historiadora.mp4",
+ esp_protagonista:"media/especiais/protagonista.mp4",
+ esp_artista:"media/especiais/artista.mp4",
+ esp_inventor:"media/especiais/inventor.mp4",
+ esp_capoeirista:"media/especiais/capoeirista.mp4",
+ esp_empreendedora:"media/especiais/empreendedora.mp4",
+ esp_pesquisador:"media/especiais/pesquisador.mp4",
+ esp_medica:"media/especiais/medica.mp4",
+ esp_policial:"media/especiais/policial.mp4",
+ esp_musico:"media/especiais/musico.mp4",
+ esp_dancarina:"media/especiais/dancarina.mp4",
+ esp_chef:"media/especiais/chef.mp4",
+ esp_fotografa:"media/especiais/fotografa.mp4",
+ esp_astronauta:"media/especiais/astronauta.mp4",
+ esp_guerreiro:"media/especiais/guerreiro.mp4",
+ esp_cantora:"media/especiais/cantora.mp4",
+ esp_cientista:"media/especiais/cientista.mp4",
+ esp_esportista:"media/especiais/esportista.mp4"};
