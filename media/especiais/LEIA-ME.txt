@@ -25,3 +25,9 @@ cantora.mp4
 cientista.mp4
 esportista.mp4
 (engenheiro = André Cruz, protagonista = Kayo)
+
+SITUAÇÃO ATUAL
+21 especiais já estão aqui (720x960, 3:4, cerca de 4 s cada).
+Falta lider.mp4 (Líder Comunitário): o trecho dele no vídeo original estava todo preto.
+Enquanto o arquivo não existir, a Suprema do Líder usa a animação normal do jogo.
+Formato recomendado para novos vídeos: MP4 (H.264 + AAC), proporção 3:4, ex.: 720x960.

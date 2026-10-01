@@ -144,7 +144,7 @@ function doAct(u,k){const c=CH[u.key];u._acted=true;
   else if(k==='special'){log(`<b>${u.name}</b> usa <b>${c.sp.name}</b>!`);runFx(u,c.sp.fx,false);u.cd=c.sp.cd+1;gainEn(u,15);if(u.side==='h')st('specials');sfx('special');combos(u)}
   else if(k==='ult'){u.energy=0;if(u.side==='h')st('ults');sfx('ult');
     const go=()=>{log(`<b>${u.name}</b>: SUPREMA <b>${c.ult.name}</b>!`);runFx(u,c.ult.fx,true);endTurn(u,900)};
-    if(B.ui&&window.MEDIA&&MEDIA['esp_'+u.key]){specialVideo(MEDIA['esp_'+u.key],go)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
+    if(B.ui&&window.MEDIA&&MEDIA['esp_'+u.key]){specialVideo(MEDIA['esp_'+u.key],go,u)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
   endTurn(u);
 }
 function cutIn(u,name){const c=document.getElementById('cutin');c.innerHTML=`<div class="ci" style="--tc:${TYPES[u.type].c}">${portrait(u.key)}<div><small>Suprema</small><h2>${name}</h2><p>"${pick(CH[u.key].lines)}"</p></div></div>`;c.classList.add('on');setTimeout(()=>c.classList.remove('on'),950)}
@@ -314,7 +314,15 @@ function tutStep(){const t=document.getElementById('tut');if(!t)return;if(B.tut>
 
 // ===================== VÍDEOS DE ESPECIAIS =====================
 // Coloque MEDIA['esp_<id do personagem>'] em js/assets.js e o vídeo toca na Suprema desse personagem.
-function specialVideo(src,done){const c=document.getElementById('cutin');c.innerHTML=`<div class="spv"><video id="spv" playsinline></video><button class="btn small vskip">Pular ⏭</button></div>`;c.classList.add('on','vidon');
-  const v=c.querySelector('video');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;ChMusic.setDuck(true);
-  let ended=false;const fin=()=>{if(ended)return;ended=true;v.pause();c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false);done()};
+function specialVideo(src,done,u){const c=document.getElementById('cutin');
+  const ch=u?CH[u.key]:null,tc=u?TYPES[u.type].c:'#f5b82e';
+  const info=ch?`<div class="spv-info"><svg class="spv-crown" viewBox="0 0 64 40" aria-hidden="true"><path d="M4 36 8 8l14 14L32 2l10 20L56 8l4 28z"/></svg><small>Suprema de ${esc(charName(u.key))} <span class="spv-type">${TYPES[u.type].ic} ${u.type}</span></small><h2>${esc(ch.ult.name)}</h2><p class="spv-who">${esc(ch.title)} · ${esc(ch.origin)}</p><p class="spv-q">“${esc(pick(ch.lines).replace(/\{P\}/g,P()))}”</p></div>`:'';
+  c.innerHTML=`<div class="spv" style="--tc:${tc}">${ch?`<div class="spv-bg" style="background-image:url(${IMG[u.key]})"></div>`:''}<div class="spv-chev"></div>${info}
+   <div class="spv-frame${ch?'':' solo'}"><div class="spv-back"></div><div class="spv-box"><video id="spv" playsinline preload="auto"></video><div class="spv-shine"></div></div><div class="spv-bar"><i id="spvbar"></i></div></div>
+   <div class="spv-flash"></div><button class="btn small vskip">Pular ⏭</button></div>`;
+  c.classList.add('on','vidon');
+  const v=c.querySelector('video'),bar=c.querySelector('#spvbar');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;ChMusic.setDuck(true);
+  v.ontimeupdate=()=>{if(v.duration)bar.style.width=Math.min(100,v.currentTime/v.duration*100)+'%'};
+  let ended=false;const fin=()=>{if(ended)return;ended=true;v.pause();const w=c.querySelector('.spv');if(w)w.classList.add('out');
+    setTimeout(()=>{c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false);done()},S.settings.motion===false?0:320)};
   v.onended=fin;v.onerror=fin;c.querySelector('.vskip').onclick=fin;v.src=src;const p=v.play();if(p&&p.catch)p.catch(fin)}

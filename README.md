@@ -47,3 +47,7 @@ O jogo entra em tela cheia e na horizontal ao tocar em INICIAR e volta para tela
 ## Músicas dos capítulos
 
 Cada capítulo tem sua própria música em `media/capitulos/cap1.mp3` a `cap9.mp3`. Ela toca na cutscene do capítulo, na tela da região, na montagem de equipe e nas batalhas daquela região (o capítulo 9 toca na batalha final). Para trocar uma música, basta substituir o arquivo mantendo o nome. Se um arquivo faltar, o jogo usa a trilha procedural da região. Menus continuam com `media/musica.mp3`, e os minigames (Ritmo, Corrida) mantêm a trilha própria.
+
+## Vídeos das Supremas
+
+Os especiais ficam em `media/especiais/<id>.mp4` (3:4, 720x960, ~4 s). Ao usar a Suprema, o vídeo aparece em uma moldura grande inclinada, com o nome da Suprema, o personagem, o tipo, uma fala e uma barra de progresso, sobre um fundo desfocado na cor do tipo. A música do capítulo abaixa enquanto o vídeo toca. Falta `lider.mp4`.
