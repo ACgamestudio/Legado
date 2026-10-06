@@ -45,15 +45,43 @@ AFTER.memory=()=>{const pool=shuffle(ITEMS.filter(i=>i.region!=='legado')).slice
       else{lock=true;setTimeout(()=>{open.forEach(o=>o.classList.remove('open'));open=[];lock=false},800)}}})};
 
 // ---------- QUIZ ----------
-SCREENS.quiz=()=>topbar('Quiz Cultural','challenges')+`<div class="quiz panel" id="qz"></div>`;
-AFTER.quiz=()=>{const qs=shuffle(QUIZ).slice(0,8);let i=0,right=0,timer,tl;const box=document.getElementById('qz');
-  const ask=()=>{if(i>=qs.length){clearInterval(timer);if(right===8)st('quizPerfect');miniReward(right,8,`Quiz: ${right}/8 acertos`);return}
-    const q=qs[i],opts=shuffle(q[1].map((o,k)=>({o,ok:k===q[2]})));tl=15;
-    box.innerHTML=`<div class="qh"><small>Pergunta ${i+1} de 8</small><div class="qt"><i id="qbar"></i></div><b>${right} acertos</b></div><h2>${q[0]}</h2><div class="qopts">${opts.map((o,k)=>`<button class="btn qo" data-k="${k}">${o.o}</button>`).join('')}</div>`;
-    const answer=k=>{clearInterval(timer);const ok=k>=0&&opts[k].ok;box.querySelectorAll('.qo').forEach((b,j)=>{b.disabled=true;b.classList.add(opts[j].ok?'right':(j===k?'wrong':''))});if(ok){right++;st('quizRight');sfx('good')}else sfx('miss');i++;setTimeout(ask,1300)};
-    box.querySelectorAll('.qo').forEach(b=>b.onclick=()=>answer(+b.dataset.k));
-    clearInterval(timer);timer=setInterval(()=>{if(CUR!=='quiz'){clearInterval(timer);return}tl-=.1;const qb=document.getElementById('qbar');if(qb)qb.style.width=(tl/15*100)+'%';if(tl<=0)answer(-1)},100)};
-  ask()};
+// As perguntas são da região escolhida e o fundo mostra o lugar de cada pergunta.
+// Depois de responder, aparece a resposta certa e o porquê.
+const QZ_MUNDO='mundo';
+function quizPool(r){return r&&r!==QZ_MUNDO?QUIZ.filter(q=>q.r===r):QUIZ}
+function quizOpts(q){return shuffle(q.o.map((o,k)=>({o,ok:k===0})))}
+function quizPlace(q){const r=RG[q.r];return r?`📍 ${esc(r.name)} · ${esc(r.sub)}`:'📍 Mundo'}
+function quizOptsHTML(opts){return `<div class="qopts">${opts.map((o,k)=>`<button class="btn qo" data-k="${k}"><i>${'ABCD'[k]}</i>${esc(o.o)}</button>`).join('')}</div>`}
+// Marca as opções, mostra a resposta certa + explicação e um botão para seguir
+function quizReveal(box,q,opts,k,btnTxt,next){
+  const ok=k>=0&&opts[k].ok;
+  box.querySelectorAll('.qo').forEach((b,j)=>{b.disabled=true;b.classList.add(opts[j].ok?'right':(j===k?'wrong':'dim'))});
+  const fb=document.createElement('div');fb.className='qfb '+(ok?'ok':'bad');
+  fb.innerHTML=`<div class="qfb-h"><b>${ok?'✔ Acertou!':k<0?'⏰ Tempo esgotado':'✘ Não foi dessa vez'}</b><span>Resposta certa: <strong>${esc(q.o[0])}</strong></span></div><p><em>Por quê?</em> ${esc(q.why)}</p><button class="btn gold qnext">${btnTxt}</button>`;
+  box.appendChild(fb);
+  const nb=fb.querySelector('.qnext');nb.onclick=e=>{e.stopPropagation();sfx('click');next()};setTimeout(()=>{try{nb.focus({preventScroll:true})}catch(e){}},60);
+  return ok}
+
+SCREENS.quiz=()=>`<div class="scene-wrap" id="qbg"></div>`+topbar('Quiz Cultural','challenges')+`<div class="quiz panel" id="qz"></div>`;
+AFTER.quiz=()=>{const box=document.getElementById('qz'),bg=document.getElementById('qbg');let bgId=null,timer;
+  const setBG=r=>{r=RG[r]?r:'brasil';if(r===bgId)return;bgId=r;bg.innerHTML=sceneBG(r)};
+  const pickRegion=()=>{clearInterval(timer);box.classList.add('pick');setBG(window.QZ_LAST&&RG[window.QZ_LAST]?window.QZ_LAST:'brasil');
+    box.innerHTML=`<h2>Onde vai ser o quiz?</h2><p class="note">As perguntas falam da história e da cultura do lugar escolhido. Depois de cada resposta você vê a resposta certa e o porquê.</p>
+    <div class="qregs">${REGIONS.map(r=>`<button class="qreg${window.QZ_LAST===r.id?' last':''}" data-r="${r.id}" style="--c1:${r.c1};--c2:${r.c2}"><b>${esc(r.name)}</b><small>${esc(r.sub)}</small><em>${quizPool(r.id).length} perguntas</em></button>`).join('')}
+    <button class="qreg mundo${window.QZ_LAST===QZ_MUNDO?' last':''}" data-r="${QZ_MUNDO}"><b>🌍 Volta ao mundo</b><small>Todas as regiões misturadas</small><em>${QUIZ.length} perguntas</em></button></div>`;
+    box.querySelectorAll('.qreg').forEach(b=>{const r=b.dataset.r;b.onmouseenter=()=>{if(RG[r])setBG(r)};b.onclick=()=>{sfx('click');window.QZ_LAST=r;play(r)}})};
+  const play=reg=>{box.classList.remove('pick');const qs=shuffle(quizPool(reg)).slice(0,8),N=qs.length;let i=0,right=0,tl;
+    const where=RG[reg]?RG[reg].name:'Volta ao mundo';
+    const ask=()=>{clearInterval(timer);if(i>=N){if(right===8)st('quizPerfect');miniReward(right,N,`Quiz ${where}: ${right}/${N} acertos`);return}
+      const q=qs[i],opts=quizOpts(q);tl=20;setBG(q.r);let done=false;
+      box.innerHTML=`<div class="qh"><small>Pergunta ${i+1} de ${N}</small><div class="qt"><i id="qbar"></i></div><b id="qright">${right} acerto${right===1?'':'s'}</b></div><div class="qplace" style="--c1:${RG[q.r]?RG[q.r].c1:'#555'}">${quizPlace(q)}</div><h2>${esc(q.q)}</h2>${quizOptsHTML(opts)}`;
+      const answer=k=>{if(done)return;done=true;clearInterval(timer);
+        const ok=quizReveal(box,q,opts,k,i+1<N?'Próxima pergunta ▶':'Ver resultado ▶',()=>{i++;ask()});
+        if(ok){right++;st('quizRight');sfx('good')}else sfx('miss');const rb=document.getElementById('qright');if(rb)rb.textContent=right+(right===1?' acerto':' acertos')};
+      box.querySelectorAll('.qo').forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+      timer=setInterval(()=>{if(CUR!=='quiz'){clearInterval(timer);return}tl-=.1;const qb=document.getElementById('qbar');if(qb)qb.style.width=(tl/20*100)+'%';if(tl<=0)answer(-1)},100)};
+    ask()};
+  pickRegion()};
 
 // ---------- CORRIDA DO BAOBÁ ----------
 SCREENS.runner=()=>topbar('Corrida do Baobá','challenges')+`<div class="mg"><canvas id="rn" width="1100" height="560"></canvas><div class="mgside panel"><h3>Corra, ${esc(P())}!</h3><p>Toque na tela ou aperte <kbd>espaço</kbd> para pular. Pulo duplo permitido. Colete 🐚 e desvie dos tambores da Névoa.</p><p id="rd">0 m</p><button class="btn gold" id="rgo2">Começar</button></div></div>`;

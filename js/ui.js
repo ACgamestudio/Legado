@@ -7,7 +7,8 @@ function bindAll(){stage().querySelectorAll('[data-go]').forEach(b=>b.onclick=e=
 const AFTER={};
 // Fundo de cada região = imagem do capítulo dela (assets/capitulos); se não houver, usa assets/fundos; senão, o desenho
 const REGION_CH={brasil:1,ocidental:2,caribe:3,eua:4,austral:5,latina:6,oriental:7,futuro:8,final:9};
-function sceneBG(id){const src=IMG['ch_'+REGION_CH[id]]||IMG['bg_'+id];if(src)return `<div class="scene photo" style="background-image:url(${src})"></div>`;return sceneSVG(id)}
+// Todo fundo ganha a camada viva (poeira brilhante + troca de luz); o zoom lento vem do CSS em .scene
+function sceneBG(id){const src=IMG['ch_'+REGION_CH[id]]||IMG['bg_'+id];return (src?`<div class="scene photo" style="background-image:url(${src})"></div>`:sceneSVG(id))+LiveFX.layer()}
 function portrait(id,cls=''){return `<img class="pt ${cls}" src="${IMG[id]}" alt="${esc(charName(id))}" draggable="false">`}
 function typeTag(t){const T=TYPES[t];return `<span class="tt" style="--tc:${T.c}">${T.ic} ${t}</span>`}
 function rarTag(r){return `<span class="rt" style="--rc:${RAR[r].c}">${'◆'.repeat(RAR[r].n)} ${r}</span>`}
@@ -19,7 +20,7 @@ const SCREENS={
 // ---------------------------- MENU (arte do cliente) ----------------------------
 menu(){
   const ev=currentEvent();
-  return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>
+  return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>${LiveFX.layer()}
   <nav class="menu-hot" aria-label="Menu principal">
     <button class="hot" style="left:19px;top:362px;width:416px;height:60px" data-act="play" aria-label="Jogar"></button>
     <button class="hot" style="left:48px;top:435px;width:344px;height:58px" data-go="story" aria-label="Modo história"></button>
@@ -35,7 +36,7 @@ menu(){
 
 // ---------------------------- TELA INICIAR ----------------------------
 start(){return `<div class="start">
-  <div class="kb kb1" style="background-image:url(${IMG.cidade1})"></div><div class="kb kb2" style="background-image:url(${IMG.cidade2})"></div>
+  <div class="kb kb1" style="background-image:url(${IMG.cidade1})"></div><div class="kb kb2" style="background-image:url(${IMG.cidade2})"></div>${LiveFX.layer()}
   <div class="start-shade"></div>
   <div class="start-in">${LOGO(1.25)}<p class="slogan">Nossa história é o nosso maior poder.</p>
   <button class="btn gold iniciar" id="iniciar">▶ INICIAR</button><small class="start-hint">Toque para entrar em tela cheia</small></div>
@@ -93,7 +94,7 @@ team(ctx){ // ctx: JSON-ish string stored in window.PENDING
 
 // ---------------------------- HISTÓRIA ----------------------------
 story(){ Audio.play('menu');
-  return topbar('Modo história','menu')+`<div class="chapters">${CHAPTERS.map(c=>{const done=S.chDone.includes(c.n),open=c.n<=S.chapter;const bg=c.region==='final'?'final':c.region;return `<button class="chap ${done?'done':''} ${open?'':'locked'}" ${open?`data-act="chap" data-n="${c.n}"`:''}>${IMG['ch_'+c.n]?`<div class="scene photo chph" style="background-image:url(${IMG['ch_'+c.n]})"></div>`:sceneBG(bg)}<div><small>${c.n===9?'Capítulo final':'Capítulo '+c.n}</small><b>${c.title}</b><em class="cplace">📍 ${c.place}</em><p class="cfact">${c.fact}</p><span>${done?'✔ Concluído':open?'▶ Jogar':'🔒 Bloqueado'}</span></div></button>`}).join('')}</div>`},
+  return topbar('Modo história','menu')+`<div class="chapters">${CHAPTERS.map(c=>{const done=S.chDone.includes(c.n),open=c.n<=S.chapter;const bg=c.region==='final'?'final':c.region;return `<button class="chap ${done?'done':''} ${open?'':'locked'}" ${open?`data-act="chap" data-n="${c.n}"`:''}>${IMG['ch_'+c.n]?`<div class="scene photo chph" style="background-image:url(${IMG['ch_'+c.n]})"></div>${LiveFX.layer()}`:sceneBG(bg)}<div><small>${c.n===9?'Capítulo final':'Capítulo '+c.n}</small><b>${c.title}</b><em class="cplace">📍 ${c.place}</em><p class="cfact">${c.fact}</p><span>${done?'✔ Concluído':open?'▶ Jogar':'🔒 Bloqueado'}</span></div></button>`}).join('')}</div>`},
 cutscene(n,part){return `<div class="scene-wrap">${sceneBG((CHAPTERS[n-1].region==='final')?'final':CHAPTERS[n-1].region)}</div><div class="cut"><div class="cut-title"><small>${n===9?'Capítulo final':'Capítulo '+n}</small><h2>${CHAPTERS[n-1].title}</h2><em class="cplace">📍 ${CHAPTERS[n-1].place}</em></div><div class="cut-actors" id="actors"></div><div class="dlg panel" id="dlg"><b id="dn"></b><p id="dt"></p><span class="dnext">Toque para continuar ▸</span></div><button class="btn small skip" id="skip">Pular ⏭</button></div>`},
 
 // ---------------------------- PERSONAGENS ----------------------------
@@ -206,7 +207,7 @@ AFTER.customize=()=>{let av=S.avatar,acc=S.accent;
   stage().querySelectorAll('[data-acc]').forEach(b=>b.onclick=()=>{const A=ACCENTS.find(a=>a.id===b.dataset.acc);if(!S.accents.includes(A.id)){if(S.sementes<A.cost){toast('Sementes insuficientes','🌱');return}S.sementes-=A.cost;S.accents.push(A.id);toast(`Cor ${A.name} desbloqueada`,'🎨')}acc=A.id;document.documentElement.style.setProperty('--acc',A.c);stage().querySelectorAll('[data-acc]').forEach(x=>x.classList.toggle('on',x===b));save()});
   document.getElementById('csave').onclick=()=>{S.name=(document.getElementById('cn').value.trim()||'Kayo').slice(0,14);S.title=document.getElementById('ct').value;S.avatar=av;S.accent=acc;st('custom');save();checkAch();toast('Perfil salvo','✔');show('customize')};
 };
-AFTER.settings=()=>{const u=()=>{S.settings.music=+document.getElementById('sm').value;S.settings.sfx=+document.getElementById('ss').value;S.settings.motion=document.getElementById('smo').checked;S.settings.fs=document.getElementById('sfs').checked;Audio.vol();save();if(S.settings.fs)goFullscreen();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})};['sm','ss','smo','sfs'].forEach(i=>document.getElementById(i).oninput=u);
+AFTER.settings=()=>{const u=()=>{S.settings.music=+document.getElementById('sm').value;S.settings.sfx=+document.getElementById('ss').value;S.settings.motion=document.getElementById('smo').checked;S.settings.fs=document.getElementById('sfs').checked;LiveFX.apply();Audio.vol();save();if(S.settings.fs)goFullscreen();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})};['sm','ss','smo','sfs'].forEach(i=>document.getElementById(i).oninput=u);
   document.getElementById('reset').onclick=()=>{const m=modal(`<h2>Apagar todo o progresso?</h2><p>Isso não pode ser desfeito.</p><button class="btn danger" id="rs2">Apagar</button>`);m.querySelector('#rs2').onclick=()=>{localStorage.removeItem(SAVE_KEY);load();m.remove();show('menu')}}};
 AFTER.multi=()=>{stage().querySelector('[data-act=duel]').onclick=()=>{sfx('click');duelSetup()}};
 AFTER.expedition=()=>{stage().querySelector('[data-act=expstart]').onclick=()=>{sfx('click');window.PENDING={mode:'expedition',back:'expedition'};show('team')}};
@@ -249,13 +250,19 @@ function startTutorial(){window.PENDING={mode:'story',region:'brasil',node:0,tut
 function startNode(rid,i){
   const r=RG[rid];
   const go=()=>{window.PENDING={mode:'story',region:rid,node:i,back:'region|'+rid};show('team')};
-  if(i===1&&(S.region[rid]||0)<=1){ quizGate(go) } else go();
+  if(i===1&&(S.region[rid]||0)<=1){ quizGate(go,rid) } else go();
 }
-function quizGate(cb){const q=pick(QUIZ);const opts=shuffle(q[1].map((o,i)=>({o,ok:i===q[2]})));
-  const m=modal(`<div class="qg"><small>Desafio cultural</small><h2>${q[0]}</h2><div class="qopts">${opts.map((o,i)=>`<button class="btn qo" data-i="${i}">${o.o}</button>`).join('')}</div><p class="note">Acertar dá um colecionável extra. Errar não bloqueia: você aprende e segue.</p></div>`);
-  m.querySelectorAll('.qo').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];m.querySelectorAll('.qo').forEach((x,j)=>x.classList.add(opts[j].ok?'right':'wrong'));
-    if(o.ok){st('quizRight');sfx('win');window.QUIZ_BONUS=true}else sfx('miss');
-    setTimeout(()=>{m.remove();cb()},1300)})}
+// Desafio Cultural: pergunta sobre a região onde o jogador está; depois mostra a resposta certa e o porquê
+function quizGate(cb,rid){
+  const seen=window.QG_SEEN||(window.QG_SEEN=[]);let pool=quizPool(RG[rid]?rid:QZ_MUNDO);
+  const fresh=pool.filter(q=>!seen.includes(q.q));if(fresh.length)pool=fresh;
+  const q=pick(pool);seen.push(q.q);if(seen.length>40)seen.shift();
+  const opts=quizOpts(q);let answered=false;
+  const m=modal(`<div class="qg" style="--c1:${RG[q.r]?RG[q.r].c1:'#555'}"><small>Desafio cultural</small><div class="qplace">${quizPlace(q)}</div><h2>${esc(q.q)}</h2>${quizOptsHTML(opts)}<p class="note">Acertar dá um colecionável extra. Errar não bloqueia: você aprende e segue.</p></div>`,()=>{if(answered)cb()});
+  const box=m.querySelector('.qg');
+  m.querySelectorAll('.qo').forEach(b=>b.onclick=()=>{if(answered)return;answered=true;const n=box.querySelector('.note');if(n)n.remove();
+    const ok=quizReveal(box,q,opts,+b.dataset.k,'Continuar ▶',()=>{m.remove();cb()});
+    if(ok){st('quizRight');sfx('win');window.QUIZ_BONUS=true}else sfx('miss')})}
 
 // ---------------------------- SELEÇÃO DE EQUIPE ----------------------------
 AFTER.team=()=>{

@@ -31,3 +31,6 @@ SITUAÇÃO ATUAL
 Falta lider.mp4 (Líder Comunitário): o trecho dele no vídeo original estava todo preto.
 Enquanto o arquivo não existir, a Suprema do Líder usa a animação normal do jogo.
 Formato recomendado para novos vídeos: MP4 (H.264 + AAC), proporção 3:4, ex.: 720x960.
+
+SEM SOM
+engenheiro.mp4 está sem áudio (removido do arquivo e silenciado no jogo pela lista SPV_MUDO em js/battle.js).

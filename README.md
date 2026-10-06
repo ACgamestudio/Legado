@@ -18,6 +18,7 @@ js/data.js          personagens, regiões, inimigos, chefes, história
 js/data2.js         colecionáveis, quiz, construções, missões, eventos
 js/core.js          salvamento, progressão, conquistas, trilha sonora procedural
 js/gfx.js           cenários e inimigos em SVG
+js/fx.js            cenários vivos: poeira brilhante, troca de luz e zoom lento
 js/ui.js            telas e menus
 js/battle.js        combate, recompensas, expedição, tutorial
 js/mini.js          desafios rápidos (ritmo, memória, quiz, corrida)
@@ -51,3 +52,15 @@ Cada capítulo tem sua própria música em `media/capitulos/cap1.mp3` a `cap9.mp
 ## Vídeos das Supremas
 
 Os especiais ficam em `media/especiais/<id>.mp4` (3:4, 720x960, ~4 s). Ao usar a Suprema, o vídeo aparece em uma moldura grande inclinada, com o nome da Suprema, o personagem, o tipo, uma fala e uma barra de progresso, sobre um fundo desfocado na cor do tipo. A música do capítulo abaixa enquanto o vídeo toca. Falta `lider.mp4`.
+
+## Cenários vivos
+
+Todos os fundos parados (regiões, capítulos, cutscenes, batalhas, Vila Baobá, menu e tela inicial) ganham poeira brilhante, troca lenta de iluminação (luz quente e sombra fria se alternando) e zoom lento. O menu principal não tem zoom para não desalinhar os botões desenhados na arte. Tudo desliga com "Animações" desmarcado nas Configurações ou com "reduzir movimento" ativado no aparelho.
+
+## Quiz
+
+Cada pergunta pertence a uma região (`r` em `js/data2.js`) e tem uma explicação (`why`). A resposta certa é sempre a primeira opção da lista; o jogo embaralha. O Desafio Cultural de cada região pergunta só sobre aquela região. No Quiz Cultural o jogador escolhe a região (ou "Volta ao mundo") e o fundo muda para o lugar de cada pergunta. Depois de responder, aparece a resposta certa e o porquê.
+
+## Especial sem som
+
+O vídeo `media/especiais/engenheiro.mp4` (André Cruz) não tem mais faixa de áudio, e o jogo também toca esse especial sempre mudo (lista `SPV_MUDO` em `js/battle.js`). Para silenciar outro especial, acrescente o id do personagem nessa lista.

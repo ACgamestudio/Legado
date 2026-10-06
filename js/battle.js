@@ -314,6 +314,7 @@ function tutStep(){const t=document.getElementById('tut');if(!t)return;if(B.tut>
 
 // ===================== VÍDEOS DE ESPECIAIS =====================
 // Coloque MEDIA['esp_<id do personagem>'] em js/assets.js e o vídeo toca na Suprema desse personagem.
+const SPV_MUDO=['engenheiro'];
 function specialVideo(src,done,u){const c=document.getElementById('cutin');
   const ch=u?CH[u.key]:null,tc=u?TYPES[u.type].c:'#f5b82e';
   const info=ch?`<div class="spv-info"><svg class="spv-crown" viewBox="0 0 64 40" aria-hidden="true"><path d="M4 36 8 8l14 14L32 2l10 20L56 8l4 28z"/></svg><small>Suprema de ${esc(charName(u.key))} <span class="spv-type">${TYPES[u.type].ic} ${u.type}</span></small><h2>${esc(ch.ult.name)}</h2><p class="spv-who">${esc(ch.title)} · ${esc(ch.origin)}</p><p class="spv-q">“${esc(pick(ch.lines).replace(/\{P\}/g,P()))}”</p></div>`:'';
@@ -323,6 +324,8 @@ function specialVideo(src,done,u){const c=document.getElementById('cutin');
   c.classList.add('on','vidon');
   const v=c.querySelector('video'),bar=c.querySelector('#spvbar');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;ChMusic.setDuck(true);
   v.setAttribute('webkit-playsinline','');v.playsInline=true;
+  // Especiais que tocam sem som (o arquivo do André Cruz também já está sem a faixa de áudio)
+  if(u&&SPV_MUDO.includes(u.key)){v.muted=true;v.defaultMuted=true;v.setAttribute('muted','')}
   v.ontimeupdate=()=>{if(v.duration)bar.style.width=Math.min(100,v.currentTime/v.duration*100)+'%'};
   let ended=false,started=false;
   const clean=()=>{clearTimeout(guard);v.onended=v.onerror=v.onplaying=null;try{v.pause();v.removeAttribute('src');v.load()}catch(e){}c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false)};
