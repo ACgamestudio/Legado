@@ -20,7 +20,7 @@ const SCREENS={
 // ---------------------------- MENU (arte do cliente) ----------------------------
 menu(){
   const ev=currentEvent();
-  return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>${LiveFX.layer()}
+  return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>
   <nav class="menu-hot" aria-label="Menu principal">
     <button class="hot" style="left:19px;top:362px;width:416px;height:60px" data-act="play" aria-label="Jogar"></button>
     <button class="hot" style="left:48px;top:435px;width:344px;height:58px" data-go="story" aria-label="Modo história"></button>
@@ -95,7 +95,7 @@ team(ctx){ // ctx: JSON-ish string stored in window.PENDING
 // ---------------------------- HISTÓRIA ----------------------------
 story(){ Audio.play('menu');
   return topbar('Modo história','menu')+`<div class="chapters">${CHAPTERS.map(c=>{const done=S.chDone.includes(c.n),open=c.n<=S.chapter;const bg=c.region==='final'?'final':c.region;return `<button class="chap ${done?'done':''} ${open?'':'locked'}" ${open?`data-act="chap" data-n="${c.n}"`:''}>${IMG['ch_'+c.n]?`<div class="scene photo chph" style="background-image:url(${IMG['ch_'+c.n]})"></div>${LiveFX.layer()}`:sceneBG(bg)}<div><small>${c.n===9?'Capítulo final':'Capítulo '+c.n}</small><b>${c.title}</b><em class="cplace">📍 ${c.place}</em><p class="cfact">${c.fact}</p><span>${done?'✔ Concluído':open?'▶ Jogar':'🔒 Bloqueado'}</span></div></button>`}).join('')}</div>`},
-cutscene(n,part){return `<div class="scene-wrap">${sceneBG((CHAPTERS[n-1].region==='final')?'final':CHAPTERS[n-1].region)}</div><div class="cut"><div class="cut-title"><small>${n===9?'Capítulo final':'Capítulo '+n}</small><h2>${CHAPTERS[n-1].title}</h2><em class="cplace">📍 ${CHAPTERS[n-1].place}</em></div><div class="cut-actors" id="actors"></div><div class="dlg panel" id="dlg"><b id="dn"></b><p id="dt"></p><span class="dnext">Toque para continuar ▸</span></div><button class="btn small skip" id="skip">Pular ⏭</button></div>`},
+cutscene(n,part){return `<div class="scene-wrap">${sceneBG((CHAPTERS[n-1].region==='final')?'final':CHAPTERS[n-1].region)}</div><div class="cut"><div class="cut-title"><small>${n===9?'Capítulo final':'Capítulo '+n}</small><h2>${CHAPTERS[n-1].title}</h2><em class="cplace">📍 ${CHAPTERS[n-1].place}</em></div><div class="cut-actors" id="actors"></div><div class="dlg panel" id="dlg"><b id="dn"></b><p id="dt"></p><span class="dnext">Passa sozinho · toque para adiantar ▸</span></div><button class="btn small skip" id="skip">Pular ⏭</button></div>`},
 
 // ---------------------------- PERSONAGENS ----------------------------
 chars(){ Audio.play('menu');
@@ -228,9 +228,9 @@ function playChapter(n,part='scenes',after){
   const ch=CHAPTERS[n-1];
   show('cutscene',n,part);
   Audio.play(ch.region==='final'?'final':RG[ch.region].genre);
-  const lines=ch[part];let i=0;
+  const lines=ch[part];let i=0,autoT=0,autoTok=0;
   const actors=document.getElementById('actors');
-  const step=()=>{ if(i>=lines.length){finish();return}
+  const step=()=>{ clearTimeout(autoT);const tk=++autoTok; if(i>=lines.length){finish();return}
     const [sp,tx]=lines[i++];
     const nm=sp==='narr'?'Narração':BOSSES[sp]?BOSSES[sp].name:charName(sp);
     document.getElementById('dn').textContent=nm;
@@ -239,9 +239,12 @@ function playChapter(n,part='scenes',after){
       actors.querySelectorAll('.actor').forEach(a=>a.classList.toggle('talk',a.dataset.a===sp)); }
     sfx('click');
     // Voz da fala (arquivo gravado em media/vozes/ ou voz automática)
-    Voice.say(Voice.file(n,part,i),t,sp);if(i<lines.length)Voice.preload(Voice.file(n,part,i+1));
+    // Passa sozinho: quando a voz termina (ou, sem voz, depois do tempo de leitura). Tocar adianta.
+    const t0=performance.now(),leitura=Math.max(2600,t.length*55);
+    Voice.say(Voice.file(n,part,i),t,sp,falou=>{if(tk!==autoTok)return;const espera=falou?650:Math.max(400,leitura-(performance.now()-t0));autoT=setTimeout(()=>{if(tk===autoTok&&CUR==='cutscene')step()},espera)});
+    if(i<lines.length)Voice.preload(Voice.file(n,part,i+1));
   };
-  const finish=()=>{clearInterval(window._tw);Voice.stop();if(part==='scenes'){ if(ch.region==='final'){startBattle({mode:'story',region:'final',node:3,chapter:9})} else if(!S.tutorialDone){startTutorial()} else {show('region',ch.region)} } else { after?after():show('hub') }};
+  const finish=()=>{clearInterval(window._tw);clearTimeout(autoT);autoTok++;Voice.stop();if(part==='scenes'){ if(ch.region==='final'){startBattle({mode:'story',region:'final',node:3,chapter:9})} else if(!S.tutorialDone){startTutorial()} else {show('region',ch.region)} } else { after?after():show('hub') }};
   document.getElementById('dlg').onclick=step;
   document.getElementById('skip').onclick=e=>{e.stopPropagation();finish()};
   step();

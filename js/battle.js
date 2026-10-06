@@ -73,7 +73,7 @@ AFTER.battle=()=>{
     const art=u.isChar?portrait(u.key):u.img&&IMG[u.img]?`<img class="pt" src="${IMG[u.img]}" alt="${esc(u.name)}" draggable="false">`:enemySVG(u.shape,u.color,u.boss?u.key:null);
     return `<div class="unit ${u.side} ${u.boss?'boss':''} ${u.isChar?'char':''} ${u.img?'vil':''}" id="u_${u.id}" data-id="${u.id}" style="left:${x}px;top:${y}px;--tc:${TYPES[u.type].c}"><div class="uart">${art}</div><div class="uname">${u.isChar?`${TYPES[u.type].ic} `:''}${esc(u.isChar?short(u.key):u.name)} <small>Nv.${u.lvl}</small></div><div class="hpb"><i class="hp"></i><i class="sh"></i><span></span></div>${u.isChar?'<div class="enb"><i></i></div>':''}<div class="stt"></div><div class="tgt">▼</div></div>`}).join('');
   f.querySelectorAll('.unit').forEach(el=>el.onclick=()=>{const u=B.units.find(x=>x.id===el.dataset.id);if(!u.alive||!B.cur)return;if(u.side!==B.cur.side){B.target[B.cur.side]=u;sfx('click');draw()}});
-  document.getElementById('flee').onclick=()=>{const m=modal(`<h2>Sair da batalha?</h2><p>Você não recebe recompensas desta luta.</p><button class="btn danger" id="fl">Sair</button>`);m.querySelector('#fl').onclick=()=>{B.over=true;m.remove();show(B.ctx.mode==='duel'?'multi':B.ctx.back||'hub')}};
+  document.getElementById('flee').onclick=()=>{const m=modal(`<h2>Sair da batalha?</h2><p>Você não recebe recompensas desta luta.</p><button class="btn danger" id="fl">Sair</button>`);m.querySelector('#fl').onclick=()=>{B.over=true;m.remove();const [n,...args]=(B.ctx.mode==='duel'?'multi':B.ctx.back||'hub').split('|');show(n,...args)}};
   document.onkeydown=e=>{if(CUR!=='battle'||!B||B.busy||!B.cur||B.cur.ai===true)return;const k={'1':'basic','2':'defend','3':'special','4':'ult'}[e.key];if(k)playerAct(k)};
   draw();
 };
@@ -139,7 +139,7 @@ function playerAct(k){const u=B.cur;if(!u||B.busy||B.over)return;
 function heroAI(u){ let k='basic'; if(u.energy>=100)k='ult';else if(u.cd===0)k='special';
   const fs=foes(u);B.target[u.side]=fs.reduce((a,b)=>a.hp<b.hp?a:b);doAct(u,k)}
 function doAct(u,k){const c=CH[u.key];u._acted=true;
-  if(k==='basic'){log(`${u.name}: ${c.basic}`);hit(u,B.target[u.side],1);gainEn(u,25);sfx('hit')}
+  if(k==='basic'){log(`${u.name}: ${c.basic}`);hit(u,B.target[u.side],1);gainEn(u,25)}
   else if(k==='defend'){u.buffs.push({s:'def',v:.6,d:2});gainEn(u,20);log(`${u.name} se defende.`);floatTxt(u,'Defesa','info');sfx('buff')}
   else if(k==='special'){log(`<b>${u.name}</b> usa <b>${c.sp.name}</b>!`);runFx(u,c.sp.fx,false);u.cd=c.sp.cd+1;gainEn(u,15);if(u.side==='h')st('specials');sfx('special');combos(u)}
   else if(k==='ult'){u.energy=0;if(u.side==='h')st('ults');sfx('ult');
@@ -177,16 +177,16 @@ function runFx(u,fx,isUlt){
 }
 function typeMul(a,d){if(TYPES[a].beats===d)return 1.3;if(TYPES[d].beats===a)return .8;return 1}
 function hit(a,t,m,forceCrit,noCounter){ if(!t||!t.alive||!a.alive)return 0;
-  if(Math.random()<Math.min(.9,t.dodge+bsum(t,'dodge'))){floatTxt(t,'Esquivou!','info');return 0}
+  if(Math.random()<Math.min(.9,t.dodge+bsum(t,'dodge'))){floatTxt(t,'Esquivou!','info');Golpe.dodge();return 0}
   let d=eff(a,'atk')*m*typeMul(a.type,t.type)*(50/(50+eff(t,'def')))*rnd(.92,1.08);
   if(a.isChar&&a.type===B.ev.type)d*=1.25;
   d*=1+Math.max(0,bsum(t,'vuln'));
   const cr=forceCrit||Math.random()<a.crit; if(cr){d*=1.6;if(a.side==='h')st('crits');if(a.critEnergy)gainEn(a,10)}
   d=Math.max(1,Math.round(d));
   if(a.side==='h'){stMax('maxHit',d);B.stats.dmg+=d}
-  let rest=d; if(t.shield>0){const ab=Math.min(t.shield,rest);t.shield-=ab;rest-=ab}
+  let rest=d,blk=false; if(t.shield>0){const ab=Math.min(t.shield,rest);t.shield-=ab;rest-=ab;blk=ab>0}
   t.hp-=rest; floatTxt(t,(cr?'CRÍTICO ':'')+d,cr?'dmg crit':'dmg');
-  if(cr)sfx('crit');
+  Golpe.impact(a,cr,blk); // barulho do golpe (js/golpes.js)
   if(typeMul(a.type,t.type)>1&&B.ui)floatTxt(t,'Vantagem!','info');
   if(t.isChar)gainEn(t,8);
   if(a.lifesteal>0)heal(a,d*a.lifesteal,a,true);
@@ -222,7 +222,7 @@ function enemyAct(u){u.turns++;const fs=foes(u);if(!fs.length){endTurn(u);return
       healAlly:()=>{const al=allies(u);const w=al.reduce((a,b)=>a.hp/a.maxhp<b.hp/b.maxhp?a:b);log(`${u.name} usa domínio espiritual em ${w.name}.`);heal(w,w.maxhp*.25,u);hit(u,t,.6)},
       tank:()=>{log(`${u.name} entra em modo de guerra!`);u.shield=Math.min(u.maxhp*.4,u.shield+u.maxhp*.2);floatTxt(u,'🔰','buff');hit(u,t,1.1)}}[u.style]||(()=>hit(u,t,1)))();
     sfx('special');
-  } else {const t=enemyTarget(u);hit(u,t,1);sfx('hit')}
+  } else {const t=enemyTarget(u);hit(u,t,1)}
   endTurn(u);
 }
 

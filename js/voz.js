@@ -13,18 +13,19 @@ const Voice={
     if(part!=='end')return 'media/vozes/cap'+n+'_'+pad(i)+'.mp3';
     const k=i+((CHAPTERS[n-1].scenes||[]).length);
     return ['media/vozes/cap'+n+'_fim_'+pad(i)+'.mp3','media/vozes/cap'+n+'_'+pad(k)+'.mp3']},
-  // Toca a fala; onEnd é chamado quando a voz termina (gravada ou automática)
+  // Toca a fala; onEnd(falou) é chamado quando termina. falou=false se não houve voz (sem arquivo, voz desligada ou bloqueada)
   say(src,text,sp,onEnd){
-    this.stop();if(this.vol()<=0)return;
-    const tk=++this.token;const done=()=>{if(tk!==this.token)return;this.duck(false);this.mark(false);onEnd&&onEnd()};
-    const tts=()=>{if(tk!==this.token)return;if(S.settings.tts===false){done();return}this.speak(text,sp,done,tk)};
+    this.stop();const tk=++this.token;let fim=false;
+    const done=(falou=true)=>{if(tk!==this.token||fim)return;fim=true;clearTimeout(this.guard);this.duck(false);this.mark(false);onEnd&&onEnd(falou)};
+    if(this.vol()<=0){setTimeout(()=>done(false),0);return}
+    const tts=()=>{if(tk!==this.token)return;if(S.settings.tts===false||!('speechSynthesis' in window)){done(false);return}this.speak(text,sp,done,tk)};
     const list=(Array.isArray(src)?src:[src]).filter(f=>!this.faltando[f]);
     if(!list.length){tts();return}
     const a=this.el||(this.el=new window.Audio());a.preload='auto';
-    a.onended=done;let at=0;
+    a.onended=()=>done(true);let at=0;
     a.onerror=()=>{if(tk!==this.token)return;this.faltando[list[at]]=true;at++;if(at<list.length){a.src=list[at];const p2=a.play();if(p2&&p2.catch)p2.catch(()=>{})}else tts()};
     a.src=list[0];a.volume=Math.min(1,this.vol());this.duck(true);this.mark(true);
-    const p=a.play();if(p&&p.catch)p.catch(e=>{if(tk!==this.token)return;if(e&&e.name==='NotAllowedError'){this.duck(false);this.mark(false)}});
+    const p=a.play();if(p&&p.catch)p.catch(e=>{if(tk!==this.token)return;if(e&&e.name==='NotAllowedError')done(false)});
   },
   // Pré-carrega a próxima fala para não ter atraso
   preload(src){const f=Array.isArray(src)?src[0]:src;if(!f||this.faltando[f])return;const a=new window.Audio();a.preload='auto';a.src=f},
@@ -34,18 +35,20 @@ const Voice={
     const F=/luciana|francisca|maria|vit[oó]ria|let[ií]cia|camila|thalita|helo[ií]sa|fernanda|female|feminin|joana|catarina/i,M=/daniel|ant[oô]nio|felipe|ricardo|duarte|male|masculin|j[uú]lio|donato|fabio|humberto/i;
     return vs.find(v=>(fem?F:M).test(v.name))||vs[0]},
   speak(text,sp,done,tk){
-    if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){done();return}
+    if(!window.SpeechSynthesisUtterance){done(false);return}
     const u=new SpeechSynthesisUtterance(text.replace(/["“”]/g,''));u.lang='pt-BR';
     const boss=typeof BOSSES!=='undefined'&&BOSSES[sp],fem=VOZ_FEM.includes(sp);
     const v=this.pickVoice(fem);if(v)u.voice=v;
     u.rate=sp==='narr'?.95:sp==='dj'||sp==='dancarina'?1.12:1.04;
     u.pitch=sp==='narr'?.95:boss?(fem?.85:.55):fem?1.2:.85;
     u.volume=Math.min(1,this.vol());
-    u.onend=u.onerror=()=>{if(tk===this.token)done()};
+    u.onend=()=>{if(tk===this.token)done(true)};u.onerror=()=>{if(tk===this.token)done(false)};
+    // Alguns aparelhos nunca avisam o fim da voz automática: garante que a fala segue
+    clearTimeout(this.guard);this.guard=setTimeout(()=>{if(tk===this.token)done(true)},4000+text.length*90);
     this.duck(true);this.mark(true);
-    try{speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){done()}
+    try{speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){done(false)}
   },
-  stop(){this.token++;if(this.el){this.el.onended=this.el.onerror=null;try{this.el.pause()}catch(e){}}
+  stop(){this.token++;clearTimeout(this.guard);if(this.el){this.el.onended=this.el.onerror=null;try{this.el.pause()}catch(e){}}
     try{if(window.speechSynthesis)speechSynthesis.cancel()}catch(e){}this.duck(false);this.mark(false)},
   // Abaixa a música enquanto alguém fala
   duck(on){if(on===this.ducked)return;this.ducked=on;

@@ -20,6 +20,7 @@ js/core.js          salvamento, progressão, conquistas, trilha sonora procedura
 js/gfx.js           cenários e inimigos em SVG
 js/fx.js            cenários vivos: poeira brilhante, troca de luz e zoom lento
 js/voz.js           vozes das falas (arquivos gravados ou voz automática)
+js/golpes.js        barulhos dos golpes na batalha
 js/ui.js            telas e menus
 js/battle.js        combate, recompensas, expedição, tutorial
 js/mini.js          desafios rápidos (ritmo, memória, quiz, corrida)
@@ -56,7 +57,7 @@ Os especiais ficam em `media/especiais/<id>.mp4` (3:4, 720x960, ~4 s). Ao usar a
 
 ## Cenários vivos
 
-Todos os fundos parados (regiões, capítulos, cutscenes, batalhas, Vila Baobá, menu e tela inicial) ganham poeira brilhante, troca lenta de iluminação (luz quente e sombra fria se alternando) e zoom lento. O menu principal não tem zoom para não desalinhar os botões desenhados na arte. Tudo desliga com "Animações" desmarcado nas Configurações ou com "reduzir movimento" ativado no aparelho.
+Todos os fundos parados (regiões, capítulos, cutscenes, batalhas, Vila Baobá e tela inicial) ganham poeira brilhante, troca lenta de iluminação (luz quente e sombra fria se alternando) e zoom lento. O menu principal fica sem esses efeitos. Tudo desliga com "Animações" desmarcado nas Configurações ou com "reduzir movimento" ativado no aparelho.
 
 ## Quiz
 
@@ -74,3 +75,9 @@ As falas das cutscenes tocam arquivos gravados em `media/vozes/`:
 - final do capítulo: `cap<capítulo>_fim_<número>.mp3` (ex.: `cap1_fim_01.mp3`)
 
 A lista completa, com quem fala e o texto de cada arquivo, está em `media/vozes/ROTEIRO.md`. Se um arquivo não existir, o jogo usa a voz automática do navegador (pode ser desligada nas Configurações, onde também há o volume das vozes). A música abaixa enquanto alguém fala, e um 🔊 aparece ao lado do nome.
+
+As falas passam sozinhas: quando a voz termina, o jogo vai para a próxima. Sem voz, espera o tempo de leitura do texto. Tocar na caixa de diálogo adianta.
+
+## Sons dos golpes
+
+Cada golpe que acerta faz barulho de impacto com o estilo do tipo de quem ataca (Corpo: soco pesado; Ritmo: tambor e palma; Tech: choque elétrico; Mente: sino; Espírito: estrondo místico; vilões: golpe sombrio). Crítico tem estalo extra, esquiva faz zunido e escudo faz som metálico. Os sons são criados na hora em `js/golpes.js` e seguem o volume de "Efeitos sonoros".
