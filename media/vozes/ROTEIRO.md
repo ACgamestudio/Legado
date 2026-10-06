@@ -4,7 +4,7 @@ Cada fala tem um arquivo próprio em `media/vozes/`. Grave em MP3, uma fala por 
 
 Onde aparece **[nome do jogador]**, o jogo mostra o nome que a pessoa escolheu. Na gravação, diga algo genérico (por exemplo "parceiro") ou pule o nome.
 
-**Gravadas: 13 de 79 falas** (✅ = arquivo já está na pasta).
+**Gravadas: 17 de 79 falas** (✅ = arquivo já está na pasta).
 
 ## Capítulo 1: As Raízes
 
@@ -30,10 +30,10 @@ Onde aparece **[nome do jogador]**, o jogo mostra o nome que a pessoa escolheu. 
 
 | Arquivo | Quem fala | Fala |
 |---|---|---|
-| `cap1_fim_01.mp3` | Luana "Ginga" Santos | A Zara fugiu! E olha, o bloco voltou a tocar! |
-| `cap1_fim_02.mp3` | Kayo | As páginas estão voltando! A foto da minha mãe... está aqui de novo. |
-| `cap1_fim_03.mp3` | Kofi Boateng | Isso foi só o começo. O livro está apontando para o outro lado do oceano. |
-| `cap1_fim_04.mp3` | Kayo | Então vamos. Tem muita história lá fora esperando alguém lembrar. |
+| ✅ `cap1_fim_01.mp3` | Luana "Ginga" Santos | A Zara fugiu! E olha, o bloco voltou a tocar! |
+| ✅ `cap1_fim_02.mp3` | Kayo | As páginas estão voltando! A foto da minha mãe... está aqui de novo. |
+| ✅ `cap1_fim_03.mp3` | Kofi Boateng | Isso foi só o começo. O livro está apontando para o outro lado do oceano. |
+| ✅ `cap1_fim_04.mp3` | Kayo | Então vamos. Tem muita história lá fora esperando alguém lembrar. |
 
 ## Capítulo 2: Além do Oceano
 

@@ -2,27 +2,32 @@
 // Cada fala toca o arquivo gravado em media/vozes/:
 //   falas de abertura do capítulo:  cap<capítulo>_<número>.mp3      (ex.: cap1_01.mp3, cap1_02.mp3...)
 //   falas do fim do capítulo:       cap<capítulo>_fim_<número>.mp3  (ex.: cap1_fim_01.mp3)
+//   (também aceita a numeração continuando a da abertura: no capítulo 1, cap1_14.mp3 = cap1_fim_01.mp3)
 // Se o arquivo não existir, usa a voz automática do navegador (pode desligar nas Configurações).
 // A lista completa das falas e dos nomes de arquivo está em media/vozes/ROTEIRO.md.
 const VOZ_FEM=['atleta','historiadora','artista','capoeirista','empreendedora','medica','dancarina','fotografa','astronauta','cantora','esportista','reicinza','furacao'];
 const Voice={
   el:null,faltando:{},token:0,ducked:false,prevMus:null,
   vol(){const v=S.settings.voice;return v==null?.9:v},
-  file(n,part,i){const p=String(i).padStart(2,'0');return 'media/vozes/cap'+n+(part==='end'?'_fim_':'_')+p+'.mp3'},
+  file(n,part,i){const pad=k=>String(k).padStart(2,'0');
+    if(part!=='end')return 'media/vozes/cap'+n+'_'+pad(i)+'.mp3';
+    const k=i+((CHAPTERS[n-1].scenes||[]).length);
+    return ['media/vozes/cap'+n+'_fim_'+pad(i)+'.mp3','media/vozes/cap'+n+'_'+pad(k)+'.mp3']},
   // Toca a fala; onEnd é chamado quando a voz termina (gravada ou automática)
   say(src,text,sp,onEnd){
     this.stop();if(this.vol()<=0)return;
     const tk=++this.token;const done=()=>{if(tk!==this.token)return;this.duck(false);this.mark(false);onEnd&&onEnd()};
     const tts=()=>{if(tk!==this.token)return;if(S.settings.tts===false){done();return}this.speak(text,sp,done,tk)};
-    if(this.faltando[src]){tts();return}
+    const list=(Array.isArray(src)?src:[src]).filter(f=>!this.faltando[f]);
+    if(!list.length){tts();return}
     const a=this.el||(this.el=new window.Audio());a.preload='auto';
-    a.onended=done;
-    a.onerror=()=>{if(tk!==this.token)return;this.faltando[src]=true;tts()};
-    a.src=src;a.volume=Math.min(1,this.vol());this.duck(true);this.mark(true);
+    a.onended=done;let at=0;
+    a.onerror=()=>{if(tk!==this.token)return;this.faltando[list[at]]=true;at++;if(at<list.length){a.src=list[at];const p2=a.play();if(p2&&p2.catch)p2.catch(()=>{})}else tts()};
+    a.src=list[0];a.volume=Math.min(1,this.vol());this.duck(true);this.mark(true);
     const p=a.play();if(p&&p.catch)p.catch(e=>{if(tk!==this.token)return;if(e&&e.name==='NotAllowedError'){this.duck(false);this.mark(false)}});
   },
   // Pré-carrega a próxima fala para não ter atraso
-  preload(src){if(!src||this.faltando[src])return;const a=new window.Audio();a.preload='auto';a.onerror=()=>{this.faltando[src]=true};a.src=src},
+  preload(src){const f=Array.isArray(src)?src[0]:src;if(!f||this.faltando[f])return;const a=new window.Audio();a.preload='auto';a.src=f},
   // ---- voz automática (Web Speech) ----
   voices(){const all=(window.speechSynthesis&&speechSynthesis.getVoices())||[];const pt=all.filter(v=>/^pt/i.test(v.lang));const br=pt.filter(v=>/BR/i.test(v.lang));return br.length?br:pt},
   pickVoice(fem){const vs=this.voices();if(!vs.length)return null;
