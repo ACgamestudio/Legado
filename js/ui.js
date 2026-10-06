@@ -2,7 +2,7 @@
 const stage=()=>document.getElementById('stage');
 let CUR='menu';
 function fit(){const vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.height:innerHeight;const s=Math.min(w/1600,h/900);const el=document.getElementById('stage');el.style.transform=`translate(${(w-1600*s)/2}px,${(h-900*s)/2}px) scale(${s})`;document.getElementById('rot').style.display=(h>w*1.15)?'flex':'none'}
-function show(name,...a){CUR=name;Audio.resume();Theme.route(name,a);const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
+function show(name,...a){CUR=name;if(typeof Voice!=='undefined')Voice.stop();Audio.resume();Theme.route(name,a);const f=SCREENS[name];stage().innerHTML=`<div class="screen scr-${name}">${f(...a)}</div>`;document.documentElement.style.setProperty('--acc',accent());bindAll();if(AFTER[name])AFTER[name](...a);}
 function bindAll(){stage().querySelectorAll('[data-go]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx('click');const [n,...args]=b.dataset.go.split('|');show(n,...args)})}
 const AFTER={};
 // Fundo de cada região = imagem do capítulo dela (assets/capitulos); se não houver, usa assets/fundos; senão, o desenho
@@ -149,7 +149,7 @@ customize(){ Audio.play('menu');
    <p class="note">Na versão completa: editor de tom de pele, rosto, cabelos (tranças, dreadlocks, black power, cortes), corpos, alturas, roupas urbanas, tradicionais e futuristas.</p><button class="btn gold" id="csave">Salvar</button></div></div>`},
 
 // ---------------------------- CONFIGURAÇÕES ----------------------------
-settings(){ return topbar('Configurações','menu')+`<div class="panel sets"><label>Música <input type="range" id="sm" min="0" max="1" step=".05" value="${S.settings.music}"></label><label>Efeitos sonoros <input type="range" id="ss" min="0" max="1" step=".05" value="${S.settings.sfx}"></label><label class="ck"><input type="checkbox" id="smo" ${S.settings.motion?'checked':''}> Animações de tela (tremor e flashes)</label><label class="ck"><input type="checkbox" id="sfs" ${S.settings.fs!==false?'checked':''}> Sempre em tela cheia e na horizontal</label>
+settings(){ return topbar('Configurações','menu')+`<div class="panel sets"><label>Música <input type="range" id="sm" min="0" max="1" step=".05" value="${S.settings.music}"></label><label>Efeitos sonoros <input type="range" id="ss" min="0" max="1" step=".05" value="${S.settings.sfx}"></label><label>Vozes <input type="range" id="sv" min="0" max="1" step=".05" value="${S.settings.voice==null?.9:S.settings.voice}"></label><label class="ck"><input type="checkbox" id="stts" ${S.settings.tts!==false?'checked':''}> Voz automática nas falas que ainda não foram gravadas</label><label class="ck"><input type="checkbox" id="smo" ${S.settings.motion?'checked':''}> Animações de tela (tremor e flashes)</label><label class="ck"><input type="checkbox" id="sfs" ${S.settings.fs!==false?'checked':''}> Sempre em tela cheia e na horizontal</label>
   <h4>Controles</h4><p>Batalha: teclas 1 a 4 escolhem ação; clique no inimigo para atacar. Ritmo: D F J K. Corrida: espaço ou toque.</p>
   <h4>Progresso</h4><p>Seu progresso fica salvo neste navegador.</p><button class="btn danger" id="reset">Apagar progresso</button>
   <h4>Classificação indicativa sugerida</h4><p>Livre a 10 anos: fantasia sem sangue, temas históricos tratados com cuidado.</p></div>`},
@@ -207,7 +207,7 @@ AFTER.customize=()=>{let av=S.avatar,acc=S.accent;
   stage().querySelectorAll('[data-acc]').forEach(b=>b.onclick=()=>{const A=ACCENTS.find(a=>a.id===b.dataset.acc);if(!S.accents.includes(A.id)){if(S.sementes<A.cost){toast('Sementes insuficientes','🌱');return}S.sementes-=A.cost;S.accents.push(A.id);toast(`Cor ${A.name} desbloqueada`,'🎨')}acc=A.id;document.documentElement.style.setProperty('--acc',A.c);stage().querySelectorAll('[data-acc]').forEach(x=>x.classList.toggle('on',x===b));save()});
   document.getElementById('csave').onclick=()=>{S.name=(document.getElementById('cn').value.trim()||'Kayo').slice(0,14);S.title=document.getElementById('ct').value;S.avatar=av;S.accent=acc;st('custom');save();checkAch();toast('Perfil salvo','✔');show('customize')};
 };
-AFTER.settings=()=>{const u=()=>{S.settings.music=+document.getElementById('sm').value;S.settings.sfx=+document.getElementById('ss').value;S.settings.motion=document.getElementById('smo').checked;S.settings.fs=document.getElementById('sfs').checked;LiveFX.apply();Audio.vol();save();if(S.settings.fs)goFullscreen();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})};['sm','ss','smo','sfs'].forEach(i=>document.getElementById(i).oninput=u);
+AFTER.settings=()=>{const u=()=>{S.settings.music=+document.getElementById('sm').value;S.settings.sfx=+document.getElementById('ss').value;S.settings.motion=document.getElementById('smo').checked;S.settings.fs=document.getElementById('sfs').checked;S.settings.voice=+document.getElementById('sv').value;S.settings.tts=document.getElementById('stts').checked;LiveFX.apply();Audio.vol();save();if(S.settings.fs)goFullscreen();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})};['sm','ss','sv','stts','smo','sfs'].forEach(i=>document.getElementById(i).oninput=u);
   document.getElementById('reset').onclick=()=>{const m=modal(`<h2>Apagar todo o progresso?</h2><p>Isso não pode ser desfeito.</p><button class="btn danger" id="rs2">Apagar</button>`);m.querySelector('#rs2').onclick=()=>{localStorage.removeItem(SAVE_KEY);load();m.remove();show('menu')}}};
 AFTER.multi=()=>{stage().querySelector('[data-act=duel]').onclick=()=>{sfx('click');duelSetup()}};
 AFTER.expedition=()=>{stage().querySelector('[data-act=expstart]').onclick=()=>{sfx('click');window.PENDING={mode:'expedition',back:'expedition'};show('team')}};
@@ -238,8 +238,10 @@ function playChapter(n,part='scenes',after){
     if(sp!=='narr'){ if(!actors.querySelector(`[data-a="${sp}"]`)){const d=document.createElement('div');d.className='actor';d.dataset.a=sp;d.innerHTML=BOSSES[sp]?(IMG[BOSSES[sp].img]?`<img class="pt" src="${IMG[BOSSES[sp].img]}" alt="">`:enemySVG(null,'#ff3d5a',sp)):portrait(sp);actors.appendChild(d);if(actors.children.length>3)actors.firstChild.remove()}
       actors.querySelectorAll('.actor').forEach(a=>a.classList.toggle('talk',a.dataset.a===sp)); }
     sfx('click');
+    // Voz da fala (arquivo gravado em media/vozes/ ou voz automática)
+    Voice.say(Voice.file(n,part,i),t,sp);if(i<lines.length)Voice.preload(Voice.file(n,part,i+1));
   };
-  const finish=()=>{clearInterval(window._tw);if(part==='scenes'){ if(ch.region==='final'){startBattle({mode:'story',region:'final',node:3,chapter:9})} else if(!S.tutorialDone){startTutorial()} else {show('region',ch.region)} } else { after?after():show('hub') }};
+  const finish=()=>{clearInterval(window._tw);Voice.stop();if(part==='scenes'){ if(ch.region==='final'){startBattle({mode:'story',region:'final',node:3,chapter:9})} else if(!S.tutorialDone){startTutorial()} else {show('region',ch.region)} } else { after?after():show('hub') }};
   document.getElementById('dlg').onclick=step;
   document.getElementById('skip').onclick=e=>{e.stopPropagation();finish()};
   step();

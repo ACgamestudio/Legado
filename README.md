@@ -19,6 +19,7 @@ js/data2.js         colecionáveis, quiz, construções, missões, eventos
 js/core.js          salvamento, progressão, conquistas, trilha sonora procedural
 js/gfx.js           cenários e inimigos em SVG
 js/fx.js            cenários vivos: poeira brilhante, troca de luz e zoom lento
+js/voz.js           vozes das falas (arquivos gravados ou voz automática)
 js/ui.js            telas e menus
 js/battle.js        combate, recompensas, expedição, tutorial
 js/mini.js          desafios rápidos (ritmo, memória, quiz, corrida)
@@ -64,3 +65,12 @@ Cada pergunta pertence a uma região (`r` em `js/data2.js`) e tem uma explicaç�
 ## Especial sem som
 
 O vídeo `media/especiais/engenheiro.mp4` (André Cruz) não tem mais faixa de áudio, e o jogo também toca esse especial sempre mudo (lista `SPV_MUDO` em `js/battle.js`). Para silenciar outro especial, acrescente o id do personagem nessa lista.
+
+## Vozes das falas
+
+As falas das cutscenes tocam arquivos gravados em `media/vozes/`:
+
+- abertura do capítulo: `cap<capítulo>_<número>.mp3` (ex.: `cap1_01.mp3`)
+- final do capítulo: `cap<capítulo>_fim_<número>.mp3` (ex.: `cap1_fim_01.mp3`)
+
+A lista completa, com quem fala e o texto de cada arquivo, está em `media/vozes/ROTEIRO.md`. Se um arquivo não existir, o jogo usa a voz automática do navegador (pode ser desligada nas Configurações, onde também há o volume das vozes). A música abaixa enquanto alguém fala, e um 🔊 aparece ao lado do nome.

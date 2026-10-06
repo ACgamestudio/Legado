@@ -370,3 +370,6 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 .qreg.mundo{--c1:#5a3a12;--c2:#f5b82e}
 .qo:disabled{opacity:1}.qo.dim:disabled{opacity:.4}
 .qg>small{display:block}.qg .qplace{margin-top:6px}
+/* fala com voz: alto-falante pulsando no nome */
+.dlg.speaking #dn::after{content:" 🔊";display:inline-block;animation:vozPulse 1s ease-in-out infinite}
+@keyframes vozPulse{50%{opacity:.35;transform:scale(.9)}}

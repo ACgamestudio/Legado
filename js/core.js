@@ -14,7 +14,7 @@ function newState(){return{
   unlocked:['protagonista','engenheiro','capoeirista','dj','historiadora'], frags:{}, clv:{}, cxp:{},
   team:['protagonista','capoeirista','dj'], items:{}, ach:{}, build:{}, chapter:1, chDone:[],
   region:{}, stats:{}, daily:null, accent:'ouro', accents:['ouro'], avatar:'protagonista', title:'Aprendiz da Biblioteca',
-  settings:{music:.45,sfx:.7,motion:true,fs:true}, tutorialDone:false, chv:2, started:false, lastLogin:null
+  settings:{music:.45,sfx:.7,voice:.9,tts:true,motion:true,fs:true}, tutorialDone:false, chv:2, started:false, lastLogin:null
 }}
 let S;
 function load(){let raw=null;try{raw=localStorage.getItem(SAVE_KEY);S=raw?Object.assign(newState(),JSON.parse(raw)):newState()}catch(e){S=newState();raw=null}
