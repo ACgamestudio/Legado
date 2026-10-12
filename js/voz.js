@@ -1,8 +1,8 @@
 // ===================== VOZES DAS CUTSCENES =====================
 // Cada fala toca o arquivo gravado em media/vozes/:
-//   falas de abertura do capítulo:  cap<capítulo>_<número>.mp3      (ex.: cap1_01.mp3, cap1_02.mp3...)
-//   falas do fim do capítulo:       cap<capítulo>_fim_<número>.mp3  (ex.: cap1_fim_01.mp3)
-//   (também aceita a numeração continuando a da abertura: no capítulo 1, cap1_14.mp3 = cap1_fim_01.mp3)
+//   cap<capítulo>_<número>.mp3, numerando todas as falas do capítulo em sequência:
+//   primeiro as da abertura, depois as do final (no capítulo 1: cap1_01 a cap1_13 abertura, cap1_14 a cap1_17 final).
+//   Para as falas do final também vale o nome cap<capítulo>_fim_<número>.mp3 (ex.: cap1_fim_01.mp3 = cap1_14.mp3).
 // Se o arquivo não existir, usa a voz automática do navegador (pode desligar nas Configurações).
 // A lista completa das falas e dos nomes de arquivo está em media/vozes/ROTEIRO.md.
 const VOZ_FEM=['atleta','historiadora','artista','capoeirista','empreendedora','medica','dancarina','fotografa','astronauta','cantora','esportista','reicinza','furacao'];
@@ -12,7 +12,7 @@ const Voice={
   file(n,part,i){const pad=k=>String(k).padStart(2,'0');
     if(part!=='end')return 'media/vozes/cap'+n+'_'+pad(i)+'.mp3';
     const k=i+((CHAPTERS[n-1].scenes||[]).length);
-    return ['media/vozes/cap'+n+'_fim_'+pad(i)+'.mp3','media/vozes/cap'+n+'_'+pad(k)+'.mp3']},
+    return ['media/vozes/cap'+n+'_'+pad(k)+'.mp3','media/vozes/cap'+n+'_fim_'+pad(i)+'.mp3']},
   // Toca a fala; onEnd(falou) é chamado quando termina. falou=false se não houve voz (sem arquivo, voz desligada ou bloqueada)
   say(src,text,sp,onEnd){
     this.stop();const tk=++this.token;let fim=false;
