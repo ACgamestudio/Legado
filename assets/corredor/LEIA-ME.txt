@@ -1,0 +1,10 @@
+CORREDORES DA CORRIDA DO BAOBÁ
+
+Cada arquivo <id-do-personagem>.webp é o personagem recortado de um quadro do seu vídeo de especial,
+com fundo transparente. A esportista.webp é uma tira com 18 quadros lado a lado: ela corre de verdade.
+
+O jogo usa o arquivo do avatar escolhido no perfil. Quem não tem arquivo aqui corre com o corpo
+desenhado pelo jogo e o rosto do retrato.
+
+Para adicionar outro: salve um PNG/WEBP com fundo transparente, personagem de corpo inteiro, pés na
+parte de baixo da imagem, com o nome <id>.webp, e coloque o id na lista RUNNER_SPRITES em js/mini.js.

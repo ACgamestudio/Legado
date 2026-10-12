@@ -81,3 +81,7 @@ As falas passam sozinhas: quando a voz termina, o jogo vai para a próxima. Sem 
 ## Sons dos golpes
 
 Cada golpe que acerta faz barulho de impacto com o estilo do tipo de quem ataca (Corpo: soco pesado; Ritmo: tambor e palma; Tech: choque elétrico; Mente: sino; Espírito: estrondo místico; vilões: golpe sombrio). Crítico tem estalo extra, esquiva faz zunido e escudo faz som metálico. Os sons são criados na hora em `js/golpes.js` e seguem o volume de "Efeitos sonoros".
+
+## Corrida do Baobá
+
+O corredor é o avatar escolhido no perfil. Personagens com arquivo em `assets/corredor/` (recortados dos vídeos de especial: protagonista, esportista, atleta, capoeirista, cantora, dançarina, engenheiro, guerreiro e líder) aparecem de corpo inteiro; a esportista tem animação de corrida de verdade. Os outros correm com corpo desenhado e o rosto do retrato. Veja `assets/corredor/LEIA-ME.txt`.

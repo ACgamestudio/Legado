@@ -85,13 +85,32 @@ AFTER.quiz=()=>{const box=document.getElementById('qz'),bg=document.getElementBy
 
 // ---------- CORRIDA DO BAOBÁ ----------
 SCREENS.runner=()=>topbar('Corrida do Baobá','challenges')+`<div class="mg"><canvas id="rn" width="1100" height="560"></canvas><div class="mgside panel"><h3>Corra, ${esc(P())}!</h3><p>Toque na tela ou aperte <kbd>espaço</kbd> para pular. Pulo duplo permitido. Colete 🐚 e desvie dos tambores da Névoa.</p><p id="rd">0 m</p><button class="btn gold" id="rgo2">Começar</button></div></div>`;
+// Corredores recortados dos vídeos de especial (assets/corredor/<id>.webp, fundo transparente).
+// frames>1 = tira de animação lado a lado (a esportista corre de verdade). s = ajuste de tamanho.
+// Quem não está na lista corre com o corpo desenhado + rosto do avatar (drawRunner).
+const RUNNER_SPRITES={
+  esportista:{frames:18,s:1.12},atleta:{frames:1},cantora:{frames:1},capoeirista:{frames:1},dancarina:{frames:1},
+  engenheiro:{frames:1},guerreiro:{frames:1,s:1.3},lider:{frames:1},protagonista:{frames:1}
+};
+function runShadow(x,cx,feet){const sc=Math.max(.35,1-(480-feet)/220);x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.ellipse(cx,482,30*sc,7*sc,0,0,7);x.fill()}
+function drawSprite(x,img,spr,cx,feet,ph,air,animT){
+  const n=spr.frames||1,fw=img.naturalWidth/n,fh=img.naturalHeight,H=132*(spr.s||1),W=H*fw/fh;
+  runShadow(x,cx,feet);
+  let f=0,bob=0,lean=.06,sy=1;
+  if(n>1){f=air?3:Math.floor(animT)%n;lean=air?.05:.02}
+  else if(air){lean=-.1}else{bob=Math.abs(Math.sin(ph))*6;lean=.09+Math.sin(ph*2)*.025;sy=1-Math.abs(Math.cos(ph))*.035}
+  const draw=(dx,alpha)=>{x.save();x.globalAlpha=alpha;x.translate(cx+dx,feet-bob);x.rotate(lean);x.scale(1/Math.sqrt(sy),sy);
+    if(alpha===1){x.shadowColor='rgba(255,214,150,.75)';x.shadowBlur=10} // brilho de contorno para destacar do fundo
+    x.drawImage(img,f*fw,0,fw,fh,-W/2,-H,W,H);x.restore()};
+  if(n===1&&!air){draw(-14,.16);draw(-7,.28)} // rastro de velocidade
+  draw(0,1)}
 // Corredor de corpo inteiro: rosto do avatar + corpo desenhado com balanço de corrida
 function drawRunner(x,img,cx,feet,ph,air,col){
   const bob=air?0:Math.abs(Math.sin(ph))*4,hip=feet-40-bob,sh=hip-34,hy=sh-24;
   const sw=air?0:Math.sin(ph),sw2=air?0:Math.sin(ph+Math.PI);
   x.save();x.lineCap='round';x.lineJoin='round';
   // sombra no chão (diminui quando pula)
-  const sc=Math.max(.35,1-(480-feet)/220);x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.ellipse(cx,482,30*sc,7*sc,0,0,7);x.fill();
+  runShadow(x,cx,feet);
   const leg=(a,back)=>{x.strokeStyle=back?'#1d1626':'#2b2233';x.lineWidth=11;
     let kx,ky,fx,fy;
     if(air){kx=cx+(back?-6:14);ky=hip+16;fx=cx+(back?-16:4);fy=hip+(back?32:30)}
@@ -113,7 +132,9 @@ function drawRunner(x,img,cx,feet,ph,air,col){
   x.restore()}
 function shade(hex,k){const n=parseInt(hex.slice(1),16),f=c=>Math.max(0,Math.min(255,Math.round(c+(k<0?c*k:(255-c)*k))));return '#'+[f(n>>16),f(n>>8&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
 AFTER.runner=()=>{const cv=document.getElementById('rn'),x=cv.getContext('2d');const img=new Image();img.src=IMG[S.avatar];
-  const ch=CHARS.find(c=>c.id===S.avatar),col=ch&&TYPES[ch.type]?TYPES[ch.type].c:'#f5b82e';let dust=[];
+  const ch=CHARS.find(c=>c.id===S.avatar),col=ch&&TYPES[ch.type]?TYPES[ch.type].c:'#f5b82e';let dust=[],animT=0;
+  const spr=RUNNER_SPRITES[S.avatar],sImg=spr?new Image():null;if(sImg)sImg.src='assets/corredor/'+S.avatar+'.webp';
+  const corredor=(feet,ph,air)=>{if(sImg&&sImg.complete&&sImg.naturalWidth)drawSprite(x,sImg,spr,140,feet,ph,air,animT);else drawRunner(x,img,140,feet,ph,air,col)};
   let p,obs,coins,sp,dist,run=false,got,raf,frame;
   const reset=()=>{p={y:420,vy:0,j:0};obs=[];coins=[];sp=7;dist=0;got=0;frame=0;dust=[]};
   const jump=()=>{if(!run)return;if(p.j<2){p.vy=-15;p.j++;sfx('click')}};
@@ -125,7 +146,7 @@ AFTER.runner=()=>{const cv=document.getElementById('rn'),x=cv.getContext('2d');c
     // poeira dos passos
     const air=p.y<420;if(!air&&frame%6===0)dust.push({x:128,y:478,r:3+Math.random()*3,a:.5});
     dust.forEach(d=>{d.x-=sp*.6;d.y-=.3;d.r+=.25;d.a-=.02;x.fillStyle=`rgba(255,214,170,${Math.max(0,d.a)})`;x.beginPath();x.arc(d.x,d.y,d.r,0,7);x.fill()});dust=dust.filter(d=>d.a>0);
-    drawRunner(x,img,140,p.y+60,dist*.55,air,col);
+    animT+=sp*.085;corredor(p.y+60,dist*.55,air);
     if(frame%Math.max(40,Math.round(95-sp*3))===0&&Math.random()<.8)obs.push({x:1120,w:44,h:ri(44,70)});
     if(frame%50===0)coins.push({x:1120,y:ri(250,420)});
     obs.forEach(o=>{o.x-=sp;x.fillStyle='#3b3450';x.fillRect(o.x,480-o.h,o.w,o.h);x.fillStyle='#ff4d8d';x.fillRect(o.x,480-o.h,o.w,8)});
@@ -136,7 +157,7 @@ AFTER.runner=()=>{const cv=document.getElementById('rn'),x=cv.getContext('2d');c
     x.fillStyle='#fff';x.font='bold 30px "Saira Condensed",sans-serif';x.fillText(Math.floor(dist)+' m',960,50);
     if(hitO){run=false;sfx('lose');const d=Math.floor(dist);stMax('runBest',d);Audio.play('menu');miniReward(d/10+got*4,160,`Corrida: ${d} m e ${got} cauris`);return}
     raf=requestAnimationFrame(loop)};
-  const intro=()=>{reset();x.fillStyle='#3a1c5c';x.fillRect(0,0,1100,560);x.fillStyle='#4a2410';x.fillRect(0,480,1100,80);drawRunner(x,img,140,480,0,false,col);x.fillStyle='#f5b82e';x.font='40px "Permanent Marker",cursive';x.textAlign='left';x.fillText('Pronto para correr?',360,280)};
-  intro();img.onload=()=>{if(!run)intro()};
+  const intro=()=>{reset();x.fillStyle='#3a1c5c';x.fillRect(0,0,1100,560);x.fillStyle='#4a2410';x.fillRect(0,480,1100,80);corredor(480,0,false);x.fillStyle='#f5b82e';x.font='40px "Permanent Marker",cursive';x.textAlign='left';x.fillText('Pronto para correr?',360,280)};
+  intro();img.onload=()=>{if(!run)intro()};if(sImg)sImg.onload=()=>{if(!run)intro()};
   document.getElementById('rgo2').onclick=e=>{e.target.disabled=true;reset();run=true;Audio.genre=null;Audio.play('afrobeat');loop()};
   cv.onpointerdown=jump;document.onkeydown=e=>{if(CUR==='runner'&&(e.code==='Space'||e.key==='ArrowUp')){e.preventDefault();jump()}}};
