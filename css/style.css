@@ -372,3 +372,10 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 /* fala com voz: alto-falante pulsando no nome */
 .dlg.speaking #dn::after{content:" 🔊";display:inline-block;animation:vozPulse 1s ease-in-out infinite}
 @keyframes vozPulse{50%{opacity:.35;transform:scale(.9)}}
+
+/* Fundo escurecido para telas de leitura (Desafios, Conquistas, Expedição): o cenário aparece sem atrapalhar o texto */
+.scene-wrap.dim{opacity:1;z-index:0}
+.scene-wrap.dim::after{background:radial-gradient(ellipse at 50% 45%,#120b0640,#0d0805b8 80%),linear-gradient(180deg,#0d080599,#0d080560 40%,#0d0805b0)}
+.scene-wrap.dim .lfx-dust{z-index:1}
+.ach{background:#140c08f0}
+.game.panel{background:#140c08e6}

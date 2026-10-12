@@ -117,8 +117,8 @@ community(){ Audio.play('menu');
 
 // ---------------------------- DESAFIOS ----------------------------
 challenges(){ Audio.play('menu');
-  const g=[['rhythm','🥁','Roda de Ritmo','Acerte as notas no tempo do samba. 45 s.',`Recorde: ${s_('rhythmBest')}%`],['memory','🧠','Memória dos Tesouros','Encontre os pares de colecionáveis e descubra suas histórias.',`Melhor: ${s_('memoryBest')||'-'} jogadas`],['quiz','❓','Quiz Cultural','8 perguntas, 15 s cada. Aprenda enquanto joga.',`Acertos totais: ${s_('quizRight')}`],['runner','🏃🏾','Corrida do Baobá','Pule obstáculos e colete cauris. Toque ou espaço.',`Recorde: ${s_('runBest')} m`]];
-  return topbar('Desafios rápidos')+`<div class="games">${g.map(x=>`<button class="game panel" data-go="${x[0]}"><span class="gi">${x[1]}</span><b>${x[2]}</b><p>${x[3]}</p><small>${x[4]}</small><span class="btn gold small">Jogar</span></button>`).join('')}</div>`},
+  const g=[['rhythm','🥁','Roda de Ritmo','Acerte as notas no tempo do samba. 45 s.',`Recorde: ${s_('rhythmBest')}%`],['memory','🧠','Memória dos Tesouros','Encontre os pares de colecionáveis e descubra suas histórias.',`Melhor: ${s_('memoryBest')||'-'} jogadas`],['quiz','❓','Quiz Cultural','Escolha uma região e responda 8 perguntas, 20 s cada. Depois de cada uma, descubra o porquê.',`Acertos totais: ${s_('quizRight')}`],['runner','🏃🏾','Corrida do Baobá','Pule obstáculos e colete cauris. Toque ou espaço.',`Recorde: ${s_('runBest')} m`]];
+  return `<div class="scene-wrap dim">${sceneBG('caribe')}</div>`+topbar('Desafios rápidos')+`<div class="games">${g.map(x=>`<button class="game panel" data-go="${x[0]}"><span class="gi">${x[1]}</span><b>${x[2]}</b><p>${x[3]}</p><small>${x[4]}</small><span class="btn gold small">Jogar</span></button>`).join('')}</div>`},
 
 // ---------------------------- MISSÕES ----------------------------
 missions(){ ensureDaily(); Audio.play('menu');
@@ -136,7 +136,7 @@ events(){ Audio.play('menu'); const ev=currentEvent();
 
 // ---------------------------- CONQUISTAS ----------------------------
 achievements(){ Audio.play('menu');
-  return topbar(`Conquistas ${Object.keys(S.ach).length}/50`)+`<div class="achs scroll">${ACHS.map(a=>`<div class="ach ${S.ach[a[0]]?'on':''}"><span>${a[3]}</span><div><b>${a[1]}</b><small>${a[2]}</small></div><em>${S.ach[a[0]]?'✔':'🌱10'}</em></div>`).join('')}</div>`},
+  return `<div class="scene-wrap dim">${sceneBG('oriental')}</div>`+topbar(`Conquistas ${Object.keys(S.ach).length}/50`)+`<div class="achs scroll">${ACHS.map(a=>`<div class="ach ${S.ach[a[0]]?'on':''}"><span>${a[3]}</span><div><b>${a[1]}</b><small>${a[2]}</small></div><em>${S.ach[a[0]]?'✔':'🌱10'}</em></div>`).join('')}</div>`},
 
 // ---------------------------- PERSONALIZAÇÃO ----------------------------
 customize(){ Audio.play('menu');
@@ -159,7 +159,7 @@ multi(){ Audio.play('menu'); return topbar('Multiplayer','menu')+`<div class="mu
   <div class="panel mcard soon"><span>🌐</span><b>Online (planejado)</b><p>Cooperativo para 2 a 4 jogadores, batalhas amistosas, guildas, ranking opcional, troca de itens permitidos e o Modo Legado de cidade compartilhada. Precisa de servidores e fica para a versão de lançamento.</p></div></div>`},
 
 // ---------------------------- EXPEDIÇÃO ----------------------------
-expedition(){ Audio.play('final'); return topbar('Expedição Sankofa')+`<div class="exp panel"><h2>Mergulhe fundo na memória</h2><p>6 salas seguidas. A vida da equipe não recupera entre lutas. Depois de cada vitória, escolha 1 de 3 bênçãos aleatórias. Na sala 3 há uma fogueira de descanso. Na sala 6, a vilã Eclipse espera.</p><p>Se a equipe cair, você mantém as recompensas das salas vencidas.</p><p>Expedições concluídas: <b>${s_('expDone')}</b>. Recorde de salas: <b>${s_('expBest')}</b>.</p><button class="btn gold" data-act="expstart">Montar equipe e entrar</button></div>`},
+expedition(){ Audio.play('final'); return `<div class="scene-wrap dim">${sceneBG('final')}</div>`+topbar('Expedição Sankofa')+`<div class="exp panel"><h2>Mergulhe fundo na memória</h2><p>6 salas seguidas. A vida da equipe não recupera entre lutas. Depois de cada vitória, escolha 1 de 3 bênçãos aleatórias. Na sala 3 há uma fogueira de descanso. Na sala 6, a vilã Eclipse espera.</p><p>Se a equipe cair, você mantém as recompensas das salas vencidas.</p><p>Expedições concluídas: <b>${s_('expDone')}</b>. Recorde de salas: <b>${s_('expBest')}</b>.</p><button class="btn gold" data-act="expstart">Montar equipe e entrar</button></div>`},
 
 exit(){ Audio.stop(); return `<div class="exitw">${LOGO(1)}<p>Até a próxima! A Vila Baobá guarda seu progresso.</p><button class="btn gold" data-go="menu">Voltar ao menu</button></div>`}
 };
