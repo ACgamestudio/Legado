@@ -41,6 +41,7 @@ O progresso fica salvo no `localStorage` do navegador.
 
 - Fundos das regiões: coloque imagens em `assets/fundos/` com os nomes `brasil.jpg`, `ocidental.jpg`, `caribe.jpg`, `eua.jpg`, `austral.jpg`, `latina.jpg`, `oriental.jpg`, `futuro.jpg` e `final.jpg`.
 - Vídeos de especiais: coloque vídeos em `media/especiais/` com o id do personagem, por exemplo `engenheiro.mp4` (André Cruz). O vídeo toca na Suprema.
+- Vídeos especiais dos vilões: coloque vídeos em `media/especiais-viloes/` com o id do vilão em minúsculas, por exemplo `zara.mp4`.
 - Os vilões ficam em `assets/viloes/`.
 
 ## Tela cheia

@@ -204,6 +204,7 @@ function enemyAct(u){u.turns++;const fs=foes(u);if(!fs.length){endTurn(u);return
   const E=u.boss?BOSSES[u.key]:ENEMIES[u.key];
   if(u.boss&&u.hp<u.maxhp*.5&&!u.enraged){u.enraged=true;u.buffs.push({s:'atk',v:.25,d:99});log(`<b>${u.name}</b> fica furioso!`);floatTxt(u,'FÚRIA','debuff')}
   const skill=u.turns%3===0;
+  if(skill&&B.ui&&typeof MEDIA!=='undefined'&&MEDIA['esp_'+u.key])specialVideo(MEDIA['esp_'+u.key],()=>{},u);
   if(u.boss&&skill){log(`<b>${u.name}</b> usa <b>${E.skill}</b>!`);sfx('ult');
     fs.forEach(t=>hit(u,t,1.05));
     const rider={reicinza:()=>fs.forEach(t=>t.buffs.push({s:'atk',v:.2,d:2,neg:true})),ladrao:()=>fs.forEach(t=>t.energy=Math.max(0,t.energy-20)),furacao:()=>fs.forEach(t=>t.buffs.push({s:'spd',v:.3,d:2,neg:true})),
