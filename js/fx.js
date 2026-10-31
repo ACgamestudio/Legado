@@ -5,7 +5,7 @@
 const LiveFX={
   // Camada colocada por cima de qualquer fundo. Usa <span> para não herdar estilos de "div".
   layer(){return '<span class="lfx" aria-hidden="true"><i class="lfx-warm"></i><i class="lfx-cool"></i><i class="lfx-ray"></i><canvas class="lfx-dust"></canvas></span>'},
-  list:[],raf:0,last:0,sprite:null,
+  list:[],raf:0,last:0,sprite:null,paused:false,
   off(){return (typeof S!=='undefined'&&S.settings&&S.settings.motion===false)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)},
   // Brilho pré-desenhado (mais leve que shadowBlur a cada quadro)
   makeSprite(){const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d');
@@ -33,6 +33,7 @@ const LiveFX={
   },
   tick(t){
     this.list=this.list.filter(o=>o.cv.isConnected);
+    if(this.paused){this.last=t;this.raf=requestAnimationFrame(t2=>this.tick(t2));return}
     if(!this.list.length||this.off()){this.raf=0;this.list.forEach(o=>o.ctx.clearRect(0,0,o.cv.width,o.cv.height));return}
     const dt=Math.min(3,(t-this.last)/16.7);this.last=t;const s=t/1000;
     if(!this.sprite)this.sprite=this.makeSprite();

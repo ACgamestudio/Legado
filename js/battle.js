@@ -67,6 +67,7 @@ SCREENS.battle=scene=>`<div class="scene-wrap">${sceneBG(scene)}</div><div class
   <div class="bpanel"><div class="actor-info" id="ainfo"></div><div class="acts" id="acts"></div><div class="blog" id="blog"></div></div>
   <div id="cutin"></div><div id="tut"></div></div>`;
 AFTER.battle=()=>{
+  spvPreloadBattle();
   const f=document.getElementById('field');
   let hi=0,ei=0;
   f.innerHTML=B.units.map(u=>{let x,y;const hasBoss=B.units.some(z=>z.boss);if(u.side==='h'){[x,y]=HPOS[hi++]}else{[x,y]=u.boss?[1010,100]:(hasBoss?EPOS_B:EPOS)[ei++]}
@@ -144,7 +145,7 @@ function doAct(u,k){const c=CH[u.key];u._acted=true;
   else if(k==='special'){log(`<b>${u.name}</b> usa <b>${c.sp.name}</b>!`);runFx(u,c.sp.fx,false);u.cd=c.sp.cd+1;gainEn(u,15);if(u.side==='h')st('specials');sfx('special');combos(u)}
   else if(k==='ult'){u.energy=0;if(u.side==='h')st('ults');sfx('ult');
     const go=()=>{log(`<b>${u.name}</b>: SUPREMA <b>${c.ult.name}</b>!`);runFx(u,c.ult.fx,true);endTurn(u,900)};
-    if(B.ui&&typeof MEDIA!=='undefined'&&MEDIA['esp_'+u.key]){specialVideo(MEDIA['esp_'+u.key],go,u)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
+    if(B.ui&&spvSrc(u)){specialVideo(spvSrc(u),go,u)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
   endTurn(u);
 }
 function cutIn(u,name){const c=document.getElementById('cutin');c.innerHTML=`<div class="ci" style="--tc:${TYPES[u.type].c}">${portrait(u.key)}<div><small>Suprema</small><h2>${name}</h2><p>"${pick(CH[u.key].lines)}"</p></div></div>`;c.classList.add('on');setTimeout(()=>c.classList.remove('on'),950)}
@@ -202,9 +203,11 @@ function kill(t){t.alive=false;t.hp=0;log(`${t.name} caiu.`);if(!t.isChar&&B.ctx
 function enemyTarget(u){const fs=foes(u);const tt=fs.filter(x=>x.taunt>0);if(tt.length)return tt[0];if(Math.random()<.35)return fs.reduce((a,b)=>a.hp/a.maxhp<b.hp/b.maxhp?a:b);return pick(fs)}
 function enemyAct(u){u.turns++;const fs=foes(u);if(!fs.length){endTurn(u);return}
   const E=u.boss?BOSSES[u.key]:ENEMIES[u.key];
+  const bt=B; // se a batalha mudar durante o vídeo, não faz nada
   if(u.boss&&u.hp<u.maxhp*.5&&!u.enraged){u.enraged=true;u.buffs.push({s:'atk',v:.25,d:99});log(`<b>${u.name}</b> fica furioso!`);floatTxt(u,'FÚRIA','debuff')}
   const skill=u.turns%3===0;
-  if(skill&&B.ui&&typeof MEDIA!=='undefined'&&MEDIA['esp_'+u.key])specialVideo(MEDIA['esp_'+u.key],()=>{},u);
+  const vsrc=skill&&B.ui?spvSrc(u):null;
+  const run=()=>{if(B!==bt||B.over)return;
   if(u.boss&&skill){log(`<b>${u.name}</b> usa <b>${E.skill}</b>!`);sfx('ult');
     fs.forEach(t=>hit(u,t,1.05));
     const rider={reicinza:()=>fs.forEach(t=>t.buffs.push({s:'atk',v:.2,d:2,neg:true})),ladrao:()=>fs.forEach(t=>t.energy=Math.max(0,t.energy-20)),furacao:()=>fs.forEach(t=>t.buffs.push({s:'spd',v:.3,d:2,neg:true})),
@@ -225,6 +228,8 @@ function enemyAct(u){u.turns++;const fs=foes(u);if(!fs.length){endTurn(u);return
     sfx('special');
   } else {const t=enemyTarget(u);hit(u,t,1)}
   endTurn(u);
+  };
+  if(vsrc)specialVideo(vsrc,run,u);else run();
 }
 
 // ---------- fim de batalha e recompensas ----------
@@ -314,29 +319,66 @@ function tutStep(){const t=document.getElementById('tut');if(!t)return;if(B.tut>
   t.innerHTML=`<div class="tutb panel">${TUT[B.tut]}<button class="btn small">Entendi</button></div>`;t.querySelector('button').onclick=()=>{t.innerHTML=''};B.tut++}
 
 // ===================== VÍDEOS DE ESPECIAIS =====================
-// Coloque MEDIA['esp_<id do personagem>'] em js/assets.js e o vídeo toca na Suprema desse personagem.
+// Heróis:  media/especiais/<id>.mp4            (MEDIA['esp_<id>'] em js/assets.js ou detecção automática)
+// Vilões:  media/especiais-viloes/<nome>.mp4   em 16:9, nome em minúsculo e sem acento (zara, kemet, areias, lucifer...)
 const SPV_MUDO=['engenheiro'];
-function specialVideo(src,done,u){const c=document.getElementById('cutin');
-  const ch=u?CH[u.key]:null,tc=u?TYPES[u.type].c:'#f5b82e';
-  const info=ch?`<div class="spv-info"><svg class="spv-crown" viewBox="0 0 64 40" aria-hidden="true"><path d="M4 36 8 8l14 14L32 2l10 20L56 8l4 28z"/></svg><small>Suprema de ${esc(charName(u.key))} <span class="spv-type">${TYPES[u.type].ic} ${u.type}</span></small><h2>${esc(ch.ult.name)}</h2><p class="spv-who">${esc(ch.title)} · ${esc(ch.origin)}</p><p class="spv-q">“${esc(pick(ch.lines).replace(/\{P\}/g,P()))}”</p></div>`:'';
-  c.innerHTML=`<div class="spv" style="--tc:${tc}">${ch?`<div class="spv-bg" style="background-image:url(${IMG[u.key]})"></div>`:''}<div class="spv-chev"></div>${info}
-   <div class="spv-frame${ch?'':' solo'}"><div class="spv-back"></div><div class="spv-box"><video id="spv" playsinline preload="auto"></video><div class="spv-shine"></div></div><div class="spv-bar"><i id="spvbar"></i></div></div>
+const _sl=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+// Nomes de arquivo aceitos para um vilão: o do retrato (v_zara -> zara) e o nome completo ("Brasa Negra" -> brasanegra)
+function vilSlugs(E){const o=[];if(E.img)o.push(String(E.img).replace(/^v_/,''));o.push(_sl(E.name));return o.filter((x,i)=>x&&o.indexOf(x)===i)}
+// Caminho do vídeo do especial de uma unidade (herói ou vilão), ou null
+function spvSrc(u){if(!u||typeof MEDIA==='undefined')return null;
+  if(u.isChar)return MEDIA['esp_'+u.key]||null;
+  const E=u.boss?BOSSES[u.key]:ENEMIES[u.key];if(!E)return null;
+  for(const sl of vilSlugs(E))if(MEDIA['espv_'+sl])return MEDIA['espv_'+sl];return null}
+// ---- Pré-carregamento: baixa os vídeos da luta para a memória no começo, para não travar na hora do especial ----
+const SPV_CACHE={};   // src -> {url:blobURL|null, ready:bool}
+function spvPreload(src){if(!src||SPV_CACHE[src]||typeof fetch==='undefined')return;
+  const e=SPV_CACHE[src]={url:null,ready:false};
+  fetch(src).then(r=>{if(!r.ok)throw 0;return r.blob()}).then(b=>{e.url=URL.createObjectURL(b);e.ready=true}).catch(()=>{e.ready=true});
+  const ks=Object.keys(SPV_CACHE);if(ks.length>14){const k=ks.find(x=>x!==src&&!SPV_CACHE[x].busy);if(k){try{if(SPV_CACHE[k].url)URL.revokeObjectURL(SPV_CACHE[k].url)}catch(_){}delete SPV_CACHE[k]}}}
+function spvPreloadBattle(){if(!B||!B.ui)return;B.units.forEach(u=>{const s=spvSrc(u);if(s)spvPreload(s)})}
+function specialVideo(src,done,u){const c=document.getElementById('cutin');if(!c){done();return}
+  const stage=document.getElementById('stage');
+  const ch=u&&u.isChar?CH[u.key]:null,tc=u?TYPES[u.type].c:'#f5b82e';
+  const E=u&&!u.isChar?(u.boss?BOSSES[u.key]:ENEMIES[u.key]):null;
+  // Painel de texto: herói (Suprema) ou vilão (habilidade)
+  let info='';
+  const crown='<svg class="spv-crown" viewBox="0 0 64 40" aria-hidden="true"><path d="M4 36 8 8l14 14L32 2l10 20L56 8l4 28z"/></svg>';
+  if(ch)info=`<div class="spv-info">${crown}<small>Suprema de ${esc(charName(u.key))} <span class="spv-type">${TYPES[u.type].ic} ${u.type}</span></small><h2>${esc(ch.ult.name)}</h2><p class="spv-who">${esc(ch.title)} · ${esc(ch.origin)}</p><p class="spv-q">“${esc(pick(ch.lines).replace(/\{P\}/g,P()))}”</p></div>`;
+  else if(E)info=`<div class="spv-info">${crown}<small>${u.boss?'Chefe':'Vilão'} · ${esc(u.name)} <span class="spv-type">${TYPES[u.type].ic} ${u.type}</span></small><h2>${esc(E.skill||E.power||u.name)}</h2><p class="spv-who">${esc(E.power||'')}</p><p class="spv-q">“${esc(E.intro||E.desc||'')}”</p></div>`;
+  const bgImg=u&&(ch?IMG[u.key]:IMG[u.img]);
+  // Vilões (e qualquer vídeo paisagem) usam o quadro 16:9; heróis em retrato mantêm o quadro vertical
+  const wide=true;
+  c.innerHTML=`<div class="spv${wide?' wide':''}" style="--tc:${tc}">${bgImg?`<div class="spv-bg" style="background-image:url(${bgImg})"></div>`:''}<div class="spv-chev"></div>${info}
+   <div class="spv-frame${info?'':' solo'}"><div class="spv-back"></div><div class="spv-box"><div class="spv-shine"></div></div><div class="spv-bar"><i id="spvbar"></i></div></div>
    <div class="spv-flash"></div><button class="btn small vskip">Pular ⏭</button></div>`;
+  const box=c.querySelector('.spv-box'),bar=c.querySelector('#spvbar');
+  const v=document.createElement('video');v.id='spv';v.playsInline=true;v.preload='auto';v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.disablePictureInPicture=true;
+  box.insertBefore(v,box.firstChild);
   c.classList.add('on','vidon');
-  const v=c.querySelector('video'),bar=c.querySelector('#spvbar');const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;ChMusic.setDuck(true);
-  v.setAttribute('webkit-playsinline','');v.playsInline=true;
+  // Congela o fundo da batalha enquanto o vídeo toca (o que mais travava): sem partículas, sem zoom, sem camadas por baixo
+  if(stage)stage.classList.add('spv-on');LiveFX.paused=true;
+  const prev=Audio.mus?Audio.mus.gain.value:0;if(Audio.mus)Audio.mus.gain.value=prev*.2;ChMusic.setDuck(true);
   // Especiais que tocam sem som (o arquivo do André Cruz também já está sem a faixa de áudio)
-  if(u&&SPV_MUDO.includes(u.key)){v.muted=true;v.defaultMuted=true;v.setAttribute('muted','')}
-  v.ontimeupdate=()=>{if(v.duration)bar.style.width=Math.min(100,v.currentTime/v.duration*100)+'%'};
-  let ended=false,started=false;
-  const clean=()=>{clearTimeout(guard);v.onended=v.onerror=v.onplaying=null;try{v.pause();v.removeAttribute('src');v.load()}catch(e){}c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false)};
-  const fin=()=>{if(ended)return;ended=true;const w=c.querySelector('.spv');if(w)w.classList.add('out');setTimeout(()=>{clean();done()},S.settings.motion===false?0:320)};
-  // Se o vídeo não carregar/tocar, mostra a animação antiga em vez de pular a Suprema
-  const fallback=why=>{if(ended)return;ended=true;console.warn('Vídeo da Suprema não tocou ('+why+'):',src);clean();if(u&&ch){cutIn(u,ch.ult.name);setTimeout(done,1000)}else done()};
+  if(u&&u.isChar&&SPV_MUDO.includes(u.key)){v.muted=true;v.defaultMuted=true;v.setAttribute('muted','')}
+  // Se um vídeo paisagem cair no quadro vertical (ou o contrário), ajusta o quadro ao formato real do arquivo
+  v.onloadedmetadata=()=>{if(!v.videoWidth)return;const w=v.videoWidth/v.videoHeight>=1.2;const el=c.querySelector('.spv');if(el)el.classList.toggle('wide',w)};
+  let last=0;
+  v.ontimeupdate=()=>{const n=performance.now();if(n-last<120)return;last=n;if(v.duration)bar.style.transform='scaleX('+Math.min(1,v.currentTime/v.duration)+')'};
+  let ended=false,started=false,guard=0;
+  const clean=()=>{clearTimeout(guard);v.onended=v.onerror=v.onplaying=v.onwaiting=v.ontimeupdate=v.onloadedmetadata=null;try{v.pause();v.removeAttribute('src');v.load()}catch(e){}
+    if(stage)stage.classList.remove('spv-on');LiveFX.paused=false;c.classList.remove('on','vidon');c.innerHTML='';if(Audio.mus)Audio.mus.gain.value=prev;ChMusic.setDuck(false)};
+  const fin=()=>{if(ended)return;ended=true;if(stage)stage.classList.remove('spv-on');LiveFX.paused=false;const w=c.querySelector('.spv');if(w)w.classList.add('out');setTimeout(()=>{clean();done()},S.settings.motion===false?0:320)};
+  // Se o vídeo não carregar/tocar, mostra a animação antiga em vez de pular o especial
+  const fallback=why=>{if(ended)return;ended=true;console.warn('Vídeo do especial não tocou ('+why+'):',src);clean();if(u&&ch){cutIn(u,ch.ult.name);setTimeout(done,1000)}else if(u&&E){const el=document.getElementById('u_'+u.id);if(el){el.classList.add('combo');setTimeout(()=>el.classList.remove('combo'),700)}setTimeout(done,500)}else done()};
   v.onplaying=()=>{started=true;clearTimeout(guard)};
   v.onended=fin;v.onerror=()=>started?fin():fallback('erro ao carregar');c.querySelector('.vskip').onclick=fin;
-  const guard=setTimeout(()=>{if(!started)fallback('demorou demais')},4000);
-  v.src=src;v.load();
+  guard=setTimeout(()=>{if(!started)fallback('demorou demais')},6000);
+  // Usa a cópia já baixada na memória (sem travar); se ainda não terminou de baixar, toca direto do arquivo
+  const ce=SPV_CACHE[src];if(ce)ce.busy=true;
+  v.src=(ce&&ce.url)?ce.url:src;
   const tryPlay=()=>{const p=v.play();if(p&&p.catch)p.catch(()=>{ // navegador bloqueou som: toca sem som
     v.muted=true;const p2=v.play();if(p2&&p2.catch)p2.catch(()=>fallback('reprodução bloqueada'))})};
-  tryPlay()}
+  tryPlay();
+  if(ce)v.addEventListener('ended',()=>{ce.busy=false},{once:true});
+  c.querySelector('.vskip').addEventListener('click',()=>{if(ce)ce.busy=false})}

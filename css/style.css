@@ -282,10 +282,10 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 /* ---- Suprema em vídeo ---- */
 .spv{position:absolute;inset:0;overflow:hidden;background:radial-gradient(120% 90% at 72% 50%,color-mix(in srgb,var(--tc) 38%,#120b06),#050302 70%);animation:spvIn .35s ease-out}
 .spv.out{animation:spvOut .32s ease-in forwards}
-.spv-bg{position:absolute;inset:-60px;background-size:cover;background-position:center 20%;filter:blur(38px) saturate(1.4) brightness(.45);transform:scale(1.15);opacity:.85}
+.spv-bg{position:absolute;inset:0;background-size:cover;background-position:center 20%;opacity:.28}
 .spv-chev{position:absolute;left:-10%;right:-10%;top:50%;height:300px;margin-top:-150px;transform:rotate(-8deg);opacity:.16;
  background:repeating-linear-gradient(135deg,var(--tc) 0 22px,transparent 22px 44px),repeating-linear-gradient(45deg,#f5b82e 0 22px,transparent 22px 44px);
- -webkit-mask:linear-gradient(90deg,#0000,#000 25%,#000 75%,#0000);mask:linear-gradient(90deg,#0000,#000 25%,#000 75%,#0000);animation:spvChev 6s linear infinite}
+ -webkit-mask:linear-gradient(90deg,#0000,#000 25%,#000 75%,#0000);mask:linear-gradient(90deg,#0000,#000 25%,#000 75%,#0000);}
 .spv-info{position:absolute;left:110px;top:0;bottom:0;width:640px;display:flex;flex-direction:column;justify-content:center;animation:spvTxt .5s .08s cubic-bezier(.2,.9,.3,1.2) both}
 .spv-crown{width:74px;height:46px;fill:var(--gold);filter:drop-shadow(3px 3px 0 #000);margin:0 0 14px 6px;transform:rotate(-6deg)}
 .spv-info small{font-size:26px;font-weight:700;color:var(--txt);letter-spacing:.02em;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -296,11 +296,11 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 .spv-frame{position:absolute;right:170px;top:26px;width:624px;height:832px;animation:spvFrame .55s cubic-bezier(.2,.9,.25,1.15) both}
 .spv-frame.solo{right:50%;margin-right:-312px}
 .spv-back{position:absolute;inset:0;background:var(--tc);border-radius:22px;transform:translate(18px,16px) rotate(2.5deg);box-shadow:0 0 70px color-mix(in srgb,var(--tc) 70%,transparent)}
-.spv-box{position:absolute;inset:0;border-radius:22px;overflow:hidden;border:6px solid var(--gold);background:#000;transform:rotate(-1.2deg);box-shadow:0 24px 60px #000c}
-.spv-box video{width:100%;height:100%;object-fit:cover;display:block;animation:spvZoom 4.2s ease-out both}
+.spv-box{position:absolute;inset:0;border-radius:22px;overflow:hidden;border:6px solid var(--gold);background:#000;box-shadow:0 24px 60px #000c;transform:translateZ(0)}
+.spv-box video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
 .spv-shine{position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,#fff7 48%,transparent 60%);transform:translateX(-120%);animation:spvShine .9s .35s ease-out both;pointer-events:none}
-.spv-bar{position:absolute;left:30px;right:30px;bottom:-22px;height:8px;border-radius:9px;background:#0009;overflow:hidden;transform:rotate(-1.2deg)}
-.spv-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--tc));transition:width .25s linear}
+.spv-bar{position:absolute;left:30px;right:30px;bottom:-22px;height:8px;border-radius:9px;background:#0009;overflow:hidden}
+.spv-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--gold),var(--tc));transform:scaleX(0);transform-origin:0 50%}
 .spv-flash{position:absolute;inset:0;background:#fff;pointer-events:none;animation:spvFlash .45s ease-out forwards}
 .spv .vskip{z-index:2;top:26px;bottom:auto;right:26px}
 @keyframes spvIn{from{opacity:0}}
@@ -379,3 +379,21 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 .scene-wrap.dim .lfx-dust{z-index:1}
 .ach{background:#140c08f0}
 .game.panel{background:#140c08e6}
+
+/* ===================== ESPECIAIS DOS VILÕES (vídeo 16:9) ===================== */
+/* Quadro paisagem 1280x720 (16:9) no centro, com o nome da habilidade embaixo */
+.spv.wide .spv-frame{left:160px;right:auto;top:24px;width:1280px;height:720px;margin:0}
+.spv.wide .spv-frame.solo{left:160px;right:auto;margin:0}
+.spv.wide .spv-back{transform:translate(12px,10px) rotate(.6deg)}
+.spv.wide .spv-box video{object-fit:contain}
+.spv.wide .spv-info{left:160px;top:786px;bottom:auto;width:1280px;height:100px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:36px;align-content:center;align-items:center;justify-content:start}
+.spv.wide .spv-crown,.spv.wide .spv-who{display:none}
+.spv.wide .spv-info small{grid-column:1;grid-row:1;font-size:22px}
+.spv.wide .spv-info h2{grid-column:1;grid-row:2;font-size:52px;margin:0;transform:rotate(-2deg)}
+.spv.wide .spv-q{grid-column:2;grid-row:1/3;font-size:22px;max-width:none;align-self:center}
+.spv.wide .spv-bg{opacity:.38}
+
+/* Enquanto um especial toca, o fundo da batalha fica parado e escondido: é isso que mantém o vídeo fluido */
+#stage.spv-on .scene,#stage.spv-on .lfx i{animation:none!important}
+#stage.spv-on .lfx{display:none}
+#stage.spv-on .scene-wrap,#stage.spv-on .bt>*:not(#cutin){visibility:hidden}
