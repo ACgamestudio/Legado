@@ -62,7 +62,7 @@ const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",music
  cap1:"media/capitulos/cap1.mp3",cap2:"media/capitulos/cap2.mp3",cap3:"media/capitulos/cap3.mp3",
  cap4:"media/capitulos/cap4.mp3",cap5:"media/capitulos/cap5.mp3",cap6:"media/capitulos/cap6.mp3",
  cap7:"media/capitulos/cap7.mp3",cap8:"media/capitulos/cap8.mp3",cap9:"media/capitulos/cap9.mp3",
- // Vídeos dos heróis: media/especiais/<id>.mp4. Os vilões são detectados em media/especiais-viloes/<id>.mp4.
+ // Vídeos dos heróis: media/especiais/<id>.mp4. Os vilões são detectados em media/especiais-viloes/<nome-em-minúsculo>.mp4 (16:9), ex.: zara.mp4, kemet.mp4, areias.mp4.
  esp_dj:"media/especiais/dj.mp4",
  esp_atleta:"media/especiais/atleta.mp4",
  esp_engenheiro:"media/especiais/engenheiro.mp4",
