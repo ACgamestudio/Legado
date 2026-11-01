@@ -84,3 +84,8 @@ const MEDIA={produtora:"media/produtora.mp4",abertura:"media/abertura.mp4",final
  esp_cantora:"media/especiais/cantora.mp4",
  esp_cientista:"media/especiais/cientista.mp4",
  esp_esportista:"media/especiais/esportista.mp4"};
+
+// Voz de cada chefe na entrada da batalha: media/chefes/boss1.mp3 ... boss10.mp3 (também aceita boos1.mp3 ... boos9.mp3).
+// Ordem: 1 Zara, 2 Kemet, 3 Malika, 4 Vértice, 5 Colôsso, 6 Toxina, 7 Senhor das Areias, 8 Vulcano, 9 Obsidian, 10 Eclipse.
+const BOSS_VOZ_ORDEM=['reicinza','ladrao','furacao','disco','muralha','serpente','colosso','apagao','esquecimento','ecoVazio'];
+function bossVozArquivos(key){const i=BOSS_VOZ_ORDEM.indexOf(key)+1;if(!i)return [];return ['media/chefes/boss'+i+'.mp3','media/chefes/boos'+i+'.mp3']}

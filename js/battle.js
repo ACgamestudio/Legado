@@ -91,7 +91,17 @@ AFTER.battle=()=>{
   document.onkeydown=e=>{if(CUR!=='battle'||!B||B.busy||!B.cur||B.cur.ai===true)return;const k={'1':'basic','2':'defend','3':'special','4':'ult'}[e.key];if(k)playerAct(k)};
   draw();
 };
-function bossIntro(u){const c=document.getElementById('cutin');if(!c)return;c.innerHTML=`<div class="bossin">${u.img?`<img class="bossimg" src="${IMG[u.img]}" alt="">`:''}<small>Chefe · ${esc(BOSSES[u.key].power||'')}</small><h2>${u.name}</h2><p>"${BOSSES[u.key].intro}"</p></div>`;c.classList.add('on');setTimeout(()=>{c.classList.remove('on');nextTurn()},2600)}
+function bossIntro(u){const c=document.getElementById('cutin');if(!c)return;c.innerHTML=`<div class="bossin">${u.img?`<img class="bossimg" src="${IMG[u.img]}" alt="">`:''}<small>Chefe · ${esc(BOSSES[u.key].power||'')}</small><h2>${u.name}</h2><p>"${BOSSES[u.key].intro}"</p></div>`;c.classList.add('on');
+  // Voz do chefe (media/chefes/bossN.mp3): a batalha só começa quando ele termina de falar
+  let ended=false,a=null;const go=()=>{if(ended)return;ended=true;try{if(a){a.onended=a.onerror=null;a.pause()}}catch(e){}Voice.duck(false);c.classList.remove('on');if(typeof CUR!=='undefined'&&CUR!=='battle')return;nextTurn()};
+  const files=bossVozArquivos(u.key).filter(f=>!Voice.faltando[f]);
+  if(!files.length||Voice.vol()<=0){setTimeout(go,2600);return}
+  const t0=performance.now();let k=0;a=new window.Audio();a.preload='auto';a.volume=Math.min(1,Voice.vol());
+  const fim=()=>setTimeout(go,Math.max(500,2600-(performance.now()-t0)));
+  a.onended=fim;
+  const tenta=()=>{a.src=files[k];Voice.duck(true);const p=a.play();if(p&&p.catch)p.catch(()=>{Voice.duck(false);fim()})};
+  a.onerror=()=>{Voice.faltando[files[k]]=true;k++;if(k<files.length)tenta();else{Voice.duck(false);fim()}};
+  setTimeout(go,15000);tenta()}
 
 function draw(){ if(!B||!B.ui)return;
   B.units.forEach(u=>{const el=document.getElementById('u_'+u.id);if(!el)return;
