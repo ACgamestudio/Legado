@@ -287,7 +287,7 @@ function battleEnd(win){
     }}
   if(ctx.tutorial){S.tutorialDone=true}
   save(); checkAch();
-  const next=chapterDone?()=>playChapter(chapterDone,'end',()=>show('hub')):()=>ctx.region==='final'?show('hub'):show('region',ctx.region);
+  const next=chapterDone?()=>playChapter(chapterDone,'end',chapterDone===9?()=>playFinalVideo(()=>show('hub')):()=>show('hub')):()=>ctx.region==='final'?show('hub'):show('region',ctx.region);
   const mm=modal(`<div class="res"><small>Vitória</small><h2>${boss?'Chefe derrotado!':'A memória foi preservada!'}</h2>
    <div class="rgrid"><div><span>🐚</span><b>+${fmt(cauris)}</b><small>Cauris</small></div><div><span>✦</span><b>+${pl.n}</b><small>XP ${pl.up?`· <em>Nível ${S.lvl}!</em>`:''}</small></div></div>
    <div class="rteam">${lv.map(l=>`<div>${portrait(l.id,'mini')}<small>Nv.${clv(l.id)}${l.up?' ↑':''}</small></div>`).join('')}</div>

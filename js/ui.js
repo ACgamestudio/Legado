@@ -188,6 +188,19 @@ function playIntroVideos(){
   document.getElementById('vskip').onclick=e=>{e.stopPropagation();next()};
   next();
 }
+// Vídeo de encerramento: toca depois da cena final, quando o último chefe cai
+function playFinalVideo(after){
+  const go=()=>after&&after();
+  if(!MEDIA.final){go();return}
+  try{Theme.stop();ChMusic.stop();Audio.stop()}catch(e){}
+  show('video');
+  const v=document.getElementById('vp');let done=false;
+  const fin=()=>{if(done)return;done=true;try{v.pause();v.removeAttribute('src');v.load()}catch(e){}go()};
+  v.onended=fin;v.onerror=fin;
+  document.getElementById('vskip').onclick=e=>{e.stopPropagation();fin()};
+  v.src=MEDIA.final;v.currentTime=0;
+  const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(fin)});
+}
 AFTER.intro=()=>{document.getElementById('go1').onclick=()=>{S.name=(document.getElementById('nm').value.trim()||'Kayo').slice(0,14);S.started=true;save();playChapter(1)}};
 AFTER.hub=()=>{stage().querySelector('[data-act=continue]').onclick=()=>{sfx('click');if(S.chDone.includes(9))show('map');else playChapter(S.chapter)}};
 AFTER.region=id=>{stage().querySelectorAll('[data-act=node]').forEach(b=>b.onclick=()=>{sfx('click');const i=+b.dataset.i;startNode(id,i)})};
