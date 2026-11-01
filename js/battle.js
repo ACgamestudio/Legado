@@ -20,10 +20,16 @@ function mkHero(id,side,m,lvlOverride){
     energy:Math.min(90,m.startEnergy), cd:0, buffs:[], shield:0, stun:false, taunt:0, alive:true};
   u.hp=u.maxhp; return u;
 }
+// ---------- DIFICULDADE ----------
+const DIFF={
+ easy:{n:'Fácil',ic:'🌱',hp:.55,atk:.55,def:.7,rew:.8,d:'Inimigos bem mais fracos. Para curtir a história.'},
+ normal:{n:'Médio',ic:'⚔️',hp:.85,atk:.8,def:.9,rew:1,d:'Um pouco mais leve que o original. Equilibrado.'},
+ hard:{n:'Difícil',ic:'🔥',hp:1.2,atk:1.15,def:1.1,rew:1.4,d:'Inimigos fortes. Mais recompensas.'}};
+function curDiff(){if(window.PENDING&&window.PENDING.tutorial)return {hp:1,atk:1,def:1,rew:1};return DIFF[(S&&S.diff)||'normal']||DIFF.normal}
 function mkEnemy(key,lvl,boss,idx){
-  const E=boss?BOSSES[key]:ENEMIES[key],g=1+.1*(lvl-1);
+  const E=boss?BOSSES[key]:ENEMIES[key],g=1+.1*(lvl-1),D=curDiff();
   const u={id:key+'_'+idx,key,name:E.name,side:'e',isChar:false,boss:!!boss,type:E.type,lvl,
-    maxhp:Math.round(E.hp*g*(boss?.9:1)),atk:E.atk*g,def:E.def*g,spd:E.spd,crit:.05,dodge:E.dodge||0,img:E.img,style:E.style,counter:0,thorns:0,lifesteal:0,healB:0,aoeB:0,ultB:0,debuffDur:0,energyMul:1,regen:0,shieldMul:1,stunB:0,
+    maxhp:Math.round(E.hp*g*(boss?.9:1)*D.hp),atk:E.atk*g*D.atk,def:E.def*g*D.def,spd:E.spd,crit:.05,dodge:E.dodge||0,img:E.img,style:E.style,counter:0,thorns:0,lifesteal:0,healB:0,aoeB:0,ultB:0,debuffDur:0,energyMul:1,regen:0,shieldMul:1,stunB:0,
     energy:0,cd:0,buffs:[],shield:0,stun:false,taunt:0,alive:true,turns:0,color:TYPES[E.type].c,shape:E.shape};
   u.hp=u.maxhp; return u;
 }
@@ -34,6 +40,13 @@ const foes=u=>B.units.filter(x=>x.side!==u.side&&x.alive);
 const debuffed=u=>u.buffs.some(b=>b.neg);
 
 function startBattle(ctx){
+  // Batalhas da história: escolhe a dificuldade antes de começar (a escolha vale também ao "Tentar de novo")
+  if(ctx.mode!=='story'||ctx.tutorial||ctx.diffChosen)return startBattleGo(ctx);
+  const cur=S.diff||'normal';
+  const m=modal(`<div class="res"><h2>Escolha a dificuldade</h2><div class="bless">${Object.keys(DIFF).map(k=>`<button class="bl panel" data-d="${k}" style="${k===cur?'border-color:var(--acc)':''}"><span>${DIFF[k].ic}</span><b>${DIFF[k].n}</b><small>${DIFF[k].d}</small><small>Recompensas ${Math.round(DIFF[k].rew*100)}%</small></button>`).join('')}</div></div>`,()=>show(ctx.back&&ctx.back.split('|')[0]||'hub',...(ctx.back?ctx.back.split('|').slice(1):[])));
+  m.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{S.diff=b.dataset.d;save();ctx.diffChosen=true;m.remove();sfx('click');startBattleGo(ctx)});
+}
+function startBattleGo(ctx){
   window.PENDING=ctx; const units=[];
   let genre='final', scene='final', lvl;
   if(ctx.mode==='duel'){
@@ -246,8 +259,9 @@ function battleEnd(win){
   if(new Set(S.team.map(i=>CH[i].type)).size>=3)st('diverseWin');
   const m=teamMods(S.team);
   const boss=ctx.node===3||ctx.region==='final';
-  let cauris=Math.round((50+lvl*12)*(boss?3:1)*(1+m.coin+B.coinBoost));
-  const xp=Math.round((35+lvl*10)*(boss?2.5:1)*(ctx.tutorial?1.5:1));
+  const RW=(DIFF[S.diff]||DIFF.normal).rew,rwm=ctx.tutorial?1:RW;
+  let cauris=Math.round((50+lvl*12)*(boss?3:1)*(1+m.coin+B.coinBoost)*rwm);
+  const xp=Math.round((35+lvl*10)*(boss?2.5:1)*(ctx.tutorial?1.5:1)*rwm);
   S.cauris+=cauris; const pl=gainXP(xp);
   const lv=S.team.map(id=>({id,up:gainCXP(id,Math.round(xp*.9))}));
   const rewards=[];
