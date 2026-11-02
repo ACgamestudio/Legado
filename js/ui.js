@@ -20,7 +20,7 @@ const SCREENS={
 // ---------------------------- MENU (arte do cliente) ----------------------------
 menu(){
   const ev=currentEvent();
-  return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>
+  return `<div class="menu-bg" style="background-image:url(${IMG.menu});background-color:#000;background-repeat:no-repeat;background-size:1600px auto;background-position:0 -50px"></div>
   <nav class="menu-hot" aria-label="Menu principal">
     <button class="hot" style="left:20px;top:357px;width:416px;height:70px" data-act="play" aria-label="Jogar"></button>
     <button class="hot" style="left:44px;top:433px;width:354px;height:62px" data-go="story" aria-label="Modo história"></button>
