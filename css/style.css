@@ -30,7 +30,8 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 .logo .l1{font-size:calc(110px*var(--ls));color:#fff;text-shadow:4px 4px 0 #000,-2px -2px 0 var(--acc)}
 .logo .l2{font-size:calc(84px*var(--ls));color:var(--acc);margin-left:calc(60px*var(--ls));text-shadow:4px 4px 0 #000}
 /* MENU */
-.menu-bg{position:absolute;inset:0;background-size:100% 100%}
+/* arte 16:10 (2576x1610) com faixa preta no topo: largura total e sobe 50px para esconder a faixa; os botões .hot abaixo seguem essa medida */
+.menu-bg{position:absolute;inset:0;background-color:#000;background-repeat:no-repeat;background-size:1600px auto;background-position:0 -50px}
 .menu-hot .hot{position:absolute;border-radius:6px;transition:box-shadow .15s,background .15s}
 .menu-hot .hot:hover,.menu-hot .hot:focus-visible{box-shadow:0 0 0 3px var(--acc),0 0 30px var(--acc);background:#f5b82e22;outline:none}
 .menu-hud{position:absolute;left:1092px;top:18px;width:496px}

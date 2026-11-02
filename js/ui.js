@@ -22,14 +22,14 @@ menu(){
   const ev=currentEvent();
   return `<div class="menu-bg" style="background-image:url(${IMG.menu})"></div>
   <nav class="menu-hot" aria-label="Menu principal">
-    <button class="hot" style="left:19px;top:362px;width:416px;height:60px" data-act="play" aria-label="Jogar"></button>
-    <button class="hot" style="left:48px;top:435px;width:344px;height:58px" data-go="story" aria-label="Modo história"></button>
-    <button class="hot" style="left:48px;top:502px;width:344px;height:58px" data-go="multi" aria-label="Multiplayer"></button>
-    <button class="hot" style="left:48px;top:569px;width:344px;height:58px" data-go="chars" aria-label="Personagens"></button>
-    <button class="hot" style="left:48px;top:636px;width:344px;height:58px" data-go="collection" aria-label="Coleção"></button>
-    <button class="hot" style="left:48px;top:703px;width:344px;height:60px" data-go="settings" aria-label="Configurações"></button>
-    <button class="hot" style="left:48px;top:772px;width:344px;height:59px" data-go="exit" aria-label="Sair"></button>
-    <button class="hot evhot" style="left:1115px;top:667px;width:456px;height:118px" data-go="events" aria-label="Evento especial"></button>
+    <button class="hot" style="left:20px;top:357px;width:416px;height:70px" data-act="play" aria-label="Jogar"></button>
+    <button class="hot" style="left:44px;top:433px;width:354px;height:62px" data-go="story" aria-label="Modo história"></button>
+    <button class="hot" style="left:44px;top:501px;width:344px;height:61px" data-go="multi" aria-label="Multiplayer"></button>
+    <button class="hot" style="left:44px;top:568px;width:344px;height:61px" data-go="chars" aria-label="Personagens"></button>
+    <button class="hot" style="left:44px;top:636px;width:344px;height:60px" data-go="collection" aria-label="Coleção"></button>
+    <button class="hot" style="left:44px;top:703px;width:344px;height:61px" data-go="settings" aria-label="Configurações"></button>
+    <button class="hot" style="left:44px;top:772px;width:344px;height:58px" data-go="exit" aria-label="Sair"></button>
+    <button class="hot evhot" style="left:1116px;top:665px;width:460px;height:120px" data-go="events" aria-label="Evento especial"></button>
   </nav>
   <div class="menu-tip">Evento da semana: <b>${ev.ic} ${ev.name}</b></div>
   <button class="intro-again" data-act="replay" aria-label="Rever a abertura">▶ Rever abertura</button>`},
