@@ -398,3 +398,32 @@ kbd{display:inline-block;padding:0 6px;border:1px solid var(--line);border-radiu
 #stage.spv-on .scene,#stage.spv-on .lfx i{animation:none!important}
 #stage.spv-on .lfx{display:none}
 #stage.spv-on .scene-wrap,#stage.spv-on .bt>*:not(#cutin){visibility:hidden}
+
+/* ===================== FEEDBACK DE COMBATE ===================== */
+/* tremor leve da tela no impacto */
+@keyframes shk1{20%{transform:translate(-3px,1px)}40%{transform:translate(3px,-2px)}60%{transform:translate(-2px,2px)}80%{transform:translate(2px,-1px)}}
+@keyframes shk2{15%{transform:translate(-7px,3px)}30%{transform:translate(6px,-4px)}45%{transform:translate(-5px,4px)}60%{transform:translate(5px,-3px)}80%{transform:translate(-2px,1px)}}
+.bt.shk1{animation:shk1 .22s}.bt.shk2{animation:shk2 .32s}
+/* clarão no retrato que apanha / brilho verde no que é curado */
+.unit.hit .uart{animation:hitFlash .35s}
+@keyframes hitFlash{0%{filter:brightness(2.4) saturate(1.6) sepia(.5) hue-rotate(-35deg)}100%{filter:none}}
+.unit.healed .uart{animation:healGlow .8s}
+@keyframes healGlow{0%{box-shadow:0 0 0 4px #7dffb0,0 0 46px #2fbf71}100%{box-shadow:0 12px 30px #000a}}
+/* números flutuantes com cores bem contrastantes */
+.fl{paint-order:stroke fill;-webkit-text-stroke:5px #000}
+.fl.dmg{color:#fff;-webkit-text-stroke-color:#a01818}
+.fl.crit{color:#ffd23a;-webkit-text-stroke-color:#7a3a00;font-size:50px;animation:upPop 1.2s forwards}
+.fl.heal{color:#8dffb4;-webkit-text-stroke-color:#0d5a2a;font-size:38px}
+.fl.shield{color:#aeeaff;-webkit-text-stroke-color:#0a4a78;font-size:26px}
+.fl.buff,.fl.debuff,.fl.info{-webkit-text-stroke-width:4px}
+@keyframes upPop{0%{transform:scale(.4)}15%{transform:scale(1.35)}30%{transform:scale(1)}100%{transform:translateY(-90px);opacity:0}}
+/* estados: ícones sobre o retrato */
+.unit .stt{position:absolute;left:5px;top:5px;z-index:3;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:0;pointer-events:none}
+.unit .stt b{display:flex;align-items:center;gap:3px;font-size:18px;line-height:1;font-weight:800;padding:2px 6px 2px 5px;border-radius:13px;background:#000d;border:2px solid #fff6;box-shadow:0 2px 6px #000a}
+.unit .stt b.pos{border-color:#5be38f;color:#c9ffd9}
+.unit .stt b.neg{border-color:#ff6b5b;color:#ffd5cf}
+.unit .stt b i{font-style:normal;font-size:13px;color:#fff;background:#fff2;border-radius:8px;padding:1px 5px}
+.unit.dead .stt{display:none}
+.unit.boss .stt b{font-size:22px}
+#fast{cursor:pointer;color:var(--txt)}#fast:hover{border-color:var(--acc)}
+.sets select{font:inherit;font-size:20px;background:#0008;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:6px 10px;max-width:460px}

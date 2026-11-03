@@ -68,19 +68,20 @@ function startBattleGo(ctx){
       else if(ctx.node===3){units.push(mkEnemy(r.boss,lvl,true,0));if(r.lvl>=7)units.push(mkEnemy(pick(r.enemies),lvl-2,false,1))}
       else{const n=ctx.node===2?3:2;for(let i=0;i<n;i++)units.push(mkEnemy(r.enemies[(i+ctx.node)%3],lvl,false,i))}}
   }
-  B={ctx,units,round:0,queue:[],cur:null,target:{h:null,e:null},log:[],busy:false,over:false,coinBoost:0,lootBoost:false,ev:currentEvent(),ui:true,tut:ctx.tutorial?0:-1,stats:{dmg:0}};
+  B={ctx,units,round:0,queue:[],cur:null,target:{h:null,e:null},log:[],busy:false,over:false,coinBoost:0,lootBoost:false,ev:currentEvent(),ui:true,fast:!!S.settings.fastBattle,tut:ctx.tutorial?0:-1,stats:{dmg:0}};
   units.forEach(u=>{if(u.side==='h'&&!u.alive)u.hp=0});
   show('battle',scene);
   Audio.genre=null;Audio.play(genre);
   if(B.units.some(u=>u.boss)){const bo=B.units.find(u=>u.boss);setTimeout(()=>bossIntro(bo),300)}else setTimeout(nextTurn,500);
 }
 SCREENS.battle=scene=>`<div class="scene-wrap">${sceneBG(scene)}</div><div class="bt">
-  <div class="btop"><button class="back" id="flee" aria-label="Sair da batalha">◀</button><div class="order" id="order"></div><div class="evb" title="${B.ev.desc}">${B.ev.ic} ${B.ev.name}</div></div>
+  <div class="btop"><button class="back" id="flee" aria-label="Sair da batalha">◀</button><div class="order" id="order"></div><button class="evb" id="fast" title="Velocidade da batalha">${B.fast?'⏩ x2':'▶ x1'}</button><div class="evb" title="${B.ev.desc}">${B.ev.ic} ${B.ev.name}</div></div>
   <div id="field"></div>
   <div class="bpanel"><div class="actor-info" id="ainfo"></div><div class="acts" id="acts"></div><div class="blog" id="blog"></div></div>
   <div id="cutin"></div><div id="tut"></div></div>`;
 AFTER.battle=()=>{
   spvPreloadBattle();
+  document.getElementById('fast').onclick=e=>{B.fast=!B.fast;S.settings.fastBattle=B.fast;save();e.currentTarget.textContent=B.fast?'⏩ x2':'▶ x1';sfx('click')};
   const f=document.getElementById('field');
   let hi=0,ei=0;
   f.innerHTML=B.units.map(u=>{let x,y;const hasBoss=B.units.some(z=>z.boss);if(u.side==='h'){[x,y]=HPOS[hi++]}else{[x,y]=u.boss?[1010,100]:(hasBoss?EPOS_B:EPOS)[ei++]}
@@ -103,6 +104,18 @@ function bossIntro(u){const c=document.getElementById('cutin');if(!c)return;c.in
   a.onerror=()=>{Voice.faltando[files[k]]=true;k++;if(k<files.length)tenta();else{Voice.duck(false);fim()}};
   setTimeout(go,15000);tenta()}
 
+// Ícones de reforço (verde) e penalidade (vermelho) sobre o retrato, com a porcentagem no balão e os turnos que faltam
+const ST_NOMES={atk:['⚔','Ataque'],def:['🛡','Defesa'],spd:['⚡','Velocidade'],dodge:['💨','Esquiva']};
+function statusChips(u){const o=[];const chip=(ic,cls,tip,d)=>o.push(`<b class="${cls}" title="${tip}">${ic}${d!=null?`<i>${d}</i>`:''}</b>`);
+  if(u.stun)chip('💫','neg','Atordoado: perde a próxima vez');
+  if(u.taunt>0)chip('📢','pos','Provoca: atrai os ataques inimigos',u.taunt);
+  if(u.shield>0)chip('🔰','pos','Escudo: absorve '+Math.round(u.shield)+' de dano');
+  const agg={};u.buffs.forEach(b=>{const a=agg[b.s]||(agg[b.s]={v:0,d:0});a.v+=b.neg?-b.v:b.v;a.d=Math.max(a.d,b.d)});
+  for(const k in agg){const a=agg[k],pct=Math.round(Math.abs(a.v)*100),d=a.d>=50?null:a.d;
+    if(k==='vuln')chip('🎯','neg','Vulnerável: recebe +'+pct+'% de dano',d);
+    else if(k==='spd'&&a.v<0)chip('🐌','neg','Lentidão: velocidade -'+pct+'%',d);
+    else{const [ic,nm]=ST_NOMES[k]||['✦',k];chip(ic+(a.v>0?'↑':'↓'),a.v>0?'pos':'neg',nm+(a.v>0?' +':' -')+pct+'%',d)}}
+  return o.join('')}
 function draw(){ if(!B||!B.ui)return;
   B.units.forEach(u=>{const el=document.getElementById('u_'+u.id);if(!el)return;
     el.classList.toggle('dead',!u.alive);el.classList.toggle('active',B.cur===u);
@@ -110,9 +123,7 @@ function draw(){ if(!B||!B.ui)return;
     el.querySelector('.hp').style.width=Math.max(0,u.hp/u.maxhp*100)+'%';el.querySelector('.sh').style.width=Math.min(100,u.shield/u.maxhp*100)+'%';
     el.querySelector('.hpb span').textContent=`${Math.max(0,Math.ceil(u.hp))}/${u.maxhp}`;
     const en=el.querySelector('.enb i');if(en){en.style.width=Math.min(100,u.energy)+'%';el.classList.toggle('ready',u.energy>=100)}
-    const ic=[];if(u.stun)ic.push('💫');if(u.taunt)ic.push('🛡');if(u.shield>0)ic.push('🔰');
-    const agg={};u.buffs.forEach(b=>{agg[b.s]=(agg[b.s]||0)+(b.neg?-b.v:b.v)});for(const s in agg){const n={atk:'⚔',def:'🛡',spd:'⚡',dodge:'💨',vuln:'🎯'}[s];ic.push(`<b class="${agg[s]<0||s==='vuln'?'neg':'pos'}">${n}${agg[s]>0&&s!=='vuln'?'↑':'↓'}</b>`)}
-    el.querySelector('.stt').innerHTML=ic.join('');
+    el.querySelector('.stt').innerHTML=statusChips(u);
   });
   const ord=B.queue.slice(B.qi).filter(u=>u.alive).slice(0,8);
   document.getElementById('order').innerHTML=`<span class="rnd">Rodada ${B.round}</span>`+ord.map(u=>`<span class="oq ${u.side}">${u.isChar?portrait(u.key):u.img?`<img class="pt" src="${IMG[u.img]}" alt="">`:`<i style="background:${u.color}">${u.boss?'☠':'◉'}</i>`}</span>`).join('');
@@ -127,7 +138,15 @@ function draw(){ if(!B||!B.ui)return;
   document.getElementById('blog').innerHTML=B.log.slice(-3).map(l=>`<p>${l}</p>`).join('');
 }
 function log(t){B.log.push(t);if(B.ui){const bl=document.getElementById('blog');if(bl)bl.innerHTML=B.log.slice(-3).map(l=>`<p>${l}</p>`).join('')}}
-function floatTxt(u,txt,cls){if(!B.ui)return;const el=document.getElementById('u_'+u.id);if(!el)return;const d=document.createElement('div');d.className='fl '+cls;d.textContent=txt;d.style.left=(40+Math.random()*80)+'px';el.appendChild(d);setTimeout(()=>d.remove(),1100);if(cls.includes('dmg')&&S.settings.motion){el.classList.remove('hit');void el.offsetWidth;el.classList.add('hit')}}
+// Tremor leve da tela no impacto (mais forte no crítico). Respeita "Animações de tela" e "reduzir movimento".
+function shake(p){if(!B||!B.ui||!S.settings.motion||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+  const el=document.querySelector('.bt');if(!el)return;const n=performance.now();if(B._shk&&n-B._shk<130&&p<2)return;B._shk=n;
+  el.classList.remove('shk1','shk2');void el.offsetWidth;el.classList.add(p>1?'shk2':'shk1')}
+// Números flutuantes: dano (branco/vermelho), crítico (dourado), cura (verde), escudo (azul). Vários números seguidos sobem em alturas diferentes.
+function floatTxt(u,txt,cls){if(!B.ui)return;const el=document.getElementById('u_'+u.id);if(!el)return;
+  const n=el.querySelectorAll('.fl').length;const d=document.createElement('div');d.className='fl '+cls;d.textContent=txt;
+  d.style.left=(30+Math.random()*80)+'px';d.style.top=(60-Math.min(3,n)*24)+'px';el.appendChild(d);setTimeout(()=>d.remove(),1100);
+  if(S.settings.motion){if(cls.includes('dmg')){el.classList.remove('hit');void el.offsetWidth;el.classList.add('hit')}else if(cls.includes('heal')){el.classList.remove('healed');void el.offsetWidth;el.classList.add('healed')}}}
 
 function nextTurn(){ if(!B||B.over)return;
   if(checkEnd())return;
@@ -141,15 +160,16 @@ function nextTurn(){ if(!B||B.over)return;
   u.ai=(u.side==='e'&&B.ctx.mode!=='duel')||B.auto;
   draw();
   if(B.tut>=0&&u.side==='h')tutStep();
-  if(u.ai){B.busy=true;setTimeout(()=>{if(!B||B.over)return;u.isChar?heroAI(u):enemyAct(u)},B.ui?650:0)}
+  if(u.ai){B.busy=true;setTimeout(()=>{if(!B||B.over)return;u.isChar?heroAI(u):enemyAct(u)},B.ui?T(650):0)}
   else B.busy=false;
 }
+const T=ms=>(B&&B.fast)?Math.round(ms*.5):ms; // batalha rápida: metade do tempo de espera
 function endTurn(u,delay=700){
   u.buffs.forEach(b=>b.d--);u.buffs=u.buffs.filter(b=>b.d>0);
   if(u.cd>0&&u._acted)u.cd--; u._acted=true;
   B.cur=null;draw();
   if(checkEnd())return;
-  if(B.ui)setTimeout(nextTurn,delay);else nextTurn();
+  if(B.ui)setTimeout(nextTurn,T(delay));else nextTurn();
 }
 function checkEnd(){if(B.over)return true;
   const h=B.units.some(u=>u.side==='h'&&u.alive),e=B.units.some(u=>u.side==='e'&&u.alive);
@@ -168,10 +188,17 @@ function doAct(u,k){const c=CH[u.key];u._acted=true;
   else if(k==='special'){log(`<b>${u.name}</b> usa <b>${c.sp.name}</b>!`);runFx(u,c.sp.fx,false);u.cd=c.sp.cd+1;gainEn(u,15);if(u.side==='h')st('specials');sfx('special');combos(u)}
   else if(k==='ult'){u.energy=0;if(u.side==='h')st('ults');sfx('ult');
     const go=()=>{log(`<b>${u.name}</b>: SUPREMA <b>${c.ult.name}</b>!`);runFx(u,c.ult.fx,true);endTurn(u,900)};
-    if(B.ui&&spvSrc(u)){specialVideo(spvSrc(u),go,u)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,1000)}else go();return}
+    if(B.ui&&spvSrc(u)&&spvUseVideo(u)){specialVideo(spvSrc(u),go,u)}else if(B.ui){cutIn(u,c.ult.name);setTimeout(go,T(1000))}else go();return}
   endTurn(u);
 }
-function cutIn(u,name){const c=document.getElementById('cutin');c.innerHTML=`<div class="ci" style="--tc:${TYPES[u.type].c}">${portrait(u.key)}<div><small>Suprema</small><h2>${name}</h2><p>"${pick(CH[u.key].lines)}"</p></div></div>`;c.classList.add('on');setTimeout(()=>c.classList.remove('on'),950)}
+// Ritmo das supremas: Configurações > "Supremas em vídeo". full = sempre vídeo · compact = vídeo só na 1ª vez de cada personagem · fast = sempre o banner rápido
+function spvUseVideo(u){const m=S.settings.ultMode||'full';if(m==='fast')return false;
+  if(m==='compact'){S.seenSpv=S.seenSpv||{};const k=(u.isChar?'h_':'v_')+u.key;if(S.seenSpv[k])return false;S.seenSpv[k]=1;save()}
+  return true}
+function cutIn(u,name){const c=document.getElementById('cutin');if(!c)return;const ch=u.isChar?CH[u.key]:null,E=u.isChar?null:(u.boss?BOSSES[u.key]:ENEMIES[u.key]);
+  const art=ch?portrait(u.key):(u.img&&IMG[u.img]?`<img class="pt" src="${IMG[u.img]}" alt="">`:'');
+  const q=ch?pick(ch.lines).replace(/\{P\}/g,P()):(E?(E.intro||E.desc||''):'');
+  c.innerHTML=`<div class="ci" style="--tc:${TYPES[u.type].c}">${art}<div><small>${ch?'Suprema':'Habilidade'}</small><h2>${esc(name)}</h2><p>"${esc(q)}"</p></div></div>`;c.classList.add('on');setTimeout(()=>c.classList.remove('on'),950)}
 function combos(u){ if(!u.isChar)return;
   SYNERGIES.filter(s=>s.a===u.key||s.b===u.key).forEach(s=>{const pid=s.a===u.key?s.b:s.a;const p=allies(u).find(x=>x.key===pid);const t=foes(u);if(p&&t.length){
     const tg=B.target[u.side]&&B.target[u.side].alive?B.target[u.side]:t[0];log(`✨ COMBO <b>${s.name}</b>: ${short(p.key)} entra no ritmo!`);hit(p,tg,.6);if(u.side==='h')st('combos');
@@ -208,9 +235,10 @@ function hit(a,t,m,forceCrit,noCounter){ if(!t||!t.alive||!a.alive)return 0;
   const cr=forceCrit||Math.random()<a.crit; if(cr){d*=1.6;if(a.side==='h')st('crits');if(a.critEnergy)gainEn(a,10)}
   d=Math.max(1,Math.round(d));
   if(a.side==='h'){stMax('maxHit',d);B.stats.dmg+=d}
-  let rest=d,blk=false; if(t.shield>0){const ab=Math.min(t.shield,rest);t.shield-=ab;rest-=ab;blk=ab>0}
+  let rest=d,blk=false,ab0=0; if(t.shield>0){const ab=Math.min(t.shield,rest);t.shield-=ab;rest-=ab;blk=ab>0;ab0=ab}
   t.hp-=rest; floatTxt(t,(cr?'CRÍTICO ':'')+d,cr?'dmg crit':'dmg');
   Golpe.impact(a,cr,blk); // barulho do golpe (js/golpes.js)
+  shake(cr?2:1);if(ab0>0)floatTxt(t,'🔰-'+Math.round(ab0),'shield');
   if(typeMul(a.type,t.type)>1&&B.ui)floatTxt(t,'Vantagem!','info');
   if(t.isChar)gainEn(t,8);
   if(a.lifesteal>0)heal(a,d*a.lifesteal,a,true);
@@ -229,7 +257,8 @@ function enemyAct(u){u.turns++;const fs=foes(u);if(!fs.length){endTurn(u);return
   const bt=B; // se a batalha mudar durante o vídeo, não faz nada
   if(u.boss&&u.hp<u.maxhp*.5&&!u.enraged){u.enraged=true;u.buffs.push({s:'atk',v:.25,d:99});log(`<b>${u.name}</b> fica furioso!`);floatTxt(u,'FÚRIA','debuff')}
   const skill=u.turns%3===0;
-  const vsrc=skill&&B.ui?spvSrc(u):null;
+  let vsrc=skill&&B.ui?spvSrc(u):null,banner=false;
+  if(vsrc&&!spvUseVideo(u)){vsrc=null;banner=true}
   const run=()=>{if(B!==bt||B.over)return;
   if(u.boss&&skill){log(`<b>${u.name}</b> usa <b>${E.skill}</b>!`);sfx('ult');
     fs.forEach(t=>hit(u,t,1.05));
@@ -252,7 +281,7 @@ function enemyAct(u){u.turns++;const fs=foes(u);if(!fs.length){endTurn(u);return
   } else {const t=enemyTarget(u);hit(u,t,1)}
   endTurn(u);
   };
-  if(vsrc)specialVideo(vsrc,run,u);else run();
+  if(vsrc)specialVideo(vsrc,run,u);else if(banner){cutIn(u,(u.boss?E.skill:E.power)||u.name);setTimeout(run,T(1000))}else run();
 }
 
 // ---------- fim de batalha e recompensas ----------
