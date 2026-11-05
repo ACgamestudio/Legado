@@ -374,7 +374,7 @@ function tutStep(){const t=document.getElementById('tut');if(!t)return;if(B.tut>
 // ===================== VÍDEOS DE ESPECIAIS =====================
 // Heróis:  media/especiais/<id>.mp4            (MEDIA['esp_<id>'] em js/assets.js ou detecção automática)
 // Vilões:  media/especiais-viloes/<nome>.mp4   em 16:9, nome em minúsculo e sem acento (zara, kemet, areias, lucifer...)
-const SPV_MUDO=['engenheiro'];
+
 const _sl=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 // Nomes de arquivo aceitos para um vilão: o do retrato (v_zara -> zara) e o nome completo ("Brasa Negra" -> brasanegra)
 function vilSlugs(E){const o=[];if(E.img)o.push(String(E.img).replace(/^v_/,''));o.push(_sl(E.name));return o.filter((x,i)=>x&&o.indexOf(x)===i)}
